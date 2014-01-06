@@ -17,7 +17,8 @@ public class Projet_java {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        System.out.print("kk");
+        System.out.print("kk - coucou");
+        
     }
     
 }
