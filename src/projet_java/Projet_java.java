@@ -3,13 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package projet_java;
 
-/**
- *
- * @author Karim
- */
 public class Projet_java {
 
     /**
@@ -18,7 +13,7 @@ public class Projet_java {
     public static void main(String[] args) {
         // TODO code application logic here
         System.out.print("Coucou");
-        
+
     }
-    
+
 }
