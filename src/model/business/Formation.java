@@ -14,8 +14,8 @@ public class Formation {
         this.idFormation = idFormation;
         this.libelleFormation = libelleFormation;
         this.departement = departement;
-    }  
-    
+    }
+
     public int getIdFormation() {
         return idFormation;
     }
@@ -39,6 +39,5 @@ public class Formation {
     public void setDepartement(Departement departement) {
         this.departement = departement;
     }
-    
-    
+
 }
