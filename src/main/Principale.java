@@ -1,13 +1,13 @@
 package main;
 
 import javax.swing.JFrame;
-import view.SetParams;
+import view.manifestation.ManifestationFenetrePrincipale;
 
 public class Principale {
 
     public static void main(String[] args) {
 
-        new SetParams(new JFrame());
+        new ManifestationFenetrePrincipale();
     }
 
 }
