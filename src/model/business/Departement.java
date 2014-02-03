@@ -9,7 +9,7 @@ public class Departement {
         this.setLibelleDepartement(libelleDepartement);
     }
     
-    public Departement(int idDeprtement, String libelleDepartement) {
+    public Departement(int idDepartement, String libelleDepartement) {
         this(libelleDepartement);
         this.setIdDepartement(idDepartement);
     }
