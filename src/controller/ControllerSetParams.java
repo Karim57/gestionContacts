@@ -1,7 +1,14 @@
 package controller;
 
+import view.Observable;
+
 public class ControllerSetParams {
 
-    public ControllerSetParams() {
+    private Observable vue;
+
+    public ControllerSetParams(Observable frame) {
+
+        this.vue = frame;
+
     }
 }
