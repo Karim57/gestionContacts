@@ -10,9 +10,6 @@ public abstract class DAOFactory {
             case MYSQL:
                 daoF = new MySQLDAOFactory();
                 break;
-            case ORACLE:
-                daoF = null;
-                break;
             case XML:
                 daoF = null;
                 break;
