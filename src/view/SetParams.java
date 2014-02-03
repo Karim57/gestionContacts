@@ -38,7 +38,7 @@ public class SetParams extends JDialog implements Observable {
         this.setResizable(false);
 
         this.setVisible(true);
-
+       
     }
 
     private void construitInterface() {
