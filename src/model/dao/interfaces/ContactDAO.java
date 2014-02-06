@@ -5,7 +5,7 @@
  */
 package model.dao.interfaces;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import model.business.Contact;
 
 /**

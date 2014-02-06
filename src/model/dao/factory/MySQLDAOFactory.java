@@ -6,8 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import model.dao.MySQLManifestationDAO;
-import model.dao.factory.DAOFactory;
+import model.dao.sql.SQLManifestationDAO;
 import model.dao.interfaces.ManifestationDAO;
 
 public class MySQLDAOFactory extends DAOFactory {
@@ -55,7 +54,7 @@ public class MySQLDAOFactory extends DAOFactory {
     }
 
     public ManifestationDAO getEnseignantDAO() {
-        return MySQLManifestationDAO.getInstance();
+        return SQLManifestationDAO.getInstance();
     }
 
     private void demandePilote() throws ClassNotFoundException {
@@ -65,7 +64,7 @@ public class MySQLDAOFactory extends DAOFactory {
 
     private void chargeDonneesConnexion() {
 
-        String chemin = "bdd.properties";
+        String chemin = "src/config/bdd.properties";
         this.proprietes = new Properties();
 
         try {
@@ -73,8 +72,7 @@ public class MySQLDAOFactory extends DAOFactory {
             this.proprietes.loadFromXML(path);
             path.close();
         } catch (IOException ioe) {
-            System.out
-                    .println("Problème à la lecture du fichier de config bdd");
+            System.out.println("Problème à la lecture du fichier de config bdd");
             System.out.println(ioe.getMessage());
         }
 

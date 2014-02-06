@@ -1,6 +1,6 @@
-package view.manifestation;
+package view;
 
-import controller.manifestation.ManifestationControlleurPrincipale;
+import controller.manifestation.ControleurManifestation;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,15 +10,19 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -28,10 +32,12 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import model.tables.ModeleManifestation;
+import view.manifestation.ManifestationTable;
 
-public class ManifestationFenetrePrincipale extends JFrame {
+public class VueFenetrePrincipale extends JFrame {
 
-    public ManifestationFenetrePrincipale() {
+    public VueFenetrePrincipale() {
 
         super("Gestion des événements");
 
@@ -87,8 +93,6 @@ public class ManifestationFenetrePrincipale extends JFrame {
         mb.add(view);
         mb.add(settings);
         mb.add(help);
-
-        newEvent.addActionListener(new ManifestationControlleurPrincipale(this));
 
         return mb;
 
@@ -178,17 +182,40 @@ public class ManifestationFenetrePrincipale extends JFrame {
 
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
-
         JTabbedPane tp = new JTabbedPane();
 
         /* Partie TEST */
         Object[][] donnees = {
             {"1", "Journée Portes Ouvertes de l'IUT de METZ"},
             {"2", "Journée E-Commerce à l'ENIM"},
-            {"3", "ORIACTION"},
+            {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"},
             {"4", "Stage en Poche"}};
 
         String[] entetes = {"ID", "Libelle"};
+
+        /* Partie TEST */
+        JPanel jp2 = new JPanel();
+        ManifestationTable mt = new ManifestationTable();
+        tp.addTab("Manifestations", mt.creerPanelTableManifestation());
+        tp.addTab("Enseignants", jp2);
+        tp.addTab("Etudiants", null);
+        tp.addTab("Formations", null);
+        tp.addTab("Départements", null);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        p.add(tp, gbc);
+        return p;
+    }
+
+    public void creerTable(Object[][] donnees, String[] entetes) {
 
         JTable tableau = new JTable(donnees, entetes);
 
@@ -215,23 +242,9 @@ public class ManifestationFenetrePrincipale extends JFrame {
 
         jp.add(tableau, gbc2);
 
-        /* Partie TEST */
-        tp.addTab("Manifestations", jp);
-        tp.addTab("Enseignants", null);
-        tp.addTab("Etudiants", null);
-        tp.addTab("Formations", null);
-        tp.addTab("Départements", null);
+        JScrollPane pane = new JScrollPane(tableau);
 
-        GridBagConstraints gbc = new GridBagConstraints();
+        jp.add(pane, gbc2);
 
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        p.add(tp, gbc);
-        return p;
     }
 }

@@ -1,13 +1,12 @@
 package main;
 
 import javax.swing.JFrame;
-import view.manifestation.ManifestationFenetrePrincipale;
+import view.VueFenetrePrincipale;
 
 public class Principale {
 
     public static void main(String[] args) {
 
-        new ManifestationFenetrePrincipale();
+        new VueFenetrePrincipale();
     }
-
 }

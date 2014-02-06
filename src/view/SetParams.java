@@ -1,4 +1,4 @@
-package view;
+/*package view;
 
 import controller.ControllerSetParams;
 import java.awt.Dimension;
@@ -8,7 +8,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import javax.swing.*;
 
-public class SetParams extends JDialog implements Observable {
+public class SetParams extends JDialog {
 
     private JButton bSubmit;
     private JButton bCancel;
@@ -194,3 +194,4 @@ public class SetParams extends JDialog implements Observable {
     }
 
 }
+*/

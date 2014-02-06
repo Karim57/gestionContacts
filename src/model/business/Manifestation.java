@@ -1,6 +1,8 @@
 package model.business;
 
-public class Manifestation {
+import java.util.Objects;
+
+public class Manifestation implements Comparable<Manifestation> {
 
     private int idManif;
     private String libelleManif;
@@ -28,6 +30,46 @@ public class Manifestation {
 
     public void setLibelleManif(String libelleManif) {
         this.libelleManif = libelleManif;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.idManif;
+        hash = 67 * hash + Objects.hashCode(this.libelleManif);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Manifestation other = (Manifestation) obj;
+        if (this.idManif != other.idManif) {
+            return false;
+        }
+        if (!Objects.equals(this.libelleManif, other.libelleManif)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Manifestation{" + "idManif=" + idManif + ", libelleManif=" + libelleManif + '}';
+    }
+
+    public int compareTo(Manifestation m) {
+
+        int c = this.libelleManif.compareTo(m.libelleManif);
+        if (c == 0) {
+            c = this.libelleManif.compareTo(m.libelleManif);
+        }
+        return c;
     }
 
 }

@@ -1,11 +1,12 @@
 package model.dao.interfaces;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import model.business.Manifestation;
+import model.dao.sql.SQLManifestationDAO;
 
 public interface ManifestationDAO {
 
-    public ArrayList<Manifestation> readAll();
+    public Vector<Manifestation> readAll();
 
     public int create(Manifestation manifestation);
 
