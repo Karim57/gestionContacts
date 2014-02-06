@@ -30,6 +30,7 @@ public class ModeleManifestation extends AbstractTableModel {
     public void setDonnees(Vector<Manifestation> donnees) {
 
         this.donnees = donnees;
+        this.tri();
         this.fireTableDataChanged();
     }
 

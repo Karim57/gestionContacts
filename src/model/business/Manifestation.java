@@ -20,7 +20,7 @@ public class Manifestation implements Comparable<Manifestation> {
         return idManif;
     }
 
-    private void setIdManif(int idManif) {
+    public void setIdManif(int idManif) {
         this.idManif = idManif;
     }
 
@@ -63,13 +63,9 @@ public class Manifestation implements Comparable<Manifestation> {
         return "Manifestation{" + "idManif=" + idManif + ", libelleManif=" + libelleManif + '}';
     }
 
+    @Override
     public int compareTo(Manifestation m) {
-
-        int c = this.libelleManif.compareTo(m.libelleManif);
-        if (c == 0) {
-            c = this.libelleManif.compareTo(m.libelleManif);
-        }
-        return c;
+        return this.libelleManif.compareTo(m.libelleManif);
     }
 
 }

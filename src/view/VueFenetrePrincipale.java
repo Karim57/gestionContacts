@@ -1,27 +1,22 @@
 package view;
 
-import controller.manifestation.ControleurManifestation;
+import controller.ControlleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
@@ -30,26 +25,38 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import model.tables.ModeleManifestation;
-import view.manifestation.ManifestationTable;
+import view.manifestation.VueManifestation;
+import view.ManifestationObservable;
 
-public class VueFenetrePrincipale extends JFrame {
+public class VueFenetrePrincipale extends JFrame implements ManifestationObservable {
+
+    private ControlleurPrincipal monControleur;
+    private JButton bNouveau;
+    private VueManifestation tableManif;
 
     public VueFenetrePrincipale() {
 
         super("Gestion des événements");
 
+        this.tableManif = new VueManifestation();
+        this.monControleur = new ControlleurPrincipal(this);
+
         this.setJMenuBar(this.creerBarreMenu());
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
 
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.gereEcouteur();
 
         this.setSize(700, 500);
-
+        this.setLocation(300, 100);
         this.setVisible(true);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    private void gereEcouteur() {
+        this.bNouveau.addActionListener(monControleur);
     }
 
     private JMenuBar creerBarreMenu() {
@@ -105,9 +112,10 @@ public class VueFenetrePrincipale extends JFrame {
         jtb.setBackground(new Color(240, 240, 240));
         ClassLoader cl = this.getClass().getClassLoader();
 
-        JButton newEvent = new JButton(new ImageIcon(cl.getResource("view/images/add2.png")));
-        newEvent.setBorderPainted(false);
-        newEvent.setFocusPainted(false);
+        this.bNouveau = new JButton(new ImageIcon(cl.getResource("view/images/add2.png")));
+        this.bNouveau.setActionCommand("Nouveau");
+        this.bNouveau.setBorderPainted(false);
+        this.bNouveau.setFocusPainted(false);
 
         JButton editEvent = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
         editEvent.setBorderPainted(false);
@@ -139,7 +147,7 @@ public class VueFenetrePrincipale extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        jtb.add(newEvent, gbc);
+        jtb.add(this.bNouveau, gbc);
 
         gbc.gridx = 1;
         jtb.add(js, gbc);
@@ -184,19 +192,8 @@ public class VueFenetrePrincipale extends JFrame {
         p.setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
 
-        /* Partie TEST */
-        Object[][] donnees = {
-            {"1", "Journée Portes Ouvertes de l'IUT de METZ"},
-            {"2", "Journée E-Commerce à l'ENIM"},
-            {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"}, {"3", "ORIACTION"},
-            {"4", "Stage en Poche"}};
-
-        String[] entetes = {"ID", "Libelle"};
-
-        /* Partie TEST */
         JPanel jp2 = new JPanel();
-        ManifestationTable mt = new ManifestationTable();
-        tp.addTab("Manifestations", mt.creerPanelTableManifestation());
+        tp.addTab("Manifestations", tableManif.creerPanelTableManifestation());
         tp.addTab("Enseignants", jp2);
         tp.addTab("Etudiants", null);
         tp.addTab("Formations", null);
@@ -246,5 +243,29 @@ public class VueFenetrePrincipale extends JFrame {
 
         jp.add(pane, gbc2);
 
+    }
+
+    @Override
+    public String getLibelle() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void activeButton() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void remplitTable(ModeleManifestation modele) {
+    }
+
+    @Override
+    public void construitAjout() {
+        tableManif.construitAjout();
     }
 }
