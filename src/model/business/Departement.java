@@ -1,6 +1,8 @@
 package model.business;
 
-public class Departement {
+import java.util.Objects;
+
+public class Departement implements Comparable<Departement>{
 
     private int idDepartement;
     private String libelleDepartement;
@@ -29,7 +31,36 @@ public class Departement {
     public void setLibelleDepartement(String libelleDepartement) {
         this.libelleDepartement = libelleDepartement;
     }
-    
+
+     
+     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Departement other = (Departement) obj;
+        if (this.idDepartement != other.idDepartement) {
+            return false;
+        }
+        if (!Objects.equals(this.libelleDepartement, other.libelleDepartement)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Département{" + "idDepartement=" + idDepartement + ", libelleDepartement=" + libelleDepartement + '}';
+    }
+
+    @Override
+    public int compareTo(Departement d) {
+        return this.libelleDepartement.compareTo(d.libelleDepartement);
+    }
+
     
 
 }

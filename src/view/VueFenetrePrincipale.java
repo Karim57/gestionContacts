@@ -29,12 +29,14 @@ import javax.swing.border.EmptyBorder;
 import model.tables.ModeleManifestation;
 import view.manifestation.VueManifestation;
 import view.ManifestationObservable;
+import view.departement.VueDepartement;
 
 public class VueFenetrePrincipale extends JFrame implements ManifestationObservable {
 
     private ControlleurPrincipal monControleur;
     private JButton bNouveau;
     private VueManifestation tableManif;
+    private VueDepartement tableDepartement;
 
     public VueFenetrePrincipale() {
 
@@ -197,7 +199,7 @@ public class VueFenetrePrincipale extends JFrame implements ManifestationObserva
         tp.addTab("Enseignants", jp2);
         tp.addTab("Etudiants", null);
         tp.addTab("Formations", null);
-        tp.addTab("Départements", null);
+        tp.addTab("Départements", tableDepartement.creerPanelTableDepartement());
 
         GridBagConstraints gbc = new GridBagConstraints();
 
