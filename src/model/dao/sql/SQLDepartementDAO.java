@@ -6,44 +6,44 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import model.business.Manifestation;
+import model.business.Departement;
 import model.dao.factory.MySQLDAOFactory;
 import model.dao.interfaces.DAOInterface;
 
-public class SQLManifestationDAO implements DAOInterface<Manifestation> {
+public class SQLDepartementDAO implements DAOInterface<Departement> {
 
-    private static SQLManifestationDAO instance = null;
+    private static SQLDepartementDAO instance = null;
 
-    public static SQLManifestationDAO getInstance() {
+    public static SQLDepartementDAO getInstance() {
 
-        if (SQLManifestationDAO.instance == null) {
-            SQLManifestationDAO.instance = new SQLManifestationDAO();
+        if (SQLDepartementDAO.instance == null) {
+            SQLDepartementDAO.instance = new SQLDepartementDAO();
         }
 
-        return SQLManifestationDAO.instance;
+        return SQLDepartementDAO.instance;
     }
 
     private MySQLDAOFactory daoFactory;
 
-    private SQLManifestationDAO() {
+    private SQLDepartementDAO() {
 
         this.daoFactory = new MySQLDAOFactory();
     }
 
     @Override
-    public ArrayList<Manifestation> readAll() {
+    public ArrayList<Departement> readAll() {
 
-        ArrayList<Manifestation> listeManifestation = new ArrayList<Manifestation>();
+        ArrayList<Departement> listeDepartement = new ArrayList<Departement>();
 
         Connection connection = this.daoFactory.getConnexion();
-        String sql = "SELECT * FROM manifestation";
+        String sql = "SELECT * FROM departement";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
-                listeManifestation.add(manifestation);
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+                listeDepartement.add(departement);
             }
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
@@ -51,25 +51,25 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
             this.daoFactory.fermeConnexion();
         }
 
-        return listeManifestation;
+        return listeDepartement;
     }
 
     @Override
-    public int create(Manifestation manifestation) {
+    public int create(Departement departement) {
         Connection connection = this.daoFactory.getConnexion();
-        String insert = "INSERT INTO manifestation SET libelle_manif = ?";
+        String insert = "INSERT INTO departement SET libelle_dpt = ?";
 
         int id = -1;
 
         try {
             PreparedStatement stI = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
-            stI.setString(1, manifestation.getLibelleManif());
+            stI.setString(1, departement.getLibelleDepartement());
             stI.executeUpdate();
 
             ResultSet cle = stI.getGeneratedKeys();
             if (cle.next()) {
                 id = cle.getInt(1);
-                manifestation.setIdManif(id);
+                departement.setIdDepartement(id);
             }
             stI.close();
         } catch (SQLException se) {
@@ -80,17 +80,17 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     }
 
     @Override
-    public boolean update(Manifestation manifestation) {
+    public boolean update(Departement departement) {
         Connection connection = this.daoFactory.getConnexion();
-        String update = "UPDATE manifestation SET libelle_manif = ? WHERE id_manif = ?";
+        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt= ?";
 
         boolean updated = false;
 
         try {
             PreparedStatement stU = connection.prepareStatement(update);
 
-            stU.setString(1, manifestation.getLibelleManif());
-            stU.setInt(2, manifestation.getIdManif());
+            stU.setString(1, departement.getLibelleDepartement());
+            stU.setInt(2, departement.getIdDepartement());
             stU.execute();
 
             updated = stU.getUpdateCount() > 0;
@@ -103,16 +103,16 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     }
 
     @Override
-    public boolean delete(Manifestation manifestation) {
+    public boolean delete(Departement departement) {
         Connection connection = this.daoFactory.getConnexion();
-        String delete = "DELETE FROM manifestation where id_manif = ?";
+        String delete = "DELETE FROM departement where id_dpt = ?";
 
         boolean deleted = false;
 
         try {
             PreparedStatement stD = connection.prepareStatement(delete);
 
-            stD.setInt(1, manifestation.getIdManif());
+            stD.setInt(1, departement.getIdDepartement());
             stD.execute();
 
             deleted = stD.executeUpdate(delete) > 0;
@@ -126,9 +126,9 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     }
 
     @Override
-    public void deleteList(ArrayList<Manifestation> liste) {
-        for (Manifestation manifestation : liste) {
-            this.delete(manifestation);
+    public void deleteList(ArrayList<Departement> liste) {
+        for (Departement departement : liste) {
+            this.delete(departement);
         }
     }
 

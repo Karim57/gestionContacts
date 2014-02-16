@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 import model.dao.sql.SQLManifestationDAO;
-import model.dao.interfaces.ManifestationDAO;
+import model.dao.interfaces.DAOInterface;
 
 public class MySQLDAOFactory extends DAOFactory {
 
@@ -53,7 +53,7 @@ public class MySQLDAOFactory extends DAOFactory {
         }
     }
 
-    public ManifestationDAO getEnseignantDAO() {
+    public DAOInterface getEnseignantDAO() {
         return SQLManifestationDAO.getInstance();
     }
 

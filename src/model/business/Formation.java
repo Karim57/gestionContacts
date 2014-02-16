@@ -4,16 +4,16 @@ public class Formation {
 
     private int idFormation;
     private String libelleFormation;
-    private Departement departement;
+    private int idDepartement;
 
     public Formation(String libelleFormation) {
         this.libelleFormation = libelleFormation;
     }
 
-    public Formation(int idFormation, String libelleFormation, Departement departement) {
+    public Formation(int idFormation, String libelleFormation, int idDepartement) {
         this.idFormation = idFormation;
         this.libelleFormation = libelleFormation;
-        this.departement = departement;
+        this.idDepartement = idDepartement;
     }
 
     public int getIdFormation() {
@@ -32,12 +32,12 @@ public class Formation {
         this.libelleFormation = libelleFormation;
     }
 
-    public Departement getDepartement() {
-        return departement;
+    public int getIdDepartement() {
+        return this.idDepartement;
     }
 
-    public void setDepartement(Departement departement) {
-        this.departement = departement;
+    public void setDepartement(int idDepartement) {
+        this.idDepartement = idDepartement;
     }
 
 }

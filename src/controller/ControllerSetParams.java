@@ -1,14 +1,10 @@
-package controller;
+/*package controller;
 
-import view.ManifestationObservable;
+import view.IObservable;
 
 public class ControllerSetParams {
 
-    ManifestationObservable vue;
+ManifestatioIObservableublic ControllerSetParams(ManifestationObservable IObservablevue = frame;
 
-    public ControllerSetParams(ManifestationObservable frame) {
-
-        this.vue = frame;
-
-    }
 }
+}*/

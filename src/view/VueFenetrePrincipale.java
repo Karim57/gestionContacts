@@ -3,6 +3,7 @@ package view;
 import controller.ControlleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,9 +11,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -26,26 +29,37 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import model.tables.ModeleManifestation;
-import view.manifestation.VueManifestation;
-import view.ManifestationObservable;
+import model.business.Manifestation;
+import model.tables.ModeleGenerique;
+import view.IObservable;
 
-public class VueFenetrePrincipale extends JFrame implements ManifestationObservable {
+public class VueFenetrePrincipale extends JFrame implements IObservable {
 
     private ControlleurPrincipal monControleur;
     private JButton bNouveau;
-    private VueManifestation tableManif;
+
+    JTabbedPane tpPrincipal;
+
+    private JTextField tLibelle;
+    private JButton bSubmit;
+    private JButton bCancel;
+
+    private JTableDonnees tableManifestations;
+    private JTableDonnees tableEnseignants;
+    private JTableDonnees tableContacts;
+    private JTableDonnees tableFormations;
+    private JTableDonnees tableDepartements;
 
     public VueFenetrePrincipale() {
 
         super("Gestion des événements");
-
-        this.tableManif = new VueManifestation();
         this.monControleur = new ControlleurPrincipal(this);
 
         this.setJMenuBar(this.creerBarreMenu());
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
+
+        this.monControleur.remplitTableManifestation();
 
         this.gereEcouteur();
 
@@ -106,6 +120,7 @@ public class VueFenetrePrincipale extends JFrame implements ManifestationObserva
     }
 
     private JToolBar creerBarreOutils() {
+
         JToolBar jtb = new JToolBar();
         jtb.setLayout(new GridBagLayout());
         jtb.setBorder(new EmptyBorder(0, 5, 0, 0));
@@ -190,14 +205,18 @@ public class VueFenetrePrincipale extends JFrame implements ManifestationObserva
 
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
-        JTabbedPane tp = new JTabbedPane();
+        this.tpPrincipal = new JTabbedPane();
 
-        JPanel jp2 = new JPanel();
-        tp.addTab("Manifestations", tableManif.creerPanelTableManifestation());
-        tp.addTab("Enseignants", jp2);
-        tp.addTab("Etudiants", null);
-        tp.addTab("Formations", null);
-        tp.addTab("Départements", null);
+        int[] tailles = {600};
+        this.tableManifestations = new JTableDonnees(tailles, this.monControleur.getModele(0));
+        tpPrincipal.addTab("Manifestations", this.creerPanelTable(this.tableManifestations));
+
+        this.tableEnseignants = new JTableDonnees(tailles, this.monControleur.getModele(1));
+        tpPrincipal.addTab("Enseignants", this.creerPanelTable(this.tableEnseignants));
+
+        tpPrincipal.addTab("Etudiants", null);
+        tpPrincipal.addTab("Formations", null);
+        tpPrincipal.addTab("Départements", null);
 
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -208,17 +227,15 @@ public class VueFenetrePrincipale extends JFrame implements ManifestationObserva
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        p.add(tp, gbc);
+        p.add(tpPrincipal, gbc);
+
         return p;
     }
 
-    public void creerTable(Object[][] donnees, String[] entetes) {
-
-        JTable tableau = new JTable(donnees, entetes);
+    private JPanel creerPanelTable(JTableDonnees table) {
 
         JPanel jp = new JPanel();
         jp.setLayout(new GridBagLayout());
-
         GridBagConstraints gbc2 = new GridBagConstraints();
 
         gbc2.anchor = GridBagConstraints.LINE_END;
@@ -226,9 +243,9 @@ public class VueFenetrePrincipale extends JFrame implements ManifestationObserva
         gbc2.fill = GridBagConstraints.HORIZONTAL;
         gbc2.gridx = 0;
         gbc2.gridy = 0;
-        tableau.getTableHeader().setBackground(new Color(245, 246, 247));
-        tableau.getTableHeader().setFont(new Font("Arial", 1, 12));
-        jp.add(tableau.getTableHeader(), gbc2);
+        table.getTableHeader().setBackground(new Color(245, 246, 247));
+        table.getTableHeader().setFont(new Font("Arial", 1, 12));
+        jp.add(table.getTableHeader(), gbc2);
 
         gbc2.anchor = GridBagConstraints.LINE_END;
         gbc2.weightx = 1;
@@ -236,36 +253,129 @@ public class VueFenetrePrincipale extends JFrame implements ManifestationObserva
         gbc2.fill = GridBagConstraints.BOTH;
         gbc2.gridx = 0;
         gbc2.gridy = 1;
+        table.setIntercellSpacing(new Dimension(20, 1));
+        jp.add(table, gbc2);
 
-        jp.add(tableau, gbc2);
-
-        JScrollPane pane = new JScrollPane(tableau);
+        JScrollPane pane = new JScrollPane(table);
 
         jp.add(pane, gbc2);
+
+        return jp;
 
     }
 
     @Override
     public String getLibelle() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void activeButton() {
+    }
+
+    @Override
+    public void construitAjout(int ajoutOuModif) {
+
+        JFrame frame = new JFrame("Ajouter une manifestation");
+
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+
+        JPanel pSaisie = this.construitPanelSaisieManifestation();
+        JPanel pValidation = this.construitPanelButtons();
+
+        if (ajoutOuModif == 1) {
+            bSubmit.setActionCommand("Modifier");
+            bSubmit.setText("Modifier");
+            frame.setTitle("Modifier une manifestation");
+        }
+
+        p.add(pSaisie);
+        p.add(pValidation);
+
+        frame.add(p);
+
+        this.gereEcouteur();
+
+        frame.setSize(400, 100);
+        frame.setResizable(false);
+        frame.setLocation(450, 300);
+        frame.setVisible(true);
+
+    }
+
+    private JPanel construitPanelSaisieManifestation() {
+
+        JPanel panelAjout = new JPanel();
+
+        JLabel lLibelle = new JLabel("Nom de la manifestation : ");
+        this.tLibelle = new JTextField(255);
+
+        panelAjout.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 5, 2, 10);
+
+        panelAjout.add(lLibelle, gbc);
+
+        gbc.ipady = 4;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panelAjout.add(this.tLibelle, gbc);
+
+        return panelAjout;
+
+    }
+
+    private JPanel construitPanelButtons() {
+
+        JPanel panelButton = new JPanel();
+
+        panelButton.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.insets = new Insets(0, 0, 2, 10);
+        this.bCancel = new JButton("Annuler");
+        panelButton.add(this.bCancel, gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(0, 0, 2, 10);
+        this.bSubmit = new JButton("Ajouter");
+        this.bSubmit.setEnabled(false);
+        panelButton.add(this.bSubmit, gbc);
+
+        return panelButton;
+    }
+
+    @Override
+    public int getLigneSelectionnee() {
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                return this.tableManifestations.getSelectedRow();
+        }
+        return 0;
+    }
+
+    @Override
+    public void remplitChamps(Manifestation manifestation) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void remplitTable(ModeleManifestation modele) {
-    }
-
-    @Override
-    public void construitAjout() {
-        tableManif.construitAjout();
+    public int getActivePane() {
+        return this.tpPrincipal.getSelectedIndex();
     }
 }
