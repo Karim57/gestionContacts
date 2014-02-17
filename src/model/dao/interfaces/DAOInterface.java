@@ -2,7 +2,7 @@ package model.dao.interfaces;
 
 import java.util.ArrayList;
 
-public interface DAOInterface<T extends Comparable<? super T>> {
+public interface DAOInterface<T> {
 
     public ArrayList<T> readAll();
 

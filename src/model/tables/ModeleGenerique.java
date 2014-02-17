@@ -74,6 +74,7 @@ public abstract class ModeleGenerique<T extends Comparable<? super T>> extends A
 
         this.aSupprimer.add(elementASupprimer);
         this.donnees.remove(elementASupprimer);
+        this.fireTableDataChanged();
     }
 
 }

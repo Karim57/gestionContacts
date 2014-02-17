@@ -31,8 +31,8 @@ public class Departement implements Comparable<Departement> {
     }
 
     @Override
-    public int compareTo(Departement o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int compareTo(Departement d) {
+        return this.libelleDepartement.compareTo(d.libelleDepartement);
     }
 
 }

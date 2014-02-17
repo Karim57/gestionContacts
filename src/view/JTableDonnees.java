@@ -9,9 +9,9 @@ public class JTableDonnees extends JTable {
     protected ModeleGenerique<?> modele;
 
     public JTableDonnees(int[] tailles, ModeleGenerique<?> modele) {
-
-        this.setModel(modele);
+        
         this.modele = modele;
+        this.setModel(this.modele);
         this.setGridColor(Color.GRAY);
         this.setColumnSelectionAllowed(false);
         this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -50,10 +50,6 @@ public class JTableDonnees extends JTable {
         }
 
         return this.getValueAt(l - 1, c).getClass();
-    }
-
-    public ModeleGenerique<?> getModele() {
-        return this.modele;
     }
 
 }

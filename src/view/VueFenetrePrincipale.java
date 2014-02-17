@@ -23,14 +23,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import model.business.Manifestation;
-import model.tables.ModeleGenerique;
 import view.IObservable;
 
 public class VueFenetrePrincipale extends JFrame implements IObservable {
@@ -43,6 +41,7 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
     private JTextField tLibelle;
     private JButton bSubmit;
     private JButton bCancel;
+    private JButton bSupprimer;
 
     private JTableDonnees tableManifestations;
     private JTableDonnees tableEnseignants;
@@ -59,8 +58,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
 
-        this.monControleur.remplitTableManifestation();
-
         this.gereEcouteur();
 
         this.setSize(700, 500);
@@ -71,6 +68,8 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
     private void gereEcouteur() {
         this.bNouveau.addActionListener(monControleur);
+        this.bSupprimer.addActionListener(monControleur);
+        this.tpPrincipal.addChangeListener(monControleur);
     }
 
     private JMenuBar creerBarreMenu() {
@@ -136,9 +135,10 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         editEvent.setBorderPainted(false);
         editEvent.setFocusPainted(false);
 
-        JButton deleteEvent = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
-        deleteEvent.setBorderPainted(false);
-        deleteEvent.setFocusPainted(false);
+        bSupprimer = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
+        bSupprimer.setBorderPainted(false);
+        bSupprimer.setFocusPainted(false);
+        bSupprimer.setActionCommand("Supprimer");
 
         JButton bsearch = new JButton(new ImageIcon(cl.getResource("view/images/search.png")));
         bsearch.setBorderPainted(false);
@@ -171,7 +171,7 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         jtb.add(editEvent, gbc);
 
         gbc.gridx = 3;
-        jtb.add(deleteEvent, gbc);
+        jtb.add(bSupprimer, gbc);
 
         gbc.gridx = 4;
         jtb.add(js2, gbc);
@@ -207,16 +207,16 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         p.setLayout(new GridBagLayout());
         this.tpPrincipal = new JTabbedPane();
 
-        int[] tailles = {600};
-        this.tableManifestations = new JTableDonnees(tailles, this.monControleur.getModele(0));
+        this.tableManifestations = new JTableDonnees(null, this.monControleur.getDonneesManifestation());
         tpPrincipal.addTab("Manifestations", this.creerPanelTable(this.tableManifestations));
 
-        this.tableEnseignants = new JTableDonnees(tailles, this.monControleur.getModele(1));
-        tpPrincipal.addTab("Enseignants", this.creerPanelTable(this.tableEnseignants));
+        tpPrincipal.addTab("Enseignants", null);
 
         tpPrincipal.addTab("Etudiants", null);
         tpPrincipal.addTab("Formations", null);
-        tpPrincipal.addTab("Départements", null);
+        
+        this.tableDepartements = new JTableDonnees(null, this.monControleur.getDonneesDepartement());
+        tpPrincipal.addTab("Départements", this.creerPanelTable(tableDepartements));
 
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -299,8 +299,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
         frame.add(p);
 
-        this.gereEcouteur();
-
         frame.setSize(400, 100);
         frame.setResizable(false);
         frame.setLocation(450, 300);
@@ -362,11 +360,16 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
     @Override
     public int getLigneSelectionnee() {
+        int selectedRow = 0;
         switch (this.tpPrincipal.getSelectedIndex()) {
             case 0:
-                return this.tableManifestations.getSelectedRow();
+                selectedRow = this.tableManifestations.getSelectedRow();
+                break;
+            case 1:
+                selectedRow = this.tableEnseignants.getSelectedRow();
+                break;
         }
-        return 0;
+        return selectedRow;
     }
 
     @Override

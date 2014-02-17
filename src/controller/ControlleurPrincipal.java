@@ -2,19 +2,22 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import model.business.Manifestation;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLManifestationDAO;
-import model.tables.ModeleGenerique;
+import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
 import view.IObservable;
 
-public class ControlleurPrincipal implements ActionListener, DocumentListener {
+public class ControlleurPrincipal implements ActionListener, DocumentListener, ChangeListener {
 
     IObservable vue;
-    ModeleGenerique modeleDonneesTables;
+
+    ModeleManifestation donneesManifestation;
+    ModeleDepartement donneesDepartement;
 
     public ControlleurPrincipal(IObservable v) {
         this.vue = v;
@@ -24,36 +27,27 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener {
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
         if (s.equals("Nouveau")) {
-            vue.construitAjout(1);
+            vue.construitAjout(0);
+        }
+
+        if (s.equals("Supprimer")) {
+            System.out.println(this.donneesManifestation);
+            this.donneesManifestation.supprimerElement(vue.getLigneSelectionnee());
         }
     }
 
-    public void remplitTableManifestation() {
-        String[] test = {"ok"};
-        this.modeleDonneesTables = new ModeleManifestation(test);
-        this.modeleDonneesTables.setDonnees(SQLManifestationDAO.getInstance().readAll());
+    public ModeleManifestation getDonneesManifestation() {
+        String[] champsManif = {"Liste des manifestations"};
+        this.donneesManifestation = new ModeleManifestation(champsManif);
+        this.donneesManifestation.setDonnees(SQLManifestationDAO.getInstance().readAll());
+        return donneesManifestation;
     }
 
-    public ModeleGenerique getModele(int quelModel) {
-
-        switch (quelModel) {
-            case 0:
-                String[] champsManif = {"Liste des manifestations"};
-                this.modeleDonneesTables = new ModeleManifestation(champsManif);
-                this.modeleDonneesTables.setDonnees(SQLManifestationDAO.getInstance().readAll());
-                System.out.println(modeleDonneesTables.getDonnees());
-
-                System.out.println(modeleDonneesTables.toString());
-                break;
-
-            case 1:
-                String[] champsDepartement = {"Liste des departements"};
-                this.modeleDonneesTables = new ModeleManifestation(champsDepartement);
-                this.modeleDonneesTables.setDonnees(SQLDepartementDAO.getInstance().readAll());
-                break;
-        }
-        return this.modeleDonneesTables;
-
+    public ModeleDepartement getDonneesDepartement() {
+        String[] champsDpt = {"Liste des départements"};
+        this.donneesDepartement = new ModeleDepartement(champsDpt);
+        this.donneesDepartement.setDonnees(SQLDepartementDAO.getInstance().readAll());
+        return donneesDepartement;
     }
 
     @Override
@@ -69,6 +63,11 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener {
     @Override
     public void changedUpdate(DocumentEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        System.out.println(vue.getActivePane());
     }
 
 }

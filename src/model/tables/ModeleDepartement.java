@@ -1,25 +1,26 @@
 package model.tables;
 
+import model.business.Departement;
 import model.business.Manifestation;
 
-public class ModeleManifestation extends ModeleGenerique<Manifestation> {
+public class ModeleDepartement extends ModeleGenerique<Departement> {
 
-    public ModeleManifestation(String[] cols) {
+    public ModeleDepartement(String[] cols) {
         super(cols);
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
-        Manifestation manifestation = this.donnees.get(rowIndex);
+        Departement departement = this.donnees.get(rowIndex);
         Object o = null;
 
         switch (columnIndex) {
             case 0:
-                o = manifestation.getLibelleManif();
+                o = departement.getLibelleDepartement();
                 break;
             case 1:
-                o = manifestation.getIdManif();
+                o = departement.getIdDepartement();
         }
         return o;
     }
