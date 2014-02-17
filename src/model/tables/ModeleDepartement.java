@@ -1,7 +1,6 @@
 package model.tables;
 
 import model.business.Departement;
-import model.business.Manifestation;
 
 public class ModeleDepartement extends ModeleGenerique<Departement> {
 
