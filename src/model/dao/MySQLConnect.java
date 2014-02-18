@@ -1,4 +1,4 @@
-package model.dao.factory;
+package model.dao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,35 +6,26 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import model.dao.sql.SQLManifestationDAO;
-import model.dao.interfaces.DAOInterface;
 
-public class MySQLDAOFactory extends DAOFactory {
+public class MySQLConnect {
 
     private Properties proprietes;
-
     private Connection connexion;
-
     private String base;
-
     private String utilisateur;
-
     private String motDePasse;
 
-    public MySQLDAOFactory() {
-
+    public MySQLConnect() {
         this.chargeDonneesConnexion();
         this.connexion = null;
         try {
             this.demandePilote();
         } catch (ClassNotFoundException cnfe) {
-            System.out.println("Pb de driver : .jar dans le classpath ??? "
-                    + cnfe.getMessage());
+            System.out.println("Problème de driver" + cnfe.getMessage());
         }
     }
 
     public Connection getConnexion() {
-
         this.connexion = null;
         try {
             this.connexion = DriverManager.getConnection(this.base, this.utilisateur, this.motDePasse);
@@ -45,7 +36,6 @@ public class MySQLDAOFactory extends DAOFactory {
     }
 
     public void fermeConnexion() {
-
         try {
             this.connexion.close();
         } catch (SQLException e) {
@@ -53,12 +43,7 @@ public class MySQLDAOFactory extends DAOFactory {
         }
     }
 
-    public DAOInterface getEnseignantDAO() {
-        return SQLManifestationDAO.getInstance();
-    }
-
     private void demandePilote() throws ClassNotFoundException {
-
         Class.forName(this.proprietes.getProperty("pilote_bdd"));
     }
 

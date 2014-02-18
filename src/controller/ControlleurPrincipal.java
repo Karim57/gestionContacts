@@ -7,17 +7,19 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import model.dao.sql.SQLDepartementDAO;
+import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
 import model.tables.ModeleDepartement;
+import model.tables.ModeleFormation;
 import model.tables.ModeleManifestation;
 import view.IObservable;
 
 public class ControlleurPrincipal implements ActionListener, DocumentListener, ChangeListener {
 
-    IObservable vue;
-
-    ModeleManifestation donneesManifestation;
-    ModeleDepartement donneesDepartement;
+    private IObservable vue;
+    private ModeleManifestation donneesManifestation;
+    private ModeleDepartement donneesDepartement;
+    private ModeleFormation donneesFormation;
 
     public ControlleurPrincipal(IObservable v) {
         this.vue = v;
@@ -48,6 +50,13 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
         this.donneesDepartement = new ModeleDepartement(champsDpt);
         this.donneesDepartement.setDonnees(SQLDepartementDAO.getInstance().readAll());
         return donneesDepartement;
+    }
+
+    public ModeleFormation getDonneesFormation() {
+        String[] champsForm = {"Formation", "Département"};
+        this.donneesFormation = new ModeleFormation(champsForm);
+        this.donneesFormation.setDonnees(SQLFormationDAO.getInstance().readAll());
+        return donneesFormation;
     }
 
     @Override

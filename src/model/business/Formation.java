@@ -1,19 +1,19 @@
 package model.business;
 
-public class Formation {
+public class Formation implements Comparable<Formation> {
 
     private int idFormation;
     private String libelleFormation;
-    private int idDepartement;
+    private Departement departement;
 
     public Formation(String libelleFormation) {
         this.libelleFormation = libelleFormation;
     }
 
-    public Formation(int idFormation, String libelleFormation, int idDepartement) {
+    public Formation(int idFormation, String libelleFormation, Departement departement) {
         this.idFormation = idFormation;
         this.libelleFormation = libelleFormation;
-        this.idDepartement = idDepartement;
+        this.departement = departement;
     }
 
     public int getIdFormation() {
@@ -32,12 +32,17 @@ public class Formation {
         this.libelleFormation = libelleFormation;
     }
 
-    public int getIdDepartement() {
-        return this.idDepartement;
+    public Departement getDepartement() {
+        return this.departement;
     }
 
-    public void setDepartement(int idDepartement) {
-        this.idDepartement = idDepartement;
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
+    }
+
+    @Override
+    public int compareTo(Formation f) {
+        return this.libelleFormation.compareTo(f.libelleFormation);
     }
 
 }

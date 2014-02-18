@@ -9,14 +9,12 @@ public class JTableDonnees extends JTable {
     protected ModeleGenerique<?> modele;
 
     public JTableDonnees(int[] tailles, ModeleGenerique<?> modele) {
-        
+
         this.modele = modele;
         this.setModel(this.modele);
         this.setGridColor(Color.GRAY);
         this.setColumnSelectionAllowed(false);
         this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.getTableHeader().setResizingAllowed(false);
-        this.getTableHeader().setReorderingAllowed(false);
         this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         if (tailles != null) {

@@ -213,8 +213,10 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         tpPrincipal.addTab("Enseignants", null);
 
         tpPrincipal.addTab("Etudiants", null);
-        tpPrincipal.addTab("Formations", null);
-        
+
+        this.tableFormations = new JTableDonnees(null, this.monControleur.getDonneesFormation());
+        tpPrincipal.addTab("Formations", this.creerPanelTable(this.tableFormations));
+
         this.tableDepartements = new JTableDonnees(null, this.monControleur.getDonneesDepartement());
         tpPrincipal.addTab("Départements", this.creerPanelTable(tableDepartements));
 
