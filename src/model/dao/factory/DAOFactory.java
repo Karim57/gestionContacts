@@ -11,7 +11,7 @@ public abstract class DAOFactory {
                 daoF = new MySQLDAOFactory();
                 break;
             case XML:
-                daoF = null;
+                daoF = new XMLDAOFactory();
                 break;
         }
 

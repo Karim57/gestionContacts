@@ -1,11 +1,14 @@
 package model.dao.factory;
 
+import java.awt.Dialog;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import model.dao.sql.SQLManifestationDAO;
 import model.dao.interfaces.DAOInterface;
 
