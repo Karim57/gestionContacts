@@ -1,24 +1,28 @@
 package model.dao;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
+
 
 public class XMLChemin {
 
     private Properties proprietes;
+    private String chemin;
 
-    public String chargeChemin() {
+    public String getChemin() {
+        return chemin;
+    }
+
+    public XMLChemin() {
+        try {
+             chemin=this.chargeChemin();
+        } catch (Exception e) {
+            System.out.println("Problème dossier config et xml.properties" + e.getMessage());
+        }  
+    }
+    
+    private  String chargeChemin() {
         String source = "src/config/xml.properties";
         this.proprietes = new Properties();
 
@@ -34,15 +38,8 @@ public class XMLChemin {
         return this.proprietes.getProperty("chemin");
     }
 
-    /*
-    public void sauvegarde(Element racine, String nomFichier) {
-        Document document = new Document(racine);
-        try {
-            XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(document, new FileOutputStream(this.chargeChemin() + "/" + nomFichier));
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-        }
-    }
-*/
+
 }
+ 
+
+
