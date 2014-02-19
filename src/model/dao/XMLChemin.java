@@ -18,7 +18,7 @@ public class XMLChemin {
 
     private Properties proprietes;
 
-    private String chargeChemin() {
+    public String chargeChemin() {
         String source = "src/config/xml.properties";
         this.proprietes = new Properties();
 
@@ -34,6 +34,7 @@ public class XMLChemin {
         return this.proprietes.getProperty("chemin");
     }
 
+    /*
     public void sauvegarde(Element racine, String nomFichier) {
         Document document = new Document(racine);
         try {
@@ -43,5 +44,5 @@ public class XMLChemin {
             e.printStackTrace();
         }
     }
-
+*/
 }

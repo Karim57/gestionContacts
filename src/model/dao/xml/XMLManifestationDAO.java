@@ -17,38 +17,51 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     private XMLChemin chemin;
     private String nomFicher;
     
-    public  XMLManifestationDAO() {
+    public XMLManifestationDAO() {
         this.chemin = new XMLChemin();
         this.nomFicher = "manifestation.xml";
     }
-
+    
     @Override
     public ArrayList<Manifestation> readAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public int create(Manifestation manifestation) {
-        Element racine = new Element("manifestation");
-        
-        Attribute id = new Attribute("id",Integer.toString(manifestation.getIdManif()));
+        Element racine = new Element("manifestation.xml");
+        Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
         racine.setAttribute(id);
-
+        
         Element libelle_manif = new Element("libelle_manif");
         libelle_manif.setText(manifestation.getLibelleManif());
         racine.addContent(libelle_manif);
-        
-        chemin.sauvegarde(racine, this.nomFicher);
+
+        // this.chemin.sauvegarde(racine, this.nomFicher);    
+        enregistre(nomFicher);
+        //this.afficher(racine, nomFicher);
 
         return 1;
     }
     
-     public void afficher(Element racine, String nomFichier) {
+    static void enregistre(String fichier) {
+        try {
+            //On utilise ici un affichage classique avec getPrettyFormat()
+            XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
+            XMLChemin test = new XMLChemin();
+      //Remarquez qu'il suffit simplement de créer une instance de FileOutputStream
+            //avec en argument le nom du fichier pour effectuer la sérialisation.
+            sortie.output(new Document(), new FileOutputStream(test.chargeChemin()  + "/" + fichier));
+        } catch (java.io.IOException e) {
+        }
+    }
+
+    public void afficher(Element racine, String nomFichier) {
         //On crée une instance de SAXBuilder
         SAXBuilder sxb = new SAXBuilder();
-
+        
         try {
-         //On crée un nouveau document JDOM avec en argument le fichier XML
+            //On crée un nouveau document JDOM avec en argument le fichier XML
             //Le parsing est terminé ;)
             Document document = sxb.build(new File(this.chemin + "/" + nomFichier));
         } catch (Exception e) {
@@ -66,39 +79,36 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
             System.out.println(courant.getChild("libelle_manif").getText());
             System.out.println("hdgyuehhen");
         }
-
+        
     }
     /*
-    @Override
-    public int createList(ArrayList<Manifestation> liste) {
-       for (Manifestation manifestation : liste) {
-           this.create(manifestation);
-       }
-       return 0;
-    }
-*/
+     @Override
+     public int createList(ArrayList<Manifestation> liste) {
+     for (Manifestation manifestation : liste) {
+     this.create(manifestation);
+     }
+     return 0;
+     }
+     */
+
     @Override
     public boolean update(Manifestation objetAModifier) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public boolean delete(Manifestation objetASupprimer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public void deleteList(ArrayList<Manifestation> liste) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public Manifestation readById(int id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    
-
-
-
 }
