@@ -27,9 +27,9 @@ public class XMLChemin {
         this.proprietes = new Properties();
 
         try {
-            FileInputStream path = new FileInputStream(source);
-            this.proprietes.loadFromXML(path);
-            path.close();
+            try (FileInputStream path = new FileInputStream(source)) {
+                this.proprietes.loadFromXML(path);
+            }
         } catch (IOException ioe) {
             System.out.println("Problème à la lecture du fichier de config xml");
             System.out.println(ioe.getMessage());

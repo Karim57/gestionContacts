@@ -24,8 +24,8 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         return XMLManifestationDAO.instance;
     }
 
-    private XMLChemin chemin;
-    private String nomFicher;
+    private final XMLChemin chemin;
+    private final String nomFicher;
     private Element racine;
 
     public XMLManifestationDAO() {
@@ -40,14 +40,14 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public int create(Manifestation manifestation) {
-        
+
         try {
             File dir = new File("src/data/");
             dir.mkdirs();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        
+
         racine = new Element(nomFicher);
         Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
         racine.setAttribute(id);
@@ -56,7 +56,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         libelle_manif.setText(manifestation.getLibelleManif());
         racine.addContent(libelle_manif);
         this.sauvegarde(chemin.getChemin(), this.nomFicher);
-        
+
         return 1;
     }
 
