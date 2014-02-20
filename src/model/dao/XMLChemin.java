@@ -18,7 +18,7 @@ public class XMLChemin {
         try {
              chemin=this.chargeChemin();
         } catch (Exception e) {
-            System.out.println("Problème dossier config et xml.properties" + e.getMessage());
+            System.out.println("Problème avec xml.properties" + e.getMessage());
         }  
     }
     

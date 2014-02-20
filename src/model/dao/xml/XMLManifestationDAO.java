@@ -28,6 +28,18 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     private final String nomFicher;
     private Element racine;
 
+    public XMLChemin getChemin() {
+        return chemin;
+    }
+
+    public String getNomFicher() {
+        return nomFicher;
+    }
+
+    public Element getRacine() {
+        return racine;
+    }
+
     public XMLManifestationDAO() {
         this.chemin = new XMLChemin();
         this.nomFicher = "manifestation.xml";
@@ -48,14 +60,14 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
             System.out.println(e.getMessage());
         }
 
-        racine = new Element(nomFicher);
+        racine = new Element("manifestation");
         Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
         racine.setAttribute(id);
 
         Element libelle_manif = new Element("libelle_manif");
         libelle_manif.setText(manifestation.getLibelleManif());
         racine.addContent(libelle_manif);
-        this.sauvegarde(chemin.getChemin(), this.nomFicher);
+        this.sauvegarde(this.nomFicher);
 
         return 1;
     }
@@ -86,18 +98,33 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     }
 
-    public void sauvegarde(String chemin, String nomFichier) {
+    public void sauvegarde(String nomFichier) {
         Document document = new Document(racine);
-        XMLChemin test = new XMLChemin();
+       // XMLChemin test = new XMLChemin();
 
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(document, new FileOutputStream(test.getChemin() + "/" + nomFichier));
+            sortie.output(document, new FileOutputStream(this.chemin.getChemin() + "/" + nomFichier));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    public void ajouter(String nomFichier) {
+        String XmlFile = racine.getText();
+        SAXBuilder builder = new SAXBuilder();
+        try {
+            Document document = builder.build(new File (this.chemin.getChemin() + "/" + nomFichier));
+            document.getRootElement().addContent(new Element("Employee").setAttribute("key", "056"));
+            document.getRootElement().addContent(new Element("Test").setAttribute("key", "056"));
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(document, System.out);
+            //this.sauvegarde(this.nomFicher);
+            
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     /*
      @Override
      public int createList(ArrayList<Manifestation> liste) {
@@ -107,6 +134,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
      return 0;
      }
      */
+
     @Override
     public boolean update(Manifestation objetAModifier) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

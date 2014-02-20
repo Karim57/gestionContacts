@@ -1,7 +1,5 @@
 package main;
 
-import javax.swing.JFrame;
-import model.business.Contact;
 import model.business.Manifestation;
 import model.dao.XMLChemin;
 import model.dao.xml.XMLManifestationDAO;
@@ -13,7 +11,9 @@ public class Principale {
         
         XMLChemin n = new XMLChemin ();
         Manifestation m = new Manifestation(5, "Porte ouverte");
-        new XMLManifestationDAO().create(m);
+        XMLManifestationDAO xml = new XMLManifestationDAO();
+        xml.create(m);
+        xml.ajouter(xml.getNomFicher());
        
  
         //new VueFenetrePrincipale();
