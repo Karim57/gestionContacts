@@ -121,7 +121,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         try {
             Document doc = (Document) builder.build(xmlFile);
             Element root = doc.getRootElement();
-           
+
             Element manif = new Element("manifestation");
             Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
             manif.setAttribute(id);
@@ -133,7 +133,27 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-           // this.sauvegarde(this.nomFicher);
+            // this.sauvegarde(this.nomFicher);
+
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void supprimer(Manifestation manifestation) {
+        SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+
+        try {
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+
+            List children = root.getChildren();
+            children.remove(manifestation.getIdManif()-1);
+
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            // this.sauvegarde(this.nomFicher);
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());

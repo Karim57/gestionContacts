@@ -11,11 +11,14 @@ public class Principale {
         Manifestation m1 = new Manifestation(1, "Porte ouverte");
         Manifestation m2 = new Manifestation(2, "Conférence sur internet");
         Manifestation m3 = new Manifestation(3, "Réunion de fin d'année");
+        Manifestation m4 = new Manifestation(4, "Rentrée des classes");
         
         XMLManifestationDAO xml = new XMLManifestationDAO();
         xml.create(m1);
         xml.ajouter(m2);
         xml.ajouter(m3);
+        xml.ajouter(m4);
+        xml.supprimer(m3);
        // xml.create(m);
                 
         
