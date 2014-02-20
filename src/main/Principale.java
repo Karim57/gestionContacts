@@ -8,13 +8,14 @@ public class Principale {
 
     public static void main(String[] args) {
         
-        Manifestation m = new Manifestation(1, "Porte ouverte");
-        Manifestation n = new Manifestation(2, "Conférence sur internet");
-        Manifestation o = new Manifestation(3, "Réunion de fin d'année");
+        Manifestation m1 = new Manifestation(1, "Porte ouverte");
+        Manifestation m2 = new Manifestation(2, "Conférence sur internet");
+        Manifestation m3 = new Manifestation(3, "Réunion de fin d'année");
+        
         XMLManifestationDAO xml = new XMLManifestationDAO();
-        xml.create(m);
-        xml.ajouter(n);
-        xml.ajouter(o);
+        xml.create(m1);
+        xml.ajouter(m2);
+        xml.ajouter(m3);
        // xml.create(m);
                 
         
