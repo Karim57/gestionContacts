@@ -18,7 +18,7 @@ public class Principale {
         xml.ajouter(m2);
         xml.ajouter(m3);
         xml.ajouter(m4);
-        xml.supprimer(m3);
+        xml.supprimer(m2);
        // xml.create(m);
                 
         

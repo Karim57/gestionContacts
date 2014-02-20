@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import model.business.Manifestation;
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -148,8 +149,16 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
             Document doc = (Document) builder.build(xmlFile);
             Element root = doc.getRootElement();
 
-            List children = root.getChildren();
-            children.remove(manifestation.getIdManif()-1);
+            String numManif = Integer.toString(manifestation.getIdManif());
+
+            for (Element element : root.getChildren()) {
+
+                if (numManif.equals(element.getAttributeValue("id"))) {
+                    root.removeContent(element);
+                    break;
+                }
+
+            }
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
