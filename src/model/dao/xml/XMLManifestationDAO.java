@@ -2,6 +2,7 @@ package model.dao.xml;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,67 +61,80 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
             System.out.println(e.getMessage());
         }
 
-        racine = new Element("manifestation");
+        racine = new Element("contact");
+        Element manif = new Element("manifestation");
+
         Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
-        racine.setAttribute(id);
+        manif.setAttribute(id);
+        racine.addContent(manif);
 
         Element libelle_manif = new Element("libelle_manif");
         libelle_manif.setText(manifestation.getLibelleManif());
-        racine.addContent(libelle_manif);
+        manif.addContent(libelle_manif);
         this.sauvegarde(this.nomFicher);
 
         return 1;
     }
+    /*
+     public void afficher(Element racine, String nomFichier) {
+     //On crée une instance de SAXBuilder
+     SAXBuilder sxb = new SAXBuilder();
 
-    public void afficher(Element racine, String nomFichier) {
-        //On crée une instance de SAXBuilder
-        SAXBuilder sxb = new SAXBuilder();
+     try {
+     //On crée un nouveau document JDOM avec en argument le fichier XML
+     //Le parsing est terminé ;)
+     Document document = sxb.build(new File(this.chemin + "/" + nomFichier));
+     } catch (IOException | JDOMException e) {
+     System.out.println(e.getMessage());
+     }
 
-        try {
-            //On crée un nouveau document JDOM avec en argument le fichier XML
-            //Le parsing est terminé ;)
-            Document document = sxb.build(new File(this.chemin + "/" + nomFichier));
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-        }
+     //On crée une List contenant tous les noeuds "manifestation" de l'Element racine
+     List liste = racine.getChildren("manifestation");
 
-        //On crée une List contenant tous les noeuds "manifestation" de l'Element racine
-        List liste = racine.getChildren("manifestation");
+     //On crée un Iterator sur notre liste
+     Iterator i = liste.iterator();
+     while (i.hasNext()) {
+     Element courant = (Element) i.next();
+     //On affiche id_manif de l’élément courant
+     System.out.println(courant.getChild("libelle_manif").getText());
+     System.out.println("hdgyuehhen");
+     }
 
-        //On crée un Iterator sur notre liste
-        Iterator i = liste.iterator();
-        while (i.hasNext()) {
-            Element courant = (Element) i.next();
-            //On affiche id_manif de l’élément courant
-            System.out.println(courant.getChild("libelle_manif").getText());
-            System.out.println("hdgyuehhen");
-        }
-
-    }
+     }*/
 
     public void sauvegarde(String nomFichier) {
-        Document document = new Document(racine);
-       // XMLChemin test = new XMLChemin();
+        //Document document = new Document(racine);
+        // XMLChemin test = new XMLChemin();
 
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(document, new FileOutputStream(this.chemin.getChemin() + "/" + nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + nomFichier));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void ajouter(String nomFichier) {
-        String XmlFile = racine.getText();
+    public void ajouter(Manifestation manifestation) {
         SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+
         try {
-            Document document = builder.build(new File (this.chemin.getChemin() + "/" + nomFichier));
-            document.getRootElement().addContent(new Element("Employee").setAttribute("key", "056"));
-            document.getRootElement().addContent(new Element("Test").setAttribute("key", "056"));
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+           
+            Element manif = new Element("manifestation");
+            Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
+            manif.setAttribute(id);
+            root.addContent(manif);
+
+            Element libelle_manif = new Element("libelle_manif");
+            libelle_manif.setText(manifestation.getLibelleManif());
+            manif.addContent(libelle_manif);
+
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(document, System.out);
-            //this.sauvegarde(this.nomFicher);
-            
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+           // this.sauvegarde(this.nomFicher);
+
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
