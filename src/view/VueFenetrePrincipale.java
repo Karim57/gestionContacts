@@ -3,58 +3,97 @@ package view;
 import controller.ControlleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.SplashScreen;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.JWindow;
 import javax.swing.KeyStroke;
+import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.table.TableRowSorter;
+import javax.swing.text.Element;
 import model.business.Manifestation;
 import view.IObservable;
 
 public class VueFenetrePrincipale extends JFrame implements IObservable {
 
     private ControlleurPrincipal monControleur;
+
     private JButton bNouveau;
-
-    JTabbedPane tpPrincipal;
-
-    private JTextField tLibelle;
-    private JButton bSubmit;
-    private JButton bCancel;
+    private JButton bModifier;
     private JButton bSupprimer;
 
+    private JTabbedPane tpPrincipal;
+
+    private JDialog frameAjoutModif;
+
+    private JTextField tLibelle;
+
+    private JButton bSubmit;
+    private JButton bCancel;
+
     private JTableDonnees tableManifestations;
-    private JTableDonnees tableEnseignants;
     private JTableDonnees tableContacts;
-    private JTableDonnees tableFormations;
     private JTableDonnees tableDepartements;
 
     public VueFenetrePrincipale() {
 
         super("Gestion des événements");
+
+        JWindow w = new JWindow();
+        JLabel l = new JLabel("Chargement ... Veuillez patienter");
+        l.setFont(new Font(null, WIDTH, 26));
+        l.setBorder(new EmptyBorder(4, 25, 4, 20));
+        ClassLoader cl = this.getClass().getClassLoader();
+        JLabel l2 = new JLabel(new ImageIcon(cl.getResource("view/images/logo2.png")));
+        l2.setBorder(new EmptyBorder(20, 20, 4, 20));
+        JPanel p = new JPanel();
+        p.setBackground(Color.yellow);
+        p.setBorder(new LineBorder(Color.black));
+        p.setLayout(new BorderLayout());
+        p.add(l2, BorderLayout.NORTH);
+        p.add(l, BorderLayout.SOUTH);
+        w.add(p);
+        w.pack();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        w.setLocation(dim.width / 2 - w.getSize().width / 2, dim.height / 3 - w.getSize().height / 2);
+        w.setVisible(true);
         this.monControleur = new ControlleurPrincipal(this);
 
-        this.setJMenuBar(this.creerBarreMenu());
+        this.tLibelle = new JTextField();
+        this.bSubmit = new JButton();
+
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
 
@@ -63,59 +102,25 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         this.setSize(700, 500);
         this.setLocation(300, 100);
         this.setVisible(true);
+        w.dispose();
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     private void gereEcouteur() {
         this.bNouveau.addActionListener(monControleur);
         this.bSupprimer.addActionListener(monControleur);
+        this.bModifier.addActionListener(monControleur);
+
         this.tpPrincipal.addChangeListener(monControleur);
+
     }
 
-    private JMenuBar creerBarreMenu() {
+    private void gereEcouteurAM() {
 
-        JMenuBar mb = new JMenuBar();
-        mb.setBackground(new Color(245, 246, 247));
-        JMenu file = new JMenu("Fichier");
+        this.tLibelle.getDocument().addDocumentListener(monControleur);
 
-        ClassLoader cl = this.getClass().getClassLoader();
-
-        JMenuItem newEvent = new JMenuItem("Nouveau", KeyEvent.VK_N);
-        newEvent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-        ImageIcon iconAdd = new ImageIcon(cl.getResource("view/images/add.png"));
-
-        newEvent.setIcon(iconAdd);
-
-        JMenuItem editEvent = new JMenuItem("Editer");
-        JMenuItem deleteEvent = new JMenuItem("Supprimer");
-        JMenuItem generateXMLEvent = new JMenuItem("Générer XML");
-
-        file.add(newEvent);
-        file.add(editEvent);
-        file.add(deleteEvent);
-        file.addSeparator();
-        file.add(generateXMLEvent);
-
-        JMenu view = new JMenu("Fenêtre");
-        JMenuItem manifestation = new JMenuItem("Manifestations");
-        JMenuItem enseignant = new JMenuItem("Enseignants");
-        JMenuItem formation = new JMenuItem("Formations");
-
-        view.add(manifestation);
-        view.add(enseignant);
-        view.add(formation);
-
-        JMenu help = new JMenu("?");
-
-        JMenu settings = new JMenu("Paramètres");
-
-        mb.add(file);
-        mb.add(view);
-        mb.add(settings);
-        mb.add(help);
-
-        return mb;
-
+        this.bSubmit.addActionListener(monControleur);
+        this.bCancel.addActionListener(monControleur);
     }
 
     private JToolBar creerBarreOutils() {
@@ -131,9 +136,10 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         this.bNouveau.setBorderPainted(false);
         this.bNouveau.setFocusPainted(false);
 
-        JButton editEvent = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
-        editEvent.setBorderPainted(false);
-        editEvent.setFocusPainted(false);
+        this.bModifier = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
+        this.bModifier.setActionCommand("Modifier");
+        this.bModifier.setBorderPainted(false);
+        this.bModifier.setFocusPainted(false);
 
         bSupprimer = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
         bSupprimer.setBorderPainted(false);
@@ -168,7 +174,7 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         jtb.add(js, gbc);
 
         gbc.gridx = 2;
-        jtb.add(editEvent, gbc);
+        jtb.add(bModifier, gbc);
 
         gbc.gridx = 3;
         jtb.add(bSupprimer, gbc);
@@ -210,15 +216,14 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         this.tableManifestations = new JTableDonnees(null, this.monControleur.getDonneesManifestation());
         tpPrincipal.addTab("Manifestations", this.creerPanelTable(this.tableManifestations));
 
-        tpPrincipal.addTab("Enseignants", null);
-
-        tpPrincipal.addTab("Etudiants", null);
-
-        this.tableFormations = new JTableDonnees(null, this.monControleur.getDonneesFormation());
-        tpPrincipal.addTab("Formations", this.creerPanelTable(this.tableFormations));
-
+        /* TableRowSorter sorter = new TableRowSorter(this.monControleur.getDonneesManifestation());
+         this.tableManifestations.setRowSorter(sorter);
+         sorter.setRowFilter(RowFilter.regexFilter("3", 1));*/
         this.tableDepartements = new JTableDonnees(null, this.monControleur.getDonneesDepartement());
-        tpPrincipal.addTab("Départements", this.creerPanelTable(tableDepartements));
+        tpPrincipal.addTab("Départements", this.creerPanelTable(this.tableDepartements));
+
+        this.tableContacts = new JTableDonnees(null, this.monControleur.getDonneesContact());
+        tpPrincipal.addTab("Contacts", this.creerPanelTable(this.tableContacts));
 
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -267,52 +272,84 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
     }
 
     @Override
+    public void remplitChamps(String libelle) {
+        this.tLibelle.setText(libelle);
+    }
+
+    @Override
     public String getLibelle() {
-        return null;
+        return this.tLibelle.getText();
     }
 
     @Override
     public void close() {
+        this.frameAjoutModif.dispose();
     }
 
     @Override
     public void activeButton() {
+
     }
 
     @Override
-    public void construitAjout(int ajoutOuModif) {
+    public void construitAjoutModif() {
 
-        JFrame frame = new JFrame("Ajouter une manifestation");
+        frameAjoutModif = new JDialog();
+        frameAjoutModif.setModal(true);
+        if (this.tpPrincipal.getSelectedIndex() == 0) {
+            frameAjoutModif.setTitle("Ajouter une manifestaion");
+        } else if (this.tpPrincipal.getSelectedIndex() == 1) {
+            frameAjoutModif.setTitle("Ajouter un département");
+        }
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
 
-        JPanel pSaisie = this.construitPanelSaisieManifestation();
+        JPanel pSaisie = this.construitPanelSaisieAjout();
         JPanel pValidation = this.construitPanelButtons();
-
-        if (ajoutOuModif == 1) {
-            bSubmit.setActionCommand("Modifier");
-            bSubmit.setText("Modifier");
-            frame.setTitle("Modifier une manifestation");
-        }
 
         p.add(pSaisie);
         p.add(pValidation);
 
-        frame.add(p);
+        this.gereEcouteurAM();
 
-        frame.setSize(400, 100);
-        frame.setResizable(false);
-        frame.setLocation(450, 300);
-        frame.setVisible(true);
+        frameAjoutModif.add(p);
+
+        frameAjoutModif.setSize(400, 100);
+        frameAjoutModif.setResizable(false);
+        frameAjoutModif.setLocation(450, 300);
+        frameAjoutModif.setVisible(true);
+
+        frameAjoutModif.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     }
 
-    private JPanel construitPanelSaisieManifestation() {
+    @Override
+    public void preapreModif() {
+
+        if (this.tpPrincipal.getSelectedIndex() == 0) {
+            frameAjoutModif.setTitle("Modifier une manifestaion");
+        } else if (this.tpPrincipal.getSelectedIndex() == 1) {
+            frameAjoutModif.setTitle("Modifier un département");
+        }
+
+        this.bSubmit.setText("Modifer");
+        this.bSubmit.setActionCommand("submitModif");
+
+    }
+
+    private JPanel construitPanelSaisieAjout() {
 
         JPanel panelAjout = new JPanel();
 
-        JLabel lLibelle = new JLabel("Nom de la manifestation : ");
+        JLabel lLibelle = new JLabel();
+
+        if (this.tpPrincipal.getSelectedIndex() == 0) {
+            lLibelle.setText("Libellé la manifestation");
+        } else if (this.tpPrincipal.getSelectedIndex() == 1) {
+            lLibelle.setText("Libellé du département");
+        }
+
         this.tLibelle = new JTextField(255);
 
         panelAjout.setLayout(new GridBagLayout());
@@ -354,6 +391,7 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 2, 10);
         this.bSubmit = new JButton("Ajouter");
+        this.bSubmit.setActionCommand("submitAjout");
         this.bSubmit.setEnabled(false);
         panelButton.add(this.bSubmit, gbc);
 
@@ -368,19 +406,23 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
                 selectedRow = this.tableManifestations.getSelectedRow();
                 break;
             case 1:
-                selectedRow = this.tableEnseignants.getSelectedRow();
+                selectedRow = this.tableDepartements.getSelectedRow();
+                break;
+            case 2:
+                selectedRow = this.tableContacts.getSelectedRow();
                 break;
         }
         return selectedRow;
     }
 
     @Override
-    public void remplitChamps(Manifestation manifestation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public int getActivePane() {
         return this.tpPrincipal.getSelectedIndex();
     }
+
+    @Override
+    public void autoriseAjoutModif() {
+        this.bSubmit.setEnabled(this.tLibelle.getText().trim().length() > 0);
+    }
+
 }

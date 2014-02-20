@@ -103,11 +103,12 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
     @Override
     public boolean update(Departement departement) {
         Connection connection = this.connect.getConnexion();
-        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt= ?";
+        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt = ?";
 
         boolean updated = false;
 
         try {
+            System.err.println(departement.getIdDepartement());
             PreparedStatement stU = connection.prepareStatement(update);
 
             stU.setString(1, departement.getLibelleDepartement());
@@ -121,7 +122,7 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         } finally {
             this.connect.fermeConnexion();
         }
-
+        System.err.println(updated);
         return updated;
     }
 

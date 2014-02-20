@@ -33,13 +33,13 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
         ArrayList<Manifestation> listeManifestation = new ArrayList<Manifestation>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_manif FROM manifestation";
+        String sql = "SELECT * FROM manifestation";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Manifestation manifestation = this.readById(res.getInt("id_manif"));
+                Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
                 listeManifestation.add(manifestation);
             }
         } catch (SQLException se) {

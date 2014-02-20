@@ -10,12 +10,16 @@ public interface IObservable {
 
     public void activeButton();
 
-    public void construitAjout(int ajoutOuModif);
+    public void construitAjoutModif();
 
     public int getLigneSelectionnee();
 
-    public void remplitChamps(Manifestation manifestation);
-
     public int getActivePane();
+
+    public void remplitChamps(String libelle);
+
+    public void preapreModif();
+
+    public void autoriseAjoutModif();
 
 }

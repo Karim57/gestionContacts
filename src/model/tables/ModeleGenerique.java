@@ -67,6 +67,15 @@ public abstract class ModeleGenerique<T extends Comparable<? super T>> extends A
 
     public void ajouterElement(T element) {
         this.donnees.add(element);
+        this.fireTableDataChanged();
+        this.tri();
+    }
+
+    public void setRow(int l, T e) {
+
+        this.donnees.set(l, e);
+        this.tri();
+        this.fireTableDataChanged();
     }
 
     public void supprimerElement(int row) {

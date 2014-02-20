@@ -6,9 +6,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import model.business.Departement;
+import model.business.Manifestation;
+import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
+import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
 import model.tables.ModeleFormation;
 import model.tables.ModeleManifestation;
@@ -19,7 +23,10 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
     private IObservable vue;
     private ModeleManifestation donneesManifestation;
     private ModeleDepartement donneesDepartement;
-    private ModeleFormation donneesFormation;
+    private ModeleContact donneesContact;
+
+    private static int activePane = 0;
+    private static int activePaneAjout = 0;
 
     public ControlleurPrincipal(IObservable v) {
         this.vue = v;
@@ -28,13 +35,66 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
     @Override
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
+
         if (s.equals("Nouveau")) {
-            vue.construitAjout(0);
+            this.vue.construitAjoutModif();
+            activePaneAjout = this.vue.getActivePane();
         }
 
         if (s.equals("Supprimer")) {
             System.out.println(this.donneesManifestation);
             this.donneesManifestation.supprimerElement(vue.getLigneSelectionnee());
+        }
+
+        if (s.equals("Modifier")) {
+            this.vue.construitAjoutModif();
+            this.vue.preapreModif();
+            if (activePane == 0) {
+                Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
+                this.vue.remplitChamps(manifestaion.getLibelleManif());
+                activePaneAjout = 0;
+            } else if (activePane == 1) {
+                Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
+                this.vue.remplitChamps(departement.getLibelleDepartement());
+                activePaneAjout = 1;
+            }
+        }
+
+        if (s.equals("submitAjout")) {
+            String libelle = this.vue.getLibelle();
+            if (activePaneAjout == 0) {
+                Manifestation manifestaion = new Manifestation(libelle);
+                this.donneesManifestation.ajouterElement(manifestaion);
+                SQLManifestationDAO.getInstance().create(manifestaion);
+
+            } else if (activePaneAjout == 1) {
+                Departement departement = new Departement(libelle);
+                this.donneesDepartement.ajouterElement(departement);
+                SQLDepartementDAO.getInstance().create(departement);
+            }
+            this.vue.close();
+        }
+
+        if (s.equals("submitModif")) {
+            String libelle = this.vue.getLibelle();
+            if (activePaneAjout == 0) {
+                Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
+                manifestaion.setLibelleManif(libelle);
+                this.donneesManifestation.setRow(this.vue.getLigneSelectionnee(), manifestaion);
+                SQLManifestationDAO.getInstance().update(manifestaion);
+
+            } else if (activePaneAjout == 1) {
+                Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
+                System.err.println(departement.getIdDepartement());
+                departement.setLibelleDepartement(libelle);
+                this.donneesDepartement.setRow(this.vue.getLigneSelectionnee(), departement);
+                SQLDepartementDAO.getInstance().update(departement);
+            }
+            this.vue.close();
+        }
+
+        if (s.equals("Annuler")) {
+            this.vue.close();
         }
     }
 
@@ -42,6 +102,7 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
         String[] champsManif = {"Liste des manifestations"};
         this.donneesManifestation = new ModeleManifestation(champsManif);
         this.donneesManifestation.setDonnees(SQLManifestationDAO.getInstance().readAll());
+        System.out.println(this.donneesManifestation.getDonnees().toString());
         return donneesManifestation;
     }
 
@@ -49,34 +110,35 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
         String[] champsDpt = {"Liste des départements"};
         this.donneesDepartement = new ModeleDepartement(champsDpt);
         this.donneesDepartement.setDonnees(SQLDepartementDAO.getInstance().readAll());
+        System.out.println(this.donneesDepartement.getDonnees().toString());
         return donneesDepartement;
     }
 
-    public ModeleFormation getDonneesFormation() {
-        String[] champsForm = {"Formation", "Département"};
-        this.donneesFormation = new ModeleFormation(champsForm);
-        this.donneesFormation.setDonnees(SQLFormationDAO.getInstance().readAll());
-        return donneesFormation;
+    public ModeleContact getDonneesContact() {
+        String[] champsForm = {"Contacts"};
+        this.donneesContact = new ModeleContact(champsForm);
+        this.donneesContact.setDonnees(SQLContactDAO.getInstance().readAll());
+        return donneesContact;
     }
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.changedUpdate(e);
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.changedUpdate(e);
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.vue.autoriseAjoutModif();
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        System.out.println(vue.getActivePane());
+        activePane = vue.getActivePane();
     }
 
 }
