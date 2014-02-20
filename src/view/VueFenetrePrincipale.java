@@ -3,17 +3,12 @@ package view;
 import controller.ControlleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.SplashScreen;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -23,28 +18,16 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.table.TableRowSorter;
-import javax.swing.text.Element;
-import model.business.Manifestation;
-import view.IObservable;
 
 public class VueFenetrePrincipale extends JFrame implements IObservable {
 
@@ -72,7 +55,7 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         super("Gestion des événements");
 
         JWindow w = new JWindow();
-        JLabel l = new JLabel("Chargement ... Veuillez patienter");
+        JLabel l = new JLabel("Gestionnaire de rencontres étudiants");
         l.setFont(new Font(null, WIDTH, 26));
         l.setBorder(new EmptyBorder(4, 25, 4, 20));
         ClassLoader cl = this.getClass().getClassLoader();
@@ -101,8 +84,10 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
         this.setSize(700, 500);
         this.setLocation(300, 100);
-        this.setVisible(true);
+
         w.dispose();
+        this.setVisible(true);
+
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
@@ -260,7 +245,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         gbc2.fill = GridBagConstraints.BOTH;
         gbc2.gridx = 0;
         gbc2.gridy = 1;
-        table.setIntercellSpacing(new Dimension(20, 1));
         jp.add(table, gbc2);
 
         JScrollPane pane = new JScrollPane(table);

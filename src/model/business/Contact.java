@@ -2,9 +2,7 @@ package model.business;
 
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+import java.sql.Date;
 
 public class Contact implements Comparable<Contact> {
 
@@ -21,12 +19,36 @@ public class Contact implements Comparable<Contact> {
     private Enseignant enseignant;
     private ArrayList<Formation> listeFormations;
 
-    public Contact() {
+    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Manifestation manifestation, Enseignant enseignant, ArrayList<Formation> listeFormations) {
+        this.idContact = idContact;
+        this.nomContact = nomContact;
+        this.prenomContact = prenomContact;
+        this.emailContact = emailContact;
+        this.etudes1Contact = etudes1Contact;
+        this.etudes2Contact = etudes2Contact;
+        this.descriptionContact = descriptionContact;
+        this.manifestation = manifestation;
+        this.enseignant = enseignant;
+        this.listeFormations = listeFormations;
 
-        this.dateContact = new LocalDate().toDateTimeAtCurrentTime().toDate();
-        LocalTime localTime = new LocalTime();
-        this.heureContact = new Time(localTime.getHourOfDay(), localTime.getMinuteOfHour(), localTime.getSecondOfMinute());
-        this.listeFormations = new ArrayList<Formation>();
+        long time = System.currentTimeMillis();
+        this.dateContact = new Date(time);
+        this.heureContact = new Time(time);
+    }
+
+    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Date dateContact, Time heureContact, Manifestation manifestation, Enseignant enseignant, ArrayList<Formation> listeFormations) {
+        this.idContact = idContact;
+        this.nomContact = nomContact;
+        this.prenomContact = prenomContact;
+        this.emailContact = emailContact;
+        this.etudes1Contact = etudes1Contact;
+        this.etudes2Contact = etudes2Contact;
+        this.descriptionContact = descriptionContact;
+        this.dateContact = dateContact;
+        this.heureContact = heureContact;
+        this.manifestation = manifestation;
+        this.enseignant = enseignant;
+        this.listeFormations = listeFormations;
     }
 
     public int getIdContact() {

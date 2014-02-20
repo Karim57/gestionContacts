@@ -14,7 +14,7 @@ public class JTableDonnees extends JTable {
         this.setModel(this.modele);
         this.setGridColor(Color.GRAY);
         this.setColumnSelectionAllowed(false);
-        this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         if (tailles != null) {

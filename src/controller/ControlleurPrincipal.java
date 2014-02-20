@@ -10,11 +10,9 @@ import model.business.Departement;
 import model.business.Manifestation;
 import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
-import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
 import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
-import model.tables.ModeleFormation;
 import model.tables.ModeleManifestation;
 import view.IObservable;
 
@@ -85,7 +83,6 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
 
             } else if (activePaneAjout == 1) {
                 Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
-                System.err.println(departement.getIdDepartement());
                 departement.setLibelleDepartement(libelle);
                 this.donneesDepartement.setRow(this.vue.getLigneSelectionnee(), departement);
                 SQLDepartementDAO.getInstance().update(departement);
@@ -102,7 +99,6 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
         String[] champsManif = {"Liste des manifestations"};
         this.donneesManifestation = new ModeleManifestation(champsManif);
         this.donneesManifestation.setDonnees(SQLManifestationDAO.getInstance().readAll());
-        System.out.println(this.donneesManifestation.getDonnees().toString());
         return donneesManifestation;
     }
 
@@ -110,12 +106,11 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
         String[] champsDpt = {"Liste des départements"};
         this.donneesDepartement = new ModeleDepartement(champsDpt);
         this.donneesDepartement.setDonnees(SQLDepartementDAO.getInstance().readAll());
-        System.out.println(this.donneesDepartement.getDonnees().toString());
         return donneesDepartement;
     }
 
     public ModeleContact getDonneesContact() {
-        String[] champsForm = {"Contacts"};
+        String[] champsForm = {"Nom", "Prenom", "Description", "Lieu de la rencontre"};
         this.donneesContact = new ModeleContact(champsForm);
         this.donneesContact.setDonnees(SQLContactDAO.getInstance().readAll());
         return donneesContact;

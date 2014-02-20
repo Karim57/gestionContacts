@@ -34,13 +34,13 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         ArrayList<Departement> listeDepartement = new ArrayList<Departement>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_dpt FROM departement";
+        String sql = "SELECT * FROM departement";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Departement departement = this.readById(res.getInt("id_dpt"));
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
                 listeDepartement.add(departement);
             }
         } catch (SQLException se) {
