@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contact>
-  <manifestation id="5">
+  <manifestation id="1">
     <libelle_manif>Porte ouverte</libelle_manif>
   </manifestation>
   <manifestation id="2">
-    <libelle_manif>Grande soirée</libelle_manif>
+    <libelle_manif>Conférence sur internet</libelle_manif>
+  </manifestation>
+  <manifestation id="3">
+    <libelle_manif>Réunion de fin d'année</libelle_manif>
   </manifestation>
 </contact>
