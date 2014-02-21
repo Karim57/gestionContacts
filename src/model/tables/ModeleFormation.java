@@ -6,8 +6,6 @@ import model.business.Formation;
 
 public class ModeleFormation extends ModeleGenerique<Formation> {
 
-    private ArrayList<Formation> sousListe;
-
     public ModeleFormation(String[] cols) {
         super(cols);
     }
@@ -32,15 +30,4 @@ public class ModeleFormation extends ModeleGenerique<Formation> {
         return o;
     }
 
-    public ArrayList<Formation> getSousListe(Departement d) {
-
-        this.sousListe = new ArrayList<Formation>();
-
-        for (Formation f : super.getDonnees()) {
-            if (f.getDepartement().equals(d)) {
-                this.sousListe.add(f);
-            }
-        }
-        return this.sousListe;
-    }
 }

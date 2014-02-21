@@ -1,6 +1,6 @@
 package view;
 
-import controller.ControlleurPrincipal;
+import controller.ControleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,22 +29,15 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-public class VueFenetrePrincipale extends JFrame implements IObservable {
+public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
-    private ControlleurPrincipal monControleur;
-
-    private JButton bNouveau;
-    private JButton bModifier;
-    private JButton bSupprimer;
+    private ControleurPrincipal monControleur;
 
     private JTabbedPane tpPrincipal;
 
     private JDialog frameAjoutModif;
 
     private JTextField tLibelle;
-
-    private JButton bSubmit;
-    private JButton bCancel;
 
     private JTableDonnees tableManifestations;
     private JTableDonnees tableContacts;
@@ -61,21 +54,23 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         ClassLoader cl = this.getClass().getClassLoader();
         JLabel l2 = new JLabel(new ImageIcon(cl.getResource("view/images/logo2.png")));
         l2.setBorder(new EmptyBorder(20, 20, 4, 20));
+        JLabel l3 = new JLabel("Chargement des données ...");
+        l3.setFont(new Font(null, WIDTH, 12));
+        l3.setBorder(new EmptyBorder(0, 20, 2, 20));
         JPanel p = new JPanel();
         p.setBackground(Color.yellow);
         p.setBorder(new LineBorder(Color.black));
         p.setLayout(new BorderLayout());
         p.add(l2, BorderLayout.NORTH);
-        p.add(l, BorderLayout.SOUTH);
+        p.add(l, BorderLayout.CENTER);
+        p.add(l3, BorderLayout.SOUTH);
         w.add(p);
         w.pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         w.setLocation(dim.width / 2 - w.getSize().width / 2, dim.height / 3 - w.getSize().height / 2);
         w.setVisible(true);
-        this.monControleur = new ControlleurPrincipal(this);
 
-        this.tLibelle = new JTextField();
-        this.bSubmit = new JButton();
+        this.monControleur = new ControleurPrincipal(this);
 
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
@@ -85,7 +80,16 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         this.setSize(700, 500);
         this.setLocation(300, 100);
 
+        l3.setText("Ouverture du programme ...");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(VueFenetrePrincipale.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         w.dispose();
+
         this.setVisible(true);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -106,90 +110,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
         this.bSubmit.addActionListener(monControleur);
         this.bCancel.addActionListener(monControleur);
-    }
-
-    private JToolBar creerBarreOutils() {
-
-        JToolBar jtb = new JToolBar();
-        jtb.setLayout(new GridBagLayout());
-        jtb.setBorder(new EmptyBorder(0, 5, 0, 0));
-        jtb.setBackground(new Color(240, 240, 240));
-        ClassLoader cl = this.getClass().getClassLoader();
-
-        this.bNouveau = new JButton(new ImageIcon(cl.getResource("view/images/add2.png")));
-        this.bNouveau.setActionCommand("Nouveau");
-        this.bNouveau.setBorderPainted(false);
-        this.bNouveau.setFocusPainted(false);
-
-        this.bModifier = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
-        this.bModifier.setActionCommand("Modifier");
-        this.bModifier.setBorderPainted(false);
-        this.bModifier.setFocusPainted(false);
-
-        bSupprimer = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
-        bSupprimer.setBorderPainted(false);
-        bSupprimer.setFocusPainted(false);
-        bSupprimer.setActionCommand("Supprimer");
-
-        JButton bsearch = new JButton(new ImageIcon(cl.getResource("view/images/search.png")));
-        bsearch.setBorderPainted(false);
-        bsearch.setFocusPainted(false);
-
-        JButton xmlEvent = new JButton(new ImageIcon(cl.getResource("view/images/xml.png")));
-        xmlEvent.setBorderPainted(false);
-        xmlEvent.setFocusPainted(false);
-
-        JSeparator js = new JSeparator(JSeparator.VERTICAL);
-        js.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
-
-        JSeparator js2 = new JSeparator(JSeparator.VERTICAL);
-        js2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        gbc.weighty = 1;
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        jtb.add(this.bNouveau, gbc);
-
-        gbc.gridx = 1;
-        jtb.add(js, gbc);
-
-        gbc.gridx = 2;
-        jtb.add(bModifier, gbc);
-
-        gbc.gridx = 3;
-        jtb.add(bSupprimer, gbc);
-
-        gbc.gridx = 4;
-        jtb.add(js2, gbc);
-
-        gbc.gridx = 5;
-        jtb.add(xmlEvent, gbc);
-
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.weightx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 200, 0, 5);
-        gbc.gridx = 6;
-        JTextField search = new JTextField(100);
-        jtb.add(search, gbc);
-
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 0, 0, 5);
-        gbc.gridx = 7;
-        jtb.add(bsearch, gbc);
-
-        jtb.setFloatable(false);
-
-        jtb.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
-        return jtb;
-
     }
 
     private JPanel creerPanelPrincipal() {
@@ -224,37 +144,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         return p;
     }
 
-    private JPanel creerPanelTable(JTableDonnees table) {
-
-        JPanel jp = new JPanel();
-        jp.setLayout(new GridBagLayout());
-        GridBagConstraints gbc2 = new GridBagConstraints();
-
-        gbc2.anchor = GridBagConstraints.LINE_END;
-        gbc2.weightx = 1;
-        gbc2.fill = GridBagConstraints.HORIZONTAL;
-        gbc2.gridx = 0;
-        gbc2.gridy = 0;
-        table.getTableHeader().setBackground(new Color(245, 246, 247));
-        table.getTableHeader().setFont(new Font("Arial", 1, 12));
-        jp.add(table.getTableHeader(), gbc2);
-
-        gbc2.anchor = GridBagConstraints.LINE_END;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.fill = GridBagConstraints.BOTH;
-        gbc2.gridx = 0;
-        gbc2.gridy = 1;
-        jp.add(table, gbc2);
-
-        JScrollPane pane = new JScrollPane(table);
-
-        jp.add(pane, gbc2);
-
-        return jp;
-
-    }
-
     @Override
     public void remplitChamps(String libelle) {
         this.tLibelle.setText(libelle);
@@ -280,6 +169,7 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
         frameAjoutModif = new JDialog();
         frameAjoutModif.setModal(true);
+
         if (this.tpPrincipal.getSelectedIndex() == 0) {
             frameAjoutModif.setTitle("Ajouter une manifestaion");
         } else if (this.tpPrincipal.getSelectedIndex() == 1) {
@@ -355,31 +245,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
         return panelAjout;
 
-    }
-
-    private JPanel construitPanelButtons() {
-
-        JPanel panelButton = new JPanel();
-
-        panelButton.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.gridy = 0;
-        gbc.gridx = 0;
-        gbc.insets = new Insets(0, 0, 2, 10);
-        this.bCancel = new JButton("Annuler");
-        panelButton.add(this.bCancel, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = new Insets(0, 0, 2, 10);
-        this.bSubmit = new JButton("Ajouter");
-        this.bSubmit.setActionCommand("submitAjout");
-        this.bSubmit.setEnabled(false);
-        panelButton.add(this.bSubmit, gbc);
-
-        return panelButton;
     }
 
     @Override

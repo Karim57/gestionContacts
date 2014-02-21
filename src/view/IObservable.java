@@ -1,7 +1,5 @@
 package view;
 
-import model.business.Manifestation;
-
 public interface IObservable {
 
     public String getLibelle();

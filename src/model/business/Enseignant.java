@@ -51,8 +51,8 @@ public class Enseignant implements Comparable<Enseignant> {
     }
 
     @Override
-    public int compareTo(Enseignant o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int compareTo(Enseignant e) {
+        return this.nomEnseignant.compareTo(e.nomEnseignant);
     }
 
 }

@@ -16,7 +16,7 @@ import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
 import view.IObservable;
 
-public class ControlleurPrincipal implements ActionListener, DocumentListener, ChangeListener {
+public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener {
 
     private IObservable vue;
     private ModeleManifestation donneesManifestation;
@@ -26,7 +26,7 @@ public class ControlleurPrincipal implements ActionListener, DocumentListener, C
     private static int activePane = 0;
     private static int activePaneAjout = 0;
 
-    public ControlleurPrincipal(IObservable v) {
+    public ControleurPrincipal(IObservable v) {
         this.vue = v;
     }
 
