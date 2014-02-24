@@ -39,7 +39,7 @@ public class Departement implements Comparable<Departement> {
 
     @Override
     public String toString() {
-        return "Departement{" + "idDepartement=" + idDepartement + ", libelleDepartement=" + libelleDepartement + '}';
+        return libelleDepartement;
     }
 
     @Override

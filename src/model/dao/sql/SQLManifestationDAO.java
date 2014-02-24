@@ -128,14 +128,12 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     @Override
     public boolean delete(Manifestation manifestation) {
         Connection connection = this.connect.getConnexion();
-        String delete = "DELETE FROM manifestation where id_manif = ?";
+        String delete = "DELETE FROM manifestation WHERE id_manif = " + manifestation.getIdManif();
 
         boolean deleted = false;
 
         try {
             PreparedStatement stD = connection.prepareStatement(delete);
-
-            stD.setInt(1, manifestation.getIdManif());
             stD.execute();
 
             deleted = stD.executeUpdate(delete) > 0;
@@ -143,6 +141,7 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
+            se.printStackTrace();
         } finally {
             this.connect.fermeConnexion();
         }

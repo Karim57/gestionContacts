@@ -2,24 +2,20 @@ package view;
 
 import controller.ControleurEnseignant;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import javax.swing.BorderFactory;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
+import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
-import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableRowSorter;
+import model.business.Departement;
 
 public class VueEnseignants extends vueAbstraite implements IObservable, IOEnseignant {
 
@@ -31,21 +27,22 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
 
     private JTableDonnees tableEnseignants;
 
-    private int idDpt = -1;
+    public VueEnseignants(Departement departement) {
 
-    public VueEnseignants() {
-        this(-1);
+        this();
+        this.cListeDpt.setSelectedItem(departement);
     }
 
-    public VueEnseignants(int id_dpt) {
+    public VueEnseignants() {
 
         super("Gestion des enseignants");
 
-        this.idDpt = id_dpt;
         this.monControleur = new ControleurEnseignant(this);
 
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
+
+        this.monControleur.remplitComboDpt();
 
         this.gereEcouteur();
 
@@ -55,11 +52,6 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
         this.setVisible(true);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    }
-
-    @Override
-    public int getIdDpt() {
-        return idDpt;
     }
 
     @Override
@@ -73,7 +65,7 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
     }
 
     @Override
-    public void activeButton() {
+    public void gereButtonsActifs() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -121,13 +113,18 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
     }
 
     @Override
-    public void preapreModif() {
+    public void prepareModif() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void autoriseAjoutModif() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setListeDepartement(ArrayList<Departement> liste) {
+        this.cListeDpt.setModel(new DefaultComboBoxModel<Departement>(liste.toArray(new Departement[liste.size()])));
     }
 
     private JPanel creerPanelPrincipal() {
@@ -155,6 +152,10 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
         this.bNouveau.addActionListener(monControleur);
         this.bSupprimer.addActionListener(monControleur);
         this.bModifier.addActionListener(monControleur);
+
+        this.cListeDpt.addItemListener(monControleur);
+
+        this.tSearch.getDocument().addDocumentListener(monControleur);
     }
 
     private void gereEcouteurAM() {
@@ -167,6 +168,66 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
 
     private JPanel construitPanelSaisieAjout() {
         return null;
+    }
+
+    @Override
+    public Departement getDptSelected() {
+        return (Departement) this.cListeDpt.getSelectedItem();
+    }
+
+    @Override
+    public void filtrer(String[] search, String dpt) {
+
+        TableRowSorter sorter = new TableRowSorter(this.tableEnseignants.getModel());
+
+        List<RowFilter<Object, Object>> filtrePlusieursMots = new ArrayList<RowFilter<Object, Object>>();
+        List<RowFilter<Object, Object>> filtrePlusieursMotsEtDpt = new ArrayList<RowFilter<Object, Object>>();
+
+        for (String s : search) {
+            s = s.trim();
+            List<RowFilter<Object, Object>> filtreUnMot = new ArrayList<RowFilter<Object, Object>>();
+            filtreUnMot.add(RowFilter.regexFilter("(?i)" + s, 0));
+            filtreUnMot.add(RowFilter.regexFilter("(?i)" + s, 1));
+            filtrePlusieursMots.add(RowFilter.orFilter(filtreUnMot));
+        }
+
+        filtrePlusieursMotsEtDpt.add(RowFilter.andFilter(filtrePlusieursMots));
+        filtrePlusieursMotsEtDpt.add(RowFilter.regexFilter(dpt, 2));
+
+        sorter.setRowFilter(RowFilter.andFilter(filtrePlusieursMotsEtDpt));
+
+        this.tableEnseignants.setRowSorter(sorter);
+
+    }
+
+    @Override
+    public String getSearch() {
+        return this.tSearch.getText().trim();
+    }
+
+    @Override
+    public void filtrer(String[] search) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void afficheAjoutModif() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int confirmation(String message, String titre, int typeMessage, int icone) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void afficheErreur(String message, String titre, int typeMessage) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int[] getLesLignesSelectionnee() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

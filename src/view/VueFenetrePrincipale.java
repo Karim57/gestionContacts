@@ -3,27 +3,21 @@ package view;
 import controller.ControleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.JWindow;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
@@ -43,56 +37,63 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
     private JTableDonnees tableContacts;
     private JTableDonnees tableDepartements;
 
+    private JWindow wSplashScreen;
+    private JLabel lMessage;
+
     public VueFenetrePrincipale() {
 
         super("Gestion des événements");
-
-        JWindow w = new JWindow();
-        JLabel l = new JLabel("Gestionnaire de rencontres étudiants");
-        l.setFont(new Font(null, WIDTH, 26));
-        l.setBorder(new EmptyBorder(4, 25, 4, 20));
-        ClassLoader cl = this.getClass().getClassLoader();
-        JLabel l2 = new JLabel(new ImageIcon(cl.getResource("view/images/logo2.png")));
-        l2.setBorder(new EmptyBorder(20, 20, 4, 20));
-        JLabel l3 = new JLabel("Chargement des données ...");
-        l3.setFont(new Font(null, WIDTH, 12));
-        l3.setBorder(new EmptyBorder(0, 20, 2, 20));
-        JPanel p = new JPanel();
-        p.setBackground(Color.yellow);
-        p.setBorder(new LineBorder(Color.black));
-        p.setLayout(new BorderLayout());
-        p.add(l2, BorderLayout.NORTH);
-        p.add(l, BorderLayout.CENTER);
-        p.add(l3, BorderLayout.SOUTH);
-        w.add(p);
-        w.pack();
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        w.setLocation(dim.width / 2 - w.getSize().width / 2, dim.height / 3 - w.getSize().height / 2);
-        w.setVisible(true);
+        this.creerSplashScreen();
 
         this.monControleur = new ControleurPrincipal(this);
 
         this.add(creerBarreOutils(), BorderLayout.NORTH);
         this.add(creerPanelPrincipal(), BorderLayout.CENTER);
 
+        this.gereButtonsActifs();
         this.gereEcouteur();
 
         this.setSize(700, 500);
         this.setLocation(300, 100);
 
-        l3.setText("Ouverture du programme ...");
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(VueFenetrePrincipale.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        w.dispose();
+        wSplashScreen.dispose();
 
         this.setVisible(true);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    private void creerSplashScreen() {
+        wSplashScreen = new JWindow();
+
+        JLabel lTitre = new JLabel("Gestionnaire de rencontres étudiants");
+        lTitre.setFont(new Font(null, WIDTH, 26));
+        lTitre.setBorder(new EmptyBorder(4, 25, 4, 20));
+
+        ClassLoader cl = this.getClass().getClassLoader();
+        JLabel lLogo = new JLabel(new ImageIcon(cl.getResource("view/images/logo2.png")));
+        lLogo.setBorder(new EmptyBorder(20, 20, 4, 20));
+
+        lMessage = new JLabel();
+
+        lMessage.setFont(new Font(null, WIDTH, 12));
+        lMessage.setBorder(new EmptyBorder(0, 20, 2, 20));
+
+        JPanel p = new JPanel();
+        p.setBackground(Color.yellow);
+        p.setBorder(new LineBorder(Color.black));
+        p.setLayout(new BorderLayout());
+        p.add(lLogo, BorderLayout.NORTH);
+        p.add(lTitre, BorderLayout.CENTER);
+        p.add(lMessage, BorderLayout.SOUTH);
+
+        wSplashScreen.add(p);
+        wSplashScreen.pack();
+
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        wSplashScreen.setLocation(dim.width / 2 - wSplashScreen.getSize().width / 2, dim.height / 3 - wSplashScreen.getSize().height / 2);
+        wSplashScreen.setVisible(true);
+
     }
 
     private void gereEcouteur() {
@@ -102,6 +103,8 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
         this.tpPrincipal.addChangeListener(monControleur);
 
+        this.tSearch.getDocument().addDocumentListener(monControleur);
+
     }
 
     private void gereEcouteurAM() {
@@ -110,6 +113,8 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
         this.bSubmit.addActionListener(monControleur);
         this.bCancel.addActionListener(monControleur);
+
+        // this.frameAjoutModif.addWindowListener(monControleur);
     }
 
     private JPanel creerPanelPrincipal() {
@@ -121,9 +126,6 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         this.tableManifestations = new JTableDonnees(null, this.monControleur.getDonneesManifestation());
         tpPrincipal.addTab("Manifestations", this.creerPanelTable(this.tableManifestations));
 
-        /* TableRowSorter sorter = new TableRowSorter(this.monControleur.getDonneesManifestation());
-         this.tableManifestations.setRowSorter(sorter);
-         sorter.setRowFilter(RowFilter.regexFilter("3", 1));*/
         this.tableDepartements = new JTableDonnees(null, this.monControleur.getDonneesDepartement());
         tpPrincipal.addTab("Départements", this.creerPanelTable(this.tableDepartements));
 
@@ -160,15 +162,29 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
     }
 
     @Override
-    public void activeButton() {
+    public void gereButtonsActifs() {
 
+        this.cListeDpt.setVisible(false);
+
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                this.bNouveau.setVisible(false);
+                this.bModifier.setVisible(false);
+                this.bSupprimer.setVisible(false);
+                this.bManifDefaut.setToolTipText("Importer");
+                break;
+        }
     }
 
     @Override
     public void construitAjoutModif() {
 
-        frameAjoutModif = new JDialog();
-        frameAjoutModif.setModal(true);
+        frameAjoutModif = new JDialog(this, "");
+        frameAjoutModif.setAlwaysOnTop(true);
 
         if (this.tpPrincipal.getSelectedIndex() == 0) {
             frameAjoutModif.setTitle("Ajouter une manifestaion");
@@ -192,24 +208,27 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         frameAjoutModif.setSize(400, 100);
         frameAjoutModif.setResizable(false);
         frameAjoutModif.setLocation(450, 300);
-        frameAjoutModif.setVisible(true);
 
         frameAjoutModif.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     }
 
     @Override
-    public void preapreModif() {
+    public void afficheAjoutModif() {
+        frameAjoutModif.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        frameAjoutModif.setVisible(true);
+    }
+
+    @Override
+    public void prepareModif() {
 
         if (this.tpPrincipal.getSelectedIndex() == 0) {
             frameAjoutModif.setTitle("Modifier une manifestaion");
         } else if (this.tpPrincipal.getSelectedIndex() == 1) {
             frameAjoutModif.setTitle("Modifier un département");
         }
-
         this.bSubmit.setText("Modifer");
         this.bSubmit.setActionCommand("submitModif");
-
     }
 
     private JPanel construitPanelSaisieAjout() {
@@ -225,6 +244,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         }
 
         this.tLibelle = new JTextField(255);
+        tLibelle.getDocument().putProperty("id", "tAjoutModif");
 
         panelAjout.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -274,4 +294,44 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         this.bSubmit.setEnabled(this.tLibelle.getText().trim().length() > 0);
     }
 
+    @Override
+    public String getSearch() {
+        return this.tSearch.getText().trim();
+    }
+
+    @Override
+    public void filtrer(String[] search) {
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                this.tableManifestations.filtrer(search);
+                break;
+        }
+    }
+
+    @Override
+    public int confirmation(String message, String titre, int typeMessage, int icone) {
+        return JOptionPane.showConfirmDialog(this, message, titre, typeMessage, icone, null);
+    }
+
+    @Override
+    public void afficheErreur(String message, String titre, int typeMessage) {
+        JOptionPane.showMessageDialog(this, message, titre, typeMessage);
+    }
+
+    @Override
+    public int[] getLesLignesSelectionnee() {
+        int[] selectedRows = {0};
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                selectedRows = this.tableManifestations.getSelectedRows();
+                break;
+            case 1:
+                selectedRows = this.tableDepartements.getSelectedRows();
+                break;
+            case 2:
+                selectedRows = this.tableContacts.getSelectedRows();
+                break;
+        }
+        return selectedRows;
+    }
 }

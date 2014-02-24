@@ -2,6 +2,9 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.Iterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -26,6 +29,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     private static int activePane = 0;
     private static int activePaneAjout = 0;
 
+    private String[] search = {""};
+    private String searchDpt = "";
+
     public ControleurPrincipal(IObservable v) {
         this.vue = v;
     }
@@ -37,16 +43,25 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         if (s.equals("Nouveau")) {
             this.vue.construitAjoutModif();
             activePaneAjout = this.vue.getActivePane();
+            this.vue.afficheAjoutModif();
         }
 
         if (s.equals("Supprimer")) {
-            System.out.println(this.donneesManifestation);
-            this.donneesManifestation.supprimerElement(vue.getLigneSelectionnee());
+            if (activePane == 0) {
+
+                if (this.vue.getLesLignesSelectionnee().length > 1) {
+                    this.supprimerDesManifestaion(this.vue.getLesLignesSelectionnee());
+                } else {
+                    this.supprimerManifestaion(this.vue.getLesLignesSelectionnee()[0]);
+                }
+
+            }
         }
 
         if (s.equals("Modifier")) {
             this.vue.construitAjoutModif();
-            this.vue.preapreModif();
+            this.vue.prepareModif();
+
             if (activePane == 0) {
                 Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
                 this.vue.remplitChamps(manifestaion.getLibelleManif());
@@ -56,6 +71,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
                 this.vue.remplitChamps(departement.getLibelleDepartement());
                 activePaneAjout = 1;
             }
+            this.vue.afficheAjoutModif();
         }
 
         if (s.equals("submitAjout")) {
@@ -116,6 +132,50 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         return donneesContact;
     }
 
+    private boolean supprimerDesManifestaion(int tab[]) {
+
+        for (int i : tab) {
+            Manifestation m = this.donneesManifestation.getValueAt(i);
+            if (this.donneesContact.canDeleteManif(m)) {
+                this.donneesManifestation.supprimerElement(m);
+            } else {
+                this.vue.afficheErreur("Impossible de supprimer une manifestation liée à une autre donnée, opération annulée.",
+                        "Erreur lors de la suppression", 0);
+                this.donneesManifestation.videElementsASupprimer();
+                return false;
+            }
+        }
+
+        if (this.vue.confirmation("Etes-vous sûr de vouloir supprimer " + tab.length + " manifestations ?",
+                "Confirmation de suppression groupée", 2, 3) == 0) {
+
+            this.donneesManifestation.confirmerSuppression();
+
+            for (Manifestation m : this.donneesManifestation.getElementsASupprimer()) {
+                SQLManifestationDAO.getInstance().delete(m);
+            }
+
+        }
+
+        this.donneesManifestation.videElementsASupprimer();
+        return true;
+    }
+
+    private void supprimerManifestaion(int i) {
+        Manifestation m = this.donneesManifestation.getValueAt(i);
+        if (this.donneesContact.canDeleteManif(m)) {
+            if (this.vue.confirmation("Etes-vous sûr de vouloir supprimer cette manifestation",
+                    m.getLibelleManif(), 2, 3) == 0) {
+                this.donneesManifestation.supprimerElement(m);
+                this.donneesManifestation.confirmerSuppression();
+                this.donneesContact.videElementsASupprimer();
+            }
+        } else {
+            this.vue.afficheErreur("Impossible de supprimer une manifestation liée à une autre donnée, opération annulée.",
+                    "Erreur lors de la suppression", 0);
+        }
+    }
+
     @Override
     public void insertUpdate(DocumentEvent e) {
         this.changedUpdate(e);
@@ -128,12 +188,17 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        this.vue.autoriseAjoutModif();
+        if (e.getDocument().getProperty("id") == "tAjoutModif") {
+            this.vue.autoriseAjoutModif();
+        } else if (e.getDocument().getProperty("id") == "tSearch") {
+            this.search = this.vue.getSearch().split(" ");
+            this.vue.filtrer(this.search);
+        }
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        activePane = vue.getActivePane();
+        this.vue.gereButtonsActifs();
     }
 
 }

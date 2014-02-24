@@ -13,6 +13,7 @@ public abstract class ModeleGenerique<T extends Comparable<? super T>> extends A
 
     public ModeleGenerique(String[] colonnes) {
         this.COLONNES = colonnes;
+        this.aSupprimer = new ArrayList<T>();
     }
 
     public void setDonnees(ArrayList<T> donnees) {
@@ -78,11 +79,14 @@ public abstract class ModeleGenerique<T extends Comparable<? super T>> extends A
         this.fireTableDataChanged();
     }
 
-    public void supprimerElement(int row) {
-        T elementASupprimer = this.getValueAt(row);
-
+    public void supprimerElement(T elementASupprimer) {
         this.aSupprimer.add(elementASupprimer);
-        this.donnees.remove(elementASupprimer);
+    }
+
+    public void confirmerSuppression() {
+        for (T obj : this.aSupprimer) {
+            this.donnees.remove(obj);
+        }
         this.fireTableDataChanged();
     }
 

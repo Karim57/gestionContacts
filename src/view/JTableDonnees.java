@@ -1,7 +1,10 @@
 package view;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
+import javax.swing.table.TableRowSorter;
 import model.tables.ModeleGenerique;
 
 public class JTableDonnees extends JTable {
@@ -28,10 +31,21 @@ public class JTableDonnees extends JTable {
         }
     }
 
-    public void vide() {
-        while (this.modele.getRowCount() != 0) {
-            this.modele.supprimerElement(0);
+    protected void filtrer(String... lesFiltres) {
+        TableRowSorter sorter = new TableRowSorter(this.modele);
+        List<RowFilter<Object, Object>> listeFilters = new ArrayList<RowFilter<Object, Object>>();
+
+        for (String s : lesFiltres) {
+            s = s.trim();
+            List<RowFilter<Object, Object>> filtreUnMot = new ArrayList<RowFilter<Object, Object>>();
+            for (int i = 0; i < this.modele.getColumnCount(); i++) {
+                filtreUnMot.add(RowFilter.regexFilter("(?i)" + s, i));
+            }
+            listeFilters.add(RowFilter.orFilter(filtreUnMot));
         }
+
+        sorter.setRowFilter(RowFilter.andFilter(listeFilters));
+        this.setRowSorter(sorter);
     }
 
     @Override
