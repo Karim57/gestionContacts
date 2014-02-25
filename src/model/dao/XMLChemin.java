@@ -1,14 +1,14 @@
 package model.dao;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-
 public class XMLChemin {
 
     private Properties proprietes;
-    private String chemin;
+    private final String chemin;
 
     public String getChemin() {
         return chemin;
@@ -16,13 +16,15 @@ public class XMLChemin {
 
     public XMLChemin() {
         try {
-             chemin=this.chargeChemin();
+            File dir = new File(this.chargeChemin());
+            dir.mkdirs();
         } catch (Exception e) {
-            System.out.println("Problème avec xml.properties" + e.getMessage());
-        }  
+            System.out.println(e.getMessage());
+        }
+        chemin = this.chargeChemin();
     }
-    
-    private  String chargeChemin() {
+
+    private String chargeChemin() {
         String source = "src/config/xml.properties";
         this.proprietes = new Properties();
 
@@ -38,8 +40,4 @@ public class XMLChemin {
         return this.proprietes.getProperty("chemin");
     }
 
-
 }
- 
-
-

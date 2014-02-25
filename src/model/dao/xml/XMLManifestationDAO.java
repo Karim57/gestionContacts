@@ -5,9 +5,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import model.business.Manifestation;
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -27,15 +24,16 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     }
 
     private final XMLChemin chemin;
-    private final String nomFicher;
+    private final String nomFichier;
     private Element racine;
-
+    
+    /*
     public XMLChemin getChemin() {
-        return chemin;
-    }
-
+    return chemin;
+    }*/
+    
     public String getNomFicher() {
-        return nomFicher;
+        return nomFichier;
     }
 
     public Element getRacine() {
@@ -44,7 +42,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     public XMLManifestationDAO() {
         this.chemin = new XMLChemin();
-        this.nomFicher = "manifestation.xml";
+        this.nomFichier = "manifestation.xml";
     }
 
     @Override
@@ -54,13 +52,6 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public int create(Manifestation manifestation) {
-
-        try {
-            File dir = new File("src/data/");
-            dir.mkdirs();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
 
         racine = new Element("contact");
         Element manif = new Element("manifestation");
@@ -72,7 +63,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         Element libelle_manif = new Element("libelle_manif");
         libelle_manif.setText(manifestation.getLibelleManif());
         manif.addContent(libelle_manif);
-        this.sauvegarde(this.nomFicher);
+        this.sauvegarde();
 
         return 1;
     }
@@ -103,13 +94,10 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
      }*/
 
-    public void sauvegarde(String nomFichier) {
-        //Document document = new Document(racine);
-        // XMLChemin test = new XMLChemin();
-
+    private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.nomFichier));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -134,8 +122,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            // this.sauvegarde(this.nomFicher);
-
+            
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
@@ -155,6 +142,37 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
                 if (numManif.equals(element.getAttributeValue("id"))) {
                     root.removeContent(element);
+                    break;
+                }
+
+            }
+
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            // this.sauvegarde(this.nomFicher);
+
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+        public void modifier(Manifestation manifestation, String libelle) {
+        SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+
+        try {
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+
+            String numManif = Integer.toString(manifestation.getIdManif());
+
+            for (Element element : root.getChildren()) {
+
+                if (numManif.equals(element.getAttributeValue("id"))) {
+                    // root.removeContent(element);
+                     element.getChild("libelle_manif").setText(libelle);
+                    // root.getChild("manifestation").getAttribute("libelle").setValue(libelle);
+      
                     break;
                 }
 

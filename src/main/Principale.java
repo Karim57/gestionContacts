@@ -19,6 +19,7 @@ public class Principale {
         xml.ajouter(m3);
         xml.ajouter(m4);
         xml.supprimer(m2);
+        xml.modifier(m3, "Reunion annulée");
        // xml.create(m);
                 
         
