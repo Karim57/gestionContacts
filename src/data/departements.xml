@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contact>
+  <departement id="1">
+    <libelle_dpt>Informatique</libelle_dpt>
+  </departement>
+  <departement id="3">
+    <libelle_dpt>Physique</libelle_dpt>
+  </departement>
+  <departement id="4">
+    <libelle_dpt>Biologie</libelle_dpt>
+  </departement>
+</contact>
