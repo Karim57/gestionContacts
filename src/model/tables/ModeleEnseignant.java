@@ -27,6 +27,8 @@ public class ModeleEnseignant extends ModeleGenerique<Enseignant> {
             case 3:
                 o = enseignant.getIdEnseignant();
                 break;
+            case 4:
+                o = enseignant.getDepartement().getIdDepartement();
         }
         return o;
     }

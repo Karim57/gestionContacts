@@ -4,11 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.Iterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import model.business.Departement;
 import model.business.Manifestation;
 import model.dao.sql.SQLContactDAO;
@@ -18,19 +19,22 @@ import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
 import view.IObservable;
+import view.VueEnseignants;
 
-public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener {
+public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener {
 
     private IObservable vue;
     private ModeleManifestation donneesManifestation;
     private ModeleDepartement donneesDepartement;
     private ModeleContact donneesContact;
+    
+    private VueEnseignants vueEnseignants;
+
+    private static boolean enseignantOuverte = false;
 
     private static int activePane = 0;
-    private static int activePaneAjout = 0;
 
     private String[] search = {""};
-    private String searchDpt = "";
 
     public ControleurPrincipal(IObservable v) {
         this.vue = v;
@@ -42,7 +46,6 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
         if (s.equals("Nouveau")) {
             this.vue.construitAjoutModif();
-            activePaneAjout = this.vue.getActivePane();
             this.vue.afficheAjoutModif();
         }
 
@@ -65,23 +68,31 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
             if (activePane == 0) {
                 Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
                 this.vue.remplitChamps(manifestaion.getLibelleManif());
-                activePaneAjout = 0;
             } else if (activePane == 1) {
                 Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
                 this.vue.remplitChamps(departement.getLibelleDepartement());
-                activePaneAjout = 1;
             }
             this.vue.afficheAjoutModif();
         }
 
+        if (s.equals("ManifDefaut")) {
+            if (!enseignantOuverte) {
+                vueEnseignants = new VueEnseignants(new Departement(5, "Informatique"));
+                enseignantOuverte = true;
+                vueEnseignants.addWindowListener(this);
+            } else {
+                vueEnseignants.toFront();
+            }
+        }
+
         if (s.equals("submitAjout")) {
             String libelle = this.vue.getLibelle();
-            if (activePaneAjout == 0) {
+            if (activePane == 0) {
                 Manifestation manifestaion = new Manifestation(libelle);
                 this.donneesManifestation.ajouterElement(manifestaion);
                 SQLManifestationDAO.getInstance().create(manifestaion);
 
-            } else if (activePaneAjout == 1) {
+            } else if (activePane == 1) {
                 Departement departement = new Departement(libelle);
                 this.donneesDepartement.ajouterElement(departement);
                 SQLDepartementDAO.getInstance().create(departement);
@@ -91,13 +102,13 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
         if (s.equals("submitModif")) {
             String libelle = this.vue.getLibelle();
-            if (activePaneAjout == 0) {
+            if (activePane == 0) {
                 Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
                 manifestaion.setLibelleManif(libelle);
                 this.donneesManifestation.setRow(this.vue.getLigneSelectionnee(), manifestaion);
                 SQLManifestationDAO.getInstance().update(manifestaion);
 
-            } else if (activePaneAjout == 1) {
+            } else if (activePane == 1) {
                 Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
                 departement.setLibelleDepartement(libelle);
                 this.donneesDepartement.setRow(this.vue.getLigneSelectionnee(), departement);
@@ -199,6 +210,45 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     @Override
     public void stateChanged(ChangeEvent e) {
         this.vue.gereButtonsActifs();
+        activePane = this.vue.getActivePane();
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        this.vue.gereButtonsActifs();
+    }
+
+    @Override
+    public void windowOpened(WindowEvent we) {
+        enseignantOuverte = true;
+    }
+
+    @Override
+    public void windowClosing(WindowEvent we) {
+        enseignantOuverte = false;
+    }
+
+    @Override
+    public void windowClosed(WindowEvent we) {
+        enseignantOuverte = false;
+    }
+
+    @Override
+    public void windowIconified(WindowEvent we) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent we) {
+        enseignantOuverte = true;
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent we) {
     }
 
 }

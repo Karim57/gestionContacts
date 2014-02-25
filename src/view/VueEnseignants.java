@@ -28,7 +28,6 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
     private JTableDonnees tableEnseignants;
 
     public VueEnseignants(Departement departement) {
-
         this();
         this.cListeDpt.setSelectedItem(departement);
     }
@@ -51,7 +50,7 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
 
         this.setVisible(true);
 
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     @Override
@@ -192,7 +191,7 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
         }
 
         filtrePlusieursMotsEtDpt.add(RowFilter.andFilter(filtrePlusieursMots));
-        filtrePlusieursMotsEtDpt.add(RowFilter.regexFilter(dpt, 2));
+        filtrePlusieursMotsEtDpt.add(RowFilter.regexFilter("^" + dpt + "$", 2));
 
         sorter.setRowFilter(RowFilter.andFilter(filtrePlusieursMotsEtDpt));
 

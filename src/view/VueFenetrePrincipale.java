@@ -10,6 +10,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -43,24 +45,31 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
     public VueFenetrePrincipale() {
 
         super("Gestion des événements");
-        this.creerSplashScreen();
+        try {
+            this.creerSplashScreen();
+            this.lMessage.setText("Chargment des données");
+            Thread.sleep(2000);
+            this.monControleur = new ControleurPrincipal(this);
+            this.lMessage.setText("Création de l'interface graphique");
+            Thread.sleep(3000);
+            this.add(creerBarreOutils(), BorderLayout.NORTH);
+            this.add(creerPanelPrincipal(), BorderLayout.CENTER);
 
-        this.monControleur = new ControleurPrincipal(this);
+            this.gereEcouteur();
 
-        this.add(creerBarreOutils(), BorderLayout.NORTH);
-        this.add(creerPanelPrincipal(), BorderLayout.CENTER);
+            this.gereButtonsActifs();
 
-        this.gereButtonsActifs();
-        this.gereEcouteur();
+            this.setSize(700, 500);
+            this.setLocation(300, 100);
 
-        this.setSize(700, 500);
-        this.setLocation(300, 100);
+            wSplashScreen.dispose();
 
-        wSplashScreen.dispose();
+            this.setVisible(true);
 
-        this.setVisible(true);
-
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(VueFenetrePrincipale.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void creerSplashScreen() {
@@ -100,10 +109,16 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         this.bNouveau.addActionListener(monControleur);
         this.bSupprimer.addActionListener(monControleur);
         this.bModifier.addActionListener(monControleur);
+        
+        this.bManifDefaut.addActionListener(monControleur);
 
         this.tpPrincipal.addChangeListener(monControleur);
 
         this.tSearch.getDocument().addDocumentListener(monControleur);
+
+        this.tableManifestations.getSelectionModel().addListSelectionListener(monControleur);
+        this.tableDepartements.getSelectionModel().addListSelectionListener(monControleur);
+
 
     }
 
@@ -113,8 +128,6 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
         this.bSubmit.addActionListener(monControleur);
         this.bCancel.addActionListener(monControleur);
-
-        // this.frameAjoutModif.addWindowListener(monControleur);
     }
 
     private JPanel creerPanelPrincipal() {
@@ -168,13 +181,51 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
         switch (this.tpPrincipal.getSelectedIndex()) {
             case 0:
+                this.bNouveau.setEnabled(true);
+                this.bNouveau.setToolTipText("Ajouter une manifestation");
+                this.bModifier.setEnabled(true);
+                this.bModifier.setToolTipText("Modifier cette manifestation");
+                this.bSupprimer.setEnabled(true);
+                this.bManifDefaut.setEnabled(false);
+
+                if (this.tableManifestations.getSelectedRowCount() == 1) {
+                    this.bModifier.setEnabled(true);
+                } else {
+                    this.bModifier.setEnabled(false);
+                }
+
+                if (this.tableManifestations.getSelectedRowCount() > 0) {
+                    this.bSupprimer.setEnabled(true);
+                } else {
+                    this.bSupprimer.setEnabled(false);
+                }
+
                 break;
             case 1:
+                this.bNouveau.setEnabled(true);
+                this.bNouveau.setToolTipText("Ajouter un département ");
+                this.bModifier.setEnabled(true);
+                this.bModifier.setToolTipText("Modifier ce département");
+                this.bSupprimer.setEnabled(true);
+                this.bManifDefaut.setEnabled(false);
+
+                if (this.tableDepartements.getSelectedRowCount() == 1) {
+                    this.bModifier.setEnabled(true);
+                } else {
+                    this.bModifier.setEnabled(false);
+                }
+
+                if (this.tableDepartements.getSelectedRowCount() > 0) {
+                    this.bSupprimer.setEnabled(true);
+                } else {
+                    this.bSupprimer.setEnabled(false);
+                }
                 break;
             case 2:
-                this.bNouveau.setVisible(false);
-                this.bModifier.setVisible(false);
-                this.bSupprimer.setVisible(false);
+                this.bNouveau.setEnabled(false);
+                this.bModifier.setEnabled(false);
+                this.bSupprimer.setEnabled(false);
+                this.bManifDefaut.setEnabled(true);
                 this.bManifDefaut.setToolTipText("Importer");
                 break;
         }
