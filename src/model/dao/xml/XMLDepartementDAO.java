@@ -54,7 +54,7 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
     @Override
     public int create(Departement departement) {
 
-        racine = new Element("contact");
+        racine = new Element("departements");
         Element dpt = new Element("departement");
 
         Attribute id = new Attribute("id", Integer.toString(departement.getIdDepartement()));

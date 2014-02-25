@@ -54,7 +54,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     @Override
     public int create(Enseignant enseignant) {
 
-        racine = new Element("contact");
+        racine = new Element("enseignants");
         Element ens = new Element("enseignant");
 
         Attribute id = new Attribute("id", Integer.toString(enseignant.getIdEnseignant()));

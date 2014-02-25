@@ -1,8 +1,10 @@
 package main;
 
 import model.business.Departement;
+import model.business.Enseignant;
 import model.business.Manifestation;
 import model.dao.xml.XMLDepartementDAO;
+import model.dao.xml.XMLEnseignantDAO;
 import model.dao.xml.XMLManifestationDAO;
 
 public class Principale {
@@ -34,7 +36,19 @@ public class Principale {
         xmlDpt.ajouter(d4);
         xmlDpt.supprimer(d2);
         xmlDpt.modifier(d3, "Physique");
-       // xml.create(m);
+        
+        Enseignant e1 = new Enseignant(1, "Laroche", "Pierre", d1);
+        Enseignant e2 = new Enseignant(2, "Weber", "Pierre", d1);
+        Enseignant e3 = new Enseignant(3, "Dosne", "Isabelle", d3);
+        Enseignant e4 = new Enseignant(4, "Nagel", "Bernard", d1);
+        
+        XMLEnseignantDAO xmlEns = new XMLEnseignantDAO();
+        xmlEns.create(e1);
+        xmlEns.ajouter(e2);
+        xmlEns.ajouter(e3);
+        xmlEns.ajouter(e4);
+        xmlEns.supprimer(e2);
+        xmlEns.modifier(e4, "Nagel" , "Cyril");
                 
         //new VueFenetrePrincipale();
     }
