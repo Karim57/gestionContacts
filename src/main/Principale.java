@@ -2,9 +2,11 @@ package main;
 
 import model.business.Departement;
 import model.business.Enseignant;
+import model.business.Formation;
 import model.business.Manifestation;
 import model.dao.xml.XMLDepartementDAO;
 import model.dao.xml.XMLEnseignantDAO;
+import model.dao.xml.XMLFormationDAO;
 import model.dao.xml.XMLManifestationDAO;
 
 public class Principale {
@@ -49,6 +51,19 @@ public class Principale {
         xmlEns.ajouter(e4);
         xmlEns.supprimer(e2);
         xmlEns.modifier(e4, "Nagel" , "Cyril");
+        
+        Formation f1 = new Formation(1, "LPSIL", d1);
+        Formation f2 = new Formation(2, "1A", d1);
+        Formation f3 = new Formation(3, "2A", d1);
+        Formation f4 = new Formation(4, "LPGEA", d2);
+        
+        XMLFormationDAO xmlForm = new XMLFormationDAO();
+        xmlForm.create(f1);
+        xmlForm.ajouter(f2);
+        xmlForm.ajouter(f3);
+        xmlForm.ajouter(f4);
+        xmlForm.supprimer(f2);
+        xmlForm.modifier(f4, "LP Management");
                 
         //new VueFenetrePrincipale();
     }
