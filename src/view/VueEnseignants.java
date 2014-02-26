@@ -15,6 +15,7 @@ import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.TableRowSorter;
+import model.business.Contact;
 import model.business.Departement;
 
 public class VueEnseignants extends vueAbstraite implements IObservable, IOEnseignant {
@@ -226,6 +227,11 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
 
     @Override
     public int[] getLesLignesSelectionnee() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void construitProfil(Contact c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

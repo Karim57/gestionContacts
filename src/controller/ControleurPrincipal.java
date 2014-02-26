@@ -10,6 +10,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import model.business.Contact;
 import model.business.Departement;
 import model.business.Manifestation;
 import model.dao.sql.SQLContactDAO;
@@ -27,7 +28,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     private ModeleManifestation donneesManifestation;
     private ModeleDepartement donneesDepartement;
     private ModeleContact donneesContact;
-    
+
     private VueEnseignants vueEnseignants;
 
     private static boolean enseignantOuverte = false;
@@ -62,8 +63,8 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Modifier")) {
-            this.vue.construitAjoutModif();
-            this.vue.prepareModif();
+            this.vue.construitAjoutModif(); // On construit d'abord le frame
+            this.vue.prepareModif(); // sinon on peut pas remplir
 
             if (activePane == 0) {
                 Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
@@ -72,6 +73,8 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
                 Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
                 this.vue.remplitChamps(departement.getLibelleDepartement());
             }
+            // On l'affiche en modal à la fin,
+            // Sinon le remplissage va pas marcher (vue bloquée)
             this.vue.afficheAjoutModif();
         }
 
@@ -119,6 +122,11 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
         if (s.equals("Annuler")) {
             this.vue.close();
+        }
+
+        if (s.equals("Profil")) {
+            Contact contact = this.donneesContact.getValueAt(this.vue.getLigneSelectionnee());
+            this.vue.construitProfil(contact);
         }
     }
 
@@ -235,7 +243,6 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void windowIconified(WindowEvent we) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

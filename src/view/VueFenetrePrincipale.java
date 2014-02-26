@@ -12,18 +12,26 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import model.business.Contact;
 
 public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
@@ -47,7 +55,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         super("Gestion des événements");
         try {
             this.creerSplashScreen();
-            this.lMessage.setText("Chargment des données");
+            this.lMessage.setText("Chargement des données ...");
             Thread.sleep(2000);
             this.monControleur = new ControleurPrincipal(this);
             this.lMessage.setText("Création de l'interface graphique");
@@ -59,7 +67,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
             this.gereButtonsActifs();
 
-            this.setSize(700, 500);
+            this.setSize(1000, 600);
             this.setLocation(300, 100);
 
             wSplashScreen.dispose();
@@ -77,24 +85,37 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
         JLabel lTitre = new JLabel("Gestionnaire de rencontres étudiants");
         lTitre.setFont(new Font(null, WIDTH, 26));
-        lTitre.setBorder(new EmptyBorder(4, 25, 4, 20));
+        lTitre.setBorder(new EmptyBorder(4, 25, 10, 20));
 
         ClassLoader cl = this.getClass().getClassLoader();
         JLabel lLogo = new JLabel(new ImageIcon(cl.getResource("view/images/logo2.png")));
-        lLogo.setBorder(new EmptyBorder(20, 20, 4, 20));
+        lLogo.setBorder(new EmptyBorder(10, 5, 10, 20));
 
         lMessage = new JLabel();
 
-        lMessage.setFont(new Font(null, WIDTH, 12));
-        lMessage.setBorder(new EmptyBorder(0, 20, 2, 20));
+        lMessage.setForeground(Color.GRAY);
+        lMessage.setFont(new Font(null, 1, 13));
+        lMessage.setBorder(new EmptyBorder(5, 24, 0, 10));
 
-        JPanel p = new JPanel();
+        JLabel lCopyright = new JLabel();
+
+        lCopyright.setForeground(Color.BLACK);
+        lCopyright.setFont(new Font(null, 0, 10));
+        lCopyright.setBorder(new EmptyBorder(4, 24, 4, 10));
+        lCopyright.setText("Copyright (c) Licence Professionnelle Web et Commerce Electronique");
+
+        JPanel pLabel = new JPanel(new BorderLayout());
+        pLabel.setBackground(Color.WHITE);
+        pLabel.setBorder(new MatteBorder(5, 0, 0, 0, Color.darkGray));
+        pLabel.add(lMessage, BorderLayout.NORTH);
+        pLabel.add(lCopyright, BorderLayout.CENTER);
+
+        JPanel p = new JPanel(new BorderLayout());
         p.setBackground(Color.yellow);
-        p.setBorder(new LineBorder(Color.black));
-        p.setLayout(new BorderLayout());
+        p.setBorder(new LineBorder(Color.black, 1));
         p.add(lLogo, BorderLayout.NORTH);
         p.add(lTitre, BorderLayout.CENTER);
-        p.add(lMessage, BorderLayout.SOUTH);
+        p.add(pLabel, BorderLayout.SOUTH);
 
         wSplashScreen.add(p);
         wSplashScreen.pack();
@@ -109,8 +130,9 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         this.bNouveau.addActionListener(monControleur);
         this.bSupprimer.addActionListener(monControleur);
         this.bModifier.addActionListener(monControleur);
-        
-        this.bManifDefaut.addActionListener(monControleur);
+
+        this.bExporter.addActionListener(monControleur);
+        this.bProfil.addActionListener(monControleur);
 
         this.tpPrincipal.addChangeListener(monControleur);
 
@@ -118,7 +140,6 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
         this.tableManifestations.getSelectionModel().addListSelectionListener(monControleur);
         this.tableDepartements.getSelectionModel().addListSelectionListener(monControleur);
-
 
     }
 
@@ -186,7 +207,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
                 this.bModifier.setEnabled(true);
                 this.bModifier.setToolTipText("Modifier cette manifestation");
                 this.bSupprimer.setEnabled(true);
-                this.bManifDefaut.setEnabled(false);
+                this.bExporter.setEnabled(false);
 
                 if (this.tableManifestations.getSelectedRowCount() == 1) {
                     this.bModifier.setEnabled(true);
@@ -207,7 +228,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
                 this.bModifier.setEnabled(true);
                 this.bModifier.setToolTipText("Modifier ce département");
                 this.bSupprimer.setEnabled(true);
-                this.bManifDefaut.setEnabled(false);
+                this.bExporter.setEnabled(false);
 
                 if (this.tableDepartements.getSelectedRowCount() == 1) {
                     this.bModifier.setEnabled(true);
@@ -225,10 +246,106 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
                 this.bNouveau.setEnabled(false);
                 this.bModifier.setEnabled(false);
                 this.bSupprimer.setEnabled(false);
-                this.bManifDefaut.setEnabled(true);
-                this.bManifDefaut.setToolTipText("Importer");
+                this.bExporter.setEnabled(true);
+                this.bExporter.setToolTipText("Importer");
                 break;
         }
+    }
+
+    @Override
+    public void construitProfil(Contact c) {
+
+        String[] s = {"", ""};
+        Object[][] data = {
+            {"Lieu de la rencontre", c.getManifestation().getLibelleManif()},
+            {"Enseignant", c.getEnseignant().getNomEnseignant() + " " + c.getEnseignant().getPrenomEnseignant()},
+            {"Date", c.getDateContact()},
+            {"Heure", c.getHeureContact()},
+            {"Nom du contact", c.getNomContact()},
+            {"Description", c.getDescriptionContact()}
+        };
+
+        JTable jt = new JTable(data, s);
+        jt.setRowHeight(5, 120);
+
+        JLabel lManifestation = new JLabel("Contact rencontré à : " + c.getManifestation().getLibelleManif());
+        lManifestation.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lNomContact = new JLabel("Nom : " + c.getNomContact());
+        lNomContact.setBorder(new EmptyBorder(15, 0, 0, 0));
+
+        JLabel lPrenomContact = new JLabel("Prenom : " + c.getPrenomContact());
+        lPrenomContact.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lMailContact = new JLabel("E-mail : " + c.getEmailContact());
+        lMailContact.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lEtude1 = new JLabel("Etude 1 : " + c.getEtudes1Contact());
+        lEtude1.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lEtude2 = new JLabel("Etude 2 : " + c.getEtudes2Contact());
+        lEtude2.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JTextArea lDescription = new JTextArea(c.getDescriptionContact());
+        lDescription.setWrapStyleWord(true);
+        lDescription.setEditable(false);
+        lDescription.setLineWrap(true);
+        JScrollPane spDescription = new JScrollPane(lDescription);
+        lDescription.setBorder(new EmptyBorder(3, 20, 0, 15));
+        spDescription.setBorder(new EmptyBorder(0, 0, 0, 0));
+        lDescription.setBackground(new Color(240, 240, 240));
+        JLabel lDescTitle = new JLabel("Description : ");
+        lDescTitle.setBorder(new EmptyBorder(15, 0, 0, 0));
+
+        JLabel lHeure = new JLabel(" à " + c.getHeureContact().toString());
+        lHeure.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lDate = new JLabel(" Le : " + c.getDateContact().toString());
+        lDate.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lEns = new JLabel("Enseignant : " + c.getEnseignant().getNomEnseignant() + " " + c.getEnseignant().getPrenomEnseignant());
+        lEns.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        /*        JLabel lChoix1 = new JLabel("Formation souhaitée 1 : " + c.getListeFormations().get(0).getLibelleFormation());
+         JLabel lChoix2 = new JLabel("Formation souhaitée 2 : " + c.getListeFormations().get(1).getLibelleFormation());
+         JLabel lChoix3 = new JLabel("Formation souhaitée 3 : " + c.getListeFormations().get(2).getLibelleFormation());
+         JLabel lChoix4 = new JLabel("Formation souhaitée 3 : " + c.getListeFormations().get(3).getLibelleFormation());*/
+        JDialog vueProfil = new JDialog(this, "Aperçu d'un contact");
+        JPanel pInfosRencontre = new JPanel();
+        pInfosRencontre.setLayout(new BoxLayout(pInfosRencontre, BoxLayout.Y_AXIS));
+
+        pInfosRencontre.add(lManifestation);
+        pInfosRencontre.add(lEns);
+        pInfosRencontre.add(lDate);
+        pInfosRencontre.add(lHeure);
+
+        JPanel pInfosContact = new JPanel();
+        pInfosContact.setLayout(new BoxLayout(pInfosContact, BoxLayout.Y_AXIS));
+
+        pInfosContact.add(lNomContact);
+        pInfosContact.add(lPrenomContact);
+        pInfosContact.add(lMailContact);
+        pInfosContact.add(lEtude1);
+        pInfosContact.add(lEtude2);
+
+        pInfosContact.add(lDescTitle);
+
+        JPanel pTotal = new JPanel();
+
+        pTotal.setLayout(new BoxLayout(pTotal, BoxLayout.Y_AXIS));
+
+        pTotal.add(pInfosRencontre, BorderLayout.NORTH);
+        pTotal.add(pInfosContact, BorderLayout.CENTER);
+        pTotal.add(spDescription, BorderLayout.SOUTH);
+
+        vueProfil.add(pTotal);
+
+        vueProfil.pack();
+        vueProfil.setSize(600, 350);
+        vueProfil.setLocation(400, 200);
+        vueProfil.setModal(true);
+        vueProfil.setVisible(true);
+
     }
 
     @Override

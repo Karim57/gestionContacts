@@ -1,5 +1,7 @@
 package view;
 
+import model.business.Contact;
+
 public interface IObservable {
 
     public String getLibelle();
@@ -31,5 +33,7 @@ public interface IObservable {
     public int confirmation(String message, String titre, int typeMessage, int icone);
 
     public void afficheErreur(String message, String titre, int typeMessage);
+
+    public void construitProfil(Contact c);
 
 }
