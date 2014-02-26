@@ -154,7 +154,6 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         }
         return true;
     }
-    
 
     @Override
     public void deleteList(ArrayList<Manifestation> liste) {
