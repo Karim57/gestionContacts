@@ -67,13 +67,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
         
         Element prenom_ens = new Element("prenom_ens");
         prenom_ens.setText(enseignant.getPrenomEnseignant());
-        ens.addContent(prenom_ens);
-        /*
-        Element dpt_ens = new Element("dpt_ens");
-        dpt_ens.setText(enseignant.geti());
-        ens.addContent(nom_ens);
-        */
-        
+        ens.addContent(prenom_ens);     
         
         this.sauvegarde();
 
@@ -113,33 +107,6 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
             
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void supprimer(Enseignant enseignant) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numEns = Integer.toString(enseignant.getIdEnseignant());
-
-            for (Element element : root.getChildren()) {
-
-                if (numEns.equals(element.getAttributeValue("id"))) {
-                    root.removeContent(element);
-                    break;
-                }
-
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
@@ -189,8 +156,33 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     }
 
     @Override
-    public boolean delete(Enseignant objetASupprimer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean delete(Enseignant enseignant) {
+         SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+
+        try {
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+
+            String numEns = Integer.toString(enseignant.getIdEnseignant());
+
+            for (Element element : root.getChildren()) {
+
+                if (numEns.equals(element.getAttributeValue("id"))) {
+                    root.removeContent(element);
+                    break;
+                }
+
+            }
+
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -200,6 +192,11 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public Enseignant readById(int id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean update(Enseignant objetAModifier, String libelle) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

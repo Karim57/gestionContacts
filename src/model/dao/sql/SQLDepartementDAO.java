@@ -158,4 +158,9 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         }
     }
 
+    @Override
+    public boolean update(Departement objetAModifier, String libelle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import model.business.Formation;
+import model.business.Contact;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -13,21 +13,21 @@ import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
 
-public class XMLFormationDAO implements DAOInterface<Formation> {
+public class XMLContactDAO implements DAOInterface<Contact> {
 
-    private static XMLFormationDAO instance = null;
+    private static XMLContactDAO instance = null;
 
-    public static XMLFormationDAO getInstance() {
-        if (XMLFormationDAO.instance == null) {
-            XMLFormationDAO.instance = new XMLFormationDAO();
+    public static XMLContactDAO getInstance() {
+        if (XMLContactDAO.instance == null) {
+            XMLContactDAO.instance = new XMLContactDAO();
         }
-        return XMLFormationDAO.instance;
+        return XMLContactDAO.instance;
     }
 
     private final XMLChemin chemin;
     private final String nomFichier;
     private Element racine;
-    
+        
     public String getNomFicher() {
         return nomFichier;
     }
@@ -36,34 +36,42 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
         return racine;
     }
 
-    public XMLFormationDAO() {
+    public XMLContactDAO() {
         this.chemin = new XMLChemin();
-        this.nomFichier = "formations.xml";
+        this.nomFichier = "contacts.xml";
     }
 
     @Override
-    public ArrayList<Formation> readAll() {
+    public ArrayList<Contact> readAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
-    public int create(Formation formation) {
+    public int create(Contact objetAAjouter) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public int create(Contact contact, XMLManifestationDAO manifDAO, XMLEnseignantDAO ensDAO ) {
 
-        racine = new Element("formations");
-        Element form = new Element("formation");
+        racine = new Element("contacts");
+        Element cont = new Element("contact");
 
-        Attribute id = new Attribute("id", Integer.toString(formation.getIdFormation()));
-        form.setAttribute(id);
-        racine.addContent(form);
+        Attribute id = new Attribute("id", Integer.toString(contact.getIdContact()));
+        cont.setAttribute(id);
+        racine.addContent(cont);
+          
+        manifDAO.create(contact.getManifestation());
+        ensDAO.create(contact.getEnseignant());
+        
+        Element nom = new Element("nom");
+        nom.setText(contact.getNomContact());
+        cont.addContent(nom);
 
-        Element libelle_form = new Element("libelle_form");
-        libelle_form.setText(formation.getLibelleFormation());
-        form.addContent(libelle_form);
         this.sauvegarde();
 
         return 1;
     }
- 
+
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
@@ -73,7 +81,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
         }
     }
 
-    public void ajouter(Formation formation) {
+    public void ajouter(Contact contact) {
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
@@ -81,14 +89,12 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             Document doc = (Document) builder.build(xmlFile);
             Element root = doc.getRootElement();
 
-            Element form = new Element("formation");
-            Attribute id = new Attribute("id", Integer.toString(formation.getIdFormation()));
-            form.setAttribute(id);
-            root.addContent(form);
+            Element cont = new Element("contact");
+            Attribute id = new Attribute("id", Integer.toString(contact.getIdContact()));
+            cont.setAttribute(id);
+            root.addContent(cont);
 
-            Element libelle_form = new Element("libelle_form");
-            libelle_form.setText(formation.getLibelleFormation());
-            form.addContent(libelle_form);
+           
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
@@ -97,8 +103,8 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             System.out.println(e.getMessage());
         }
     }
-
-        public void modifier(Formation formation, String libelle) {
+    /*
+        public void modifier(Enseignant enseignant, String nom, String prenom) {
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
@@ -106,12 +112,13 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             Document doc = (Document) builder.build(xmlFile);
             Element root = doc.getRootElement();
 
-            String numForm = Integer.toString(formation.getIdFormation());
+            String numEns = Integer.toString(enseignant.getIdEnseignant());
 
             for (Element element : root.getChildren()) {
 
-                if (numForm.equals(element.getAttributeValue("id"))) {
-                     element.getChild("libelle_form").setText(libelle);
+                if (numEns.equals(element.getAttributeValue("id"))) {
+                     element.getChild("nom_ens").setText(nom);
+                     element.getChild("prenom_ens").setText(prenom);
                     break;
                 }
 
@@ -119,34 +126,45 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            // this.sauvegarde(this.nomFicher);
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
-    }
+    }*/
+    /*
+     @Override
+     public int createList(ArrayList<Manifestation> liste) {
+     for (Manifestation manifestation : liste) {
+     this.create(manifestation);
+     }
+     return 0;
+     }
+     */
 
     @Override
-    public boolean update(Formation objetAModifier) {
+    public boolean update(Contact objetAModifier) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean delete(Formation formation) {
-        SAXBuilder builder = new SAXBuilder();
+    public boolean delete(Contact contact) {
+         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
         try {
             Document doc = (Document) builder.build(xmlFile);
             Element root = doc.getRootElement();
 
-            String numForm = Integer.toString(formation.getIdFormation());
+            String numContact = Integer.toString(contact.getIdContact());
 
             for (Element element : root.getChildren()) {
 
-                if (numForm.equals(element.getAttributeValue("id"))) {
+                if (numContact.equals(element.getAttributeValue("id"))) {
                     root.removeContent(element);
                     break;
                 }
+
             }
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
@@ -160,18 +178,19 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
     }
 
     @Override
-    public void deleteList(ArrayList<Formation> liste) {
+    public void deleteList(ArrayList<Contact> liste) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Formation readById(int id) {
+    public Contact readById(int id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean update(Formation objetAModifier, String libelle) {
+    public boolean update(Contact objetAModifier, String libelle) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
+

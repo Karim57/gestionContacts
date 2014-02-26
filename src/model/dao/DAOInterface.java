@@ -7,8 +7,10 @@ public interface DAOInterface<T> {
     public ArrayList<T> readAll();
 
     public int create(T objetAAjouter);
-
+    
     public boolean update(T objetAModifier);
+    
+    public boolean update(T objetAModifier, String libelle);
 
     public boolean delete(T objetASupprimer);
 

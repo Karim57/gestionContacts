@@ -136,4 +136,9 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public boolean update(Contact objetAModifier, String libelle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

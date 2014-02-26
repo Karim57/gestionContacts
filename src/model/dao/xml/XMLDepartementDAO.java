@@ -68,33 +68,7 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
 
         return 1;
     }
-    /*
-     public void afficher(Element racine, String nomFichier) {
-     //On crée une instance de SAXBuilder
-     SAXBuilder sxb = new SAXBuilder();
-
-     try {
-     //On crée un nouveau document JDOM avec en argument le fichier XML
-     //Le parsing est terminé ;)
-     Document document = sxb.build(new File(this.chemin + "/" + nomFichier));
-     } catch (IOException | JDOMException e) {
-     System.out.println(e.getMessage());
-     }
-
-     //On crée une List contenant tous les noeuds "manifestation" de l'Element racine
-     List liste = racine.getChildren("manifestation");
-
-     //On crée un Iterator sur notre liste
-     Iterator i = liste.iterator();
-     while (i.hasNext()) {
-     Element courant = (Element) i.next();
-     //On affiche id_manif de l’élément courant
-     System.out.println(courant.getChild("libelle_manif").getText());
-     System.out.println("hdgyuehhen");
-     }
-
-     }*/
-
+ 
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
@@ -128,34 +102,7 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
             System.out.println(e.getMessage());
         }
     }
-
-    public void supprimer(Departement departement) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numDpt = Integer.toString(departement.getIdDepartement());
-
-            for (Element element : root.getChildren()) {
-
-                if (numDpt.equals(element.getAttributeValue("id"))) {
-                    root.removeContent(element);
-                    break;
-                }
-
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-    
+   
         public void modifier(Departement departement, String libelle) {
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
@@ -199,8 +146,32 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
     }
 
     @Override
-    public boolean delete(Departement objetASupprimer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean delete(Departement departement) {
+        SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+
+        try {
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+
+            String numDpt = Integer.toString(departement.getIdDepartement());
+
+            for (Element element : root.getChildren()) {
+
+                if (numDpt.equals(element.getAttributeValue("id"))) {
+                    root.removeContent(element);
+                    break;
+                }
+            }
+
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));         
+
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -212,5 +183,11 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
     public Departement readById(int id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public boolean update(Departement objetAModifier, String libelle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
 }

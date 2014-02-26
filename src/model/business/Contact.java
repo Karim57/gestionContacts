@@ -28,6 +28,17 @@ public class Contact implements Comparable<Contact> {
         this.heureContact = new Time(localTime.getHourOfDay(), localTime.getMinuteOfHour(), localTime.getSecondOfMinute());
         this.listeFormations = new ArrayList<Formation>();
     }
+    
+        public Contact(int idContact, Manifestation manif, Enseignant ens) {
+
+        this.setIdContact(idContact);
+        this.setManifestation(manif);
+        this.setEnseignant(ens);
+        this.dateContact = new LocalDate().toDateTimeAtCurrentTime().toDate();
+        LocalTime localTime = new LocalTime();
+        this.heureContact = new Time(localTime.getHourOfDay(), localTime.getMinuteOfHour(), localTime.getSecondOfMinute());
+        this.listeFormations = new ArrayList<Formation>();
+    }
 
     public int getIdContact() {
         return idContact;
