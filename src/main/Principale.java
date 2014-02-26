@@ -1,6 +1,8 @@
 package main;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.sql.Date;
 import model.business.Contact;
 import model.business.Departement;
 import model.business.Enseignant;
@@ -79,9 +81,12 @@ public class Principale {
         
         
         Contact contact = new Contact(1,"EZZAHIRI", "Karim", "blabla@gmail.com", "LPSIL", "BAC S", "Reunion de pré-renter", m4, e2, listeFormations);
+        
         XMLContactDAO xmlContact = new XMLContactDAO();
         xmlContact.create(contact);
-                
-        //new VueFenetrePrincipale();
+        
+        contact.setEmailContact("email@gmail.com");
+        XMLContactDAO.getInstance().update(contact);
+
     }
 }
