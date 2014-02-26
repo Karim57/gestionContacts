@@ -47,7 +47,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
         super("Gestion des événements");
         try {
             this.creerSplashScreen();
-            this.lMessage.setText("Chargment des données");
+            this.lMessage.setText("Chargement des données");
             Thread.sleep(2000);
             this.monControleur = new ControleurPrincipal(this);
             this.lMessage.setText("Création de l'interface graphique");
