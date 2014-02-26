@@ -141,48 +141,45 @@ public class XMLContactDAO implements DAOInterface<Contact> {
             System.out.println(e.getMessage());
         }
     }
-    /*
-     public void modifier(Enseignant enseignant, String nom, String prenom) {
-     SAXBuilder builder = new SAXBuilder();
-     File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-     try {
-     Document doc = (Document) builder.build(xmlFile);
-     Element root = doc.getRootElement();
-
-     String numEns = Integer.toString(enseignant.getIdEnseignant());
-
-     for (Element element : root.getChildren()) {
-
-     if (numEns.equals(element.getAttributeValue("id"))) {
-     element.getChild("nom_ens").setText(nom);
-     element.getChild("prenom_ens").setText(prenom);
-     break;
-     }
-
-     }
-
-     XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-     outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-     // this.sauvegarde(this.nomFicher);
-
-     } catch (IOException | JDOMException e) {
-     System.out.println(e.getMessage());
-     }
-     }*/
-    /*
-     @Override
-     public int createList(ArrayList<Manifestation> liste) {
-     for (Manifestation manifestation : liste) {
-     this.create(manifestation);
-     }
-     return 0;
-     }
-     */
 
     @Override
-    public boolean update(Contact objetAModifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean update(Contact contact) {
+        SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+
+        try {
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+
+            String numContact = Integer.toString(contact.getIdContact());
+
+            for (Element element : root.getChildren()) {
+
+                if (numContact.equals(element.getAttributeValue("id"))) {
+                    element.getChild("manifestation").setText(Integer.toString(contact.getManifestation().getIdManif()));
+                    element.getChild("enseignant").setText(Integer.toString(contact.getEnseignant().getIdEnseignant()));
+                    element.getChild("nom").setText(contact.getNomContact());
+                    element.getChild("prenom").setText(contact.getPrenomContact());
+                    element.getChild("email").setText(contact.getEmailContact());
+                    element.getChild("etude1").setText(contact.getEtudes1Contact());
+                    element.getChild("etude2").setText(contact.getEtudes2Contact());
+                    element.getChild("date").setText(contact.getDateContact().toString());
+                    element.getChild("heure").setText(contact.getHeureContact().toString());
+                    element.getChild("description").setText(contact.getDescriptionContact());
+                    break;
+                }
+
+            }
+
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            // this.sauvegarde(this.nomFicher);
+
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -202,7 +199,6 @@ public class XMLContactDAO implements DAOInterface<Contact> {
                     root.removeContent(element);
                     break;
                 }
-
             }
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
@@ -222,11 +218,6 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
     @Override
     public Contact readById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean update(Contact objetAModifier, String libelle) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

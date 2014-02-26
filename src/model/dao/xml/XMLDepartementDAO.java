@@ -102,9 +102,10 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
             System.out.println(e.getMessage());
         }
     }
-   
-        public void modifier(Departement departement, String libelle) {
-        SAXBuilder builder = new SAXBuilder();
+
+    @Override
+    public boolean update(Departement departement) {
+         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
         try {
@@ -116,33 +117,20 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
             for (Element element : root.getChildren()) {
 
                 if (numDpt.equals(element.getAttributeValue("id"))) {
-                     element.getChild("libelle_dpt").setText(libelle);
+                     element.getChild("libelle_dpt").setText(departement.getLibelleDepartement());
                     break;
                 }
-
             }
-
+            
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
             // this.sauvegarde(this.nomFicher);
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
+            return false;
         }
-    }
-    /*
-     @Override
-     public int createList(ArrayList<Manifestation> liste) {
-     for (Manifestation manifestation : liste) {
-     this.create(manifestation);
-     }
-     return 0;
-     }
-     */
-
-    @Override
-    public boolean update(Departement objetAModifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -183,11 +171,5 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
     public Departement readById(int id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public boolean update(Departement objetAModifier, String libelle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 
 }

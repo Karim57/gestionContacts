@@ -112,8 +112,9 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
         }
     }
     
-        public void modifier(Enseignant enseignant, String nom, String prenom) {
-        SAXBuilder builder = new SAXBuilder();
+    @Override
+    public boolean update(Enseignant enseignant) {
+      SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
         try {
@@ -125,8 +126,8 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             for (Element element : root.getChildren()) {
 
                 if (numEns.equals(element.getAttributeValue("id"))) {
-                     element.getChild("nom_ens").setText(nom);
-                     element.getChild("prenom_ens").setText(prenom);
+                     element.getChild("nom_ens").setText(enseignant.getNomEnseignant());
+                     element.getChild("prenom_ens").setText(enseignant.getPrenomEnseignant());
                     break;
                 }
 
@@ -138,21 +139,9 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
+            return false;
         }
-    }
-    /*
-     @Override
-     public int createList(ArrayList<Manifestation> liste) {
-     for (Manifestation manifestation : liste) {
-     this.create(manifestation);
-     }
-     return 0;
-     }
-     */
-
-    @Override
-    public boolean update(Enseignant objetAModifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -192,11 +181,6 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public Enseignant readById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean update(Enseignant objetAModifier, String libelle) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

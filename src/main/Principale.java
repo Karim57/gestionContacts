@@ -27,7 +27,8 @@ public class Principale {
         xmlManif.ajouter(m3);
         xmlManif.ajouter(m4);
         xmlManif.delete(m2);
-        xmlManif.modifier(m3, "Reunion annulée");
+        m3.setLibelleManif("Réunion annulée");
+        xmlManif.update(m3);
         
         Departement d1 = new Departement(1, "Informatique");
         Departement d2 = new Departement(2, "GEA");
@@ -40,7 +41,8 @@ public class Principale {
         xmlDpt.ajouter(d3);
         xmlDpt.ajouter(d4);
         xmlDpt.delete(d2);
-        xmlDpt.modifier(d3, "Physique");
+        d3.setLibelleDepartement("Physique");
+        xmlDpt.update(d3);
         
         Enseignant e1 = new Enseignant(1, "Laroche", "Pierre", d1);
         Enseignant e2 = new Enseignant(2, "Weber", "Pierre", d1);
@@ -53,7 +55,9 @@ public class Principale {
         xmlEns.ajouter(e3);
         xmlEns.ajouter(e4);
         xmlEns.delete(e2);
-        xmlEns.modifier(e4, "Nagel" , "Cyril");
+        
+        e4.setPrenomEnseignant("Cyril");
+        xmlEns.update(e4);
         
         Formation f1 = new Formation(1, "LPSIL", d1);
         Formation f2 = new Formation(2, "1A", d1);
@@ -66,14 +70,13 @@ public class Principale {
         xmlForm.ajouter(f3);
         xmlForm.ajouter(f4);
         xmlForm.delete(f2);
-        xmlForm.modifier(f4, "LP Management");
-        
+                
         ArrayList<Formation> listeFormations = new ArrayList<Formation>(); 
         listeFormations.add(f1);
         listeFormations.add(f2);
         listeFormations.add(f3);
         listeFormations.add(f4);
-                
+        
         
         Contact contact = new Contact(1,"EZZAHIRI", "Karim", "blabla@gmail.com", "LPSIL", "BAC S", "Reunion de pré-renter", m4, e2, listeFormations);
         XMLContactDAO xmlContact = new XMLContactDAO();

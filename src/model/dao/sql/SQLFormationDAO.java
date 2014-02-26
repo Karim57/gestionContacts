@@ -93,9 +93,4 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public boolean update(Formation objetAModifier, String libelle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

@@ -98,7 +98,8 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
         }
     }
 
-        public void modifier(Formation formation, String libelle) {
+    @Override
+    public boolean update(Formation formation) {
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
@@ -111,7 +112,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             for (Element element : root.getChildren()) {
 
                 if (numForm.equals(element.getAttributeValue("id"))) {
-                     element.getChild("libelle_form").setText(libelle);
+                     element.getChild("libelle_form").setText(formation.getLibelleFormation());
                     break;
                 }
 
@@ -122,12 +123,9 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
+            return false;
         }
-    }
-
-    @Override
-    public boolean update(Formation objetAModifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -166,11 +164,6 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
     @Override
     public Formation readById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean update(Formation objetAModifier, String libelle) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

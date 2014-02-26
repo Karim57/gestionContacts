@@ -157,10 +157,4 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
             this.delete(manifestation);
         }
     }
-
-    @Override
-    public boolean update(Manifestation objetAModifier, String libelle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

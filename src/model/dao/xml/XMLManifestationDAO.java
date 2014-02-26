@@ -97,7 +97,8 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         }
     }
 
-     public void modifier(Manifestation manifestation, String libelle) {
+    @Override
+    public boolean update(Manifestation manifestation) {
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
@@ -110,22 +111,19 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
             for (Element element : root.getChildren()) {
 
                 if (numManif.equals(element.getAttributeValue("id"))) {
-                    element.getChild("libelle_manif").setText(libelle);
+                    element.getChild("libelle_manif").setText(manifestation.getLibelleManif());
                     break;
                 }
             }
-            
+
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
+            return false;
         }
-    }
-
-    @Override
-    public boolean update(Manifestation objetAModifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -166,10 +164,4 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     public Manifestation readById(int id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public boolean update(Manifestation objetAModifier, String libelle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

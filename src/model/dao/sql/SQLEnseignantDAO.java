@@ -162,9 +162,4 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         }
     }
 
-    @Override
-    public boolean update(Enseignant objetAModifier, String libelle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
