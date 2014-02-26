@@ -9,6 +9,11 @@ public class Formation implements Comparable<Formation> {
     public Formation(String libelleFormation) {
         this.libelleFormation = libelleFormation;
     }
+    
+    public Formation(int idFormation, String libelleFormation) {
+        this.idFormation = idFormation;
+        this.libelleFormation = libelleFormation;
+    }
 
     public Formation(int idFormation, String libelleFormation, Departement departement) {
         this.idFormation = idFormation;

@@ -1,4 +1,5 @@
-package view.front;
+
+/*package view.front;
 
 import controller.front.ControleurPrincipal;
 import java.awt.BorderLayout;
@@ -152,7 +153,7 @@ public class VuePrincipaleFront extends VueAbstraite implements IOPrincipale {
                     this.bSupprimer.setEnabled(true);
                 } else {
                     this.bSupprimer.setEnabled(false);
-                }*/
+                }
                 break;
             case 2:
                 this.bNouveau.setEnabled(false);
@@ -328,3 +329,4 @@ public class VuePrincipaleFront extends VueAbstraite implements IOPrincipale {
     }
 
 }
+*/

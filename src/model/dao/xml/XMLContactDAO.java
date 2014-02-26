@@ -133,6 +133,54 @@ public class XMLContactDAO implements DAOInterface<Contact> {
             cont.setAttribute(id);
             root.addContent(cont);
 
+            Element manifestation = new Element("manifestation");
+            manifestation.setText(Integer.toString(contact.getManifestation().getIdManif()));
+            cont.addContent(manifestation);
+
+            Element enseignant = new Element("enseignant");
+            enseignant.setText(Integer.toString(contact.getEnseignant().getIdEnseignant()));
+            cont.addContent(enseignant);
+
+            Element nom = new Element("nom");
+            nom.setText(contact.getNomContact());
+            cont.addContent(nom);
+
+            Element prenom = new Element("prenom");
+            prenom.setText(contact.getPrenomContact());
+            cont.addContent(prenom);
+
+            Element email = new Element("email");
+            email.setText(contact.getEmailContact());
+            cont.addContent(email);
+
+            Element etude1 = new Element("etude1");
+            etude1.setText(contact.getEtudes1Contact());
+            cont.addContent(etude1);
+
+            Element etude2 = new Element("etude2");
+            etude2.setText(contact.getEtudes2Contact());
+            cont.addContent(etude2);
+
+            Element date = new Element("date");
+            date.setText(contact.getDateContact().toString());
+            cont.addContent(date);
+
+            Element heure = new Element("heure");
+            heure.setText(contact.getHeureContact().toString());
+            cont.addContent(heure);
+
+            Element description = new Element("description");
+            description.setText(contact.getDescriptionContact().toString());
+            cont.addContent(description);
+
+            Element formations = new Element("formations");
+            for (Formation form : contact.getListeFormations()) {
+                Element formation = new Element("formation");
+                formation.setText(Integer.toString(form.getIdFormation()));
+                formations.addContent(formation);
+            }
+            cont.addContent(formations);
+
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
 
@@ -214,6 +262,5 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     public void deleteList(ArrayList<Contact> liste) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 
 }

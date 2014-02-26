@@ -1,11 +1,14 @@
 package model.dao.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import model.business.Formation;
+import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -43,7 +46,25 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
     @Override
     public ArrayList<Formation> readAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         ArrayList<Formation> liste = new  ArrayList<>();
+
+       try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Element root = doc.getRootElement();
+            
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                               
+                liste.add(new Formation(node.getAttribute("id").getIntValue(),node.getChildText("libelle_form")));
+            }
+
+        } catch (IOException | JDOMException io) {
+            System.out.println(io.getMessage());
+        }
+       return liste;
     }
 
     @Override

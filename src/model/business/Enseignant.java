@@ -11,6 +11,11 @@ public class Enseignant implements Comparable<Enseignant> {
         this.setNomEnseignant(nomEnseignant);
         this.setPrenomEnseignant(prenomEnseignant);
     }
+    
+     public Enseignant(int idEnseignant,String nomEnseignant, String prenomEnseignant) {
+        this(nomEnseignant, prenomEnseignant);
+        this.setIdEnseignant(idEnseignant);
+    }
 
     public Enseignant(int idEnseignant, String nomEnseignant, String prenomEnseignant, Departement departement) {
         this(nomEnseignant, prenomEnseignant);

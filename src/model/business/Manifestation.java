@@ -7,6 +7,11 @@ public class Manifestation implements Comparable<Manifestation> {
     private int idManif;
     private String libelleManif;
 
+    public Manifestation() {
+        this.setIdManif(idManif);
+        this.setLibelleManif(libelleManif);
+    }
+
     public Manifestation(String libelleManif) {
         this.setLibelleManif(libelleManif);
     }

@@ -1,10 +1,12 @@
 package model.dao.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import model.business.Manifestation;
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -14,6 +16,9 @@ import org.jdom2.output.*;
 
 public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
+    private final XMLChemin chemin;
+    private final String nomFichier;
+    private Element racine;
     static XMLManifestationDAO instance = null;
 
     public static XMLManifestationDAO getInstance() {
@@ -22,10 +27,6 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         }
         return XMLManifestationDAO.instance;
     }
-
-    private final XMLChemin chemin;
-    private final String nomFichier;
-    private Element racine;
 
     public String getNomFicher() {
         return nomFichier;
@@ -42,7 +43,25 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public ArrayList<Manifestation> readAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<Manifestation> liste = new  ArrayList<>();
+
+       try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Element root = doc.getRootElement();
+            
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                               
+                liste.add(new Manifestation(node.getAttribute("id").getIntValue(),node.getChildText("libelle_manif")));
+            }
+
+        } catch (IOException | JDOMException io) {
+            System.out.println(io.getMessage());
+        }
+       return liste;
     }
 
     @Override

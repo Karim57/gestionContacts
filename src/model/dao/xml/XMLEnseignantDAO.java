@@ -1,11 +1,14 @@
 package model.dao.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import model.business.Enseignant;
+import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -48,7 +51,25 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public ArrayList<Enseignant> readAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         ArrayList<Enseignant> liste = new  ArrayList<>();
+
+       try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Element root = doc.getRootElement();
+            
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                               
+                liste.add(new Enseignant(node.getAttribute("id").getIntValue(),node.getChildText("nom_ens"),node.getChildText("prenom_ens")));
+            }
+
+        } catch (IOException | JDOMException io) {
+            System.out.println(io.getMessage());
+        }
+       return liste;
     }
 
     @Override
