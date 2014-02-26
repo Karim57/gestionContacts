@@ -102,7 +102,6 @@ public class XMLContactDAO implements DAOInterface<Contact> {
         for (Formation form : contact.getListeFormations()) {
             Element formation = new Element("formation");
             formation.setText(Integer.toString(form.getIdFormation()));
-            System.out.println((Integer.toString(form.getIdFormation())));
             formations.addContent(formation);
         }
         cont.addContent(formations);
