@@ -33,7 +33,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import model.business.Contact;
 
-public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
+public class VueFenetrePrincipale extends VueAbstraite implements IObservable {
 
     private ControleurPrincipal monControleur;
 

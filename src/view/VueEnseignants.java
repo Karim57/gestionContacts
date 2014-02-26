@@ -18,7 +18,7 @@ import javax.swing.table.TableRowSorter;
 import model.business.Contact;
 import model.business.Departement;
 
-public class VueEnseignants extends vueAbstraite implements IObservable, IOEnseignant {
+public class VueEnseignants extends VueAbstraite implements IObservable, IOEnseignant {
 
     private ControleurEnseignant monControleur;
 
