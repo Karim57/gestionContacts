@@ -17,7 +17,6 @@ import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.TableRowSorter;
-import model.business.Contact;
 import model.business.Departement;
 import view.JTableDonnees;
 import view.VueAbstraite;
