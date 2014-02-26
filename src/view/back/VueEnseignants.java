@@ -22,6 +22,7 @@ import model.business.Departement;
 import view.JTableDonnees;
 import view.VueAbstraite;
 
+
 public class VueEnseignants extends VueAbstraite implements IObservable, IOEnseignant {
 
     private ControleurEnseignant monControleur;

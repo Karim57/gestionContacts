@@ -19,7 +19,6 @@ import model.dao.sql.SQLManifestationDAO;
 import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
-import view.IObservable;
 import view.back.IOPrincipale;
 import view.back.VueEnseignants;
 
