@@ -1,4 +1,4 @@
-package controller;
+package controller.back;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,11 +20,12 @@ import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
 import view.IObservable;
-import view.VueEnseignants;
+import view.back.IOPrincipale;
+import view.back.VueEnseignants;
 
 public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener {
 
-    private IObservable vue;
+    private IOPrincipale vue;
     private ModeleManifestation donneesManifestation;
     private ModeleDepartement donneesDepartement;
     private ModeleContact donneesContact;
@@ -37,7 +38,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     private String[] search = {""};
 
-    public ControleurPrincipal(IObservable v) {
+    public ControleurPrincipal(IOPrincipale v) {
         this.vue = v;
     }
 

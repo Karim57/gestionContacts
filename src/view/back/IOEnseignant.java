@@ -1,5 +1,6 @@
-package view;
+package view.back;
 
+import view.IObservable;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import model.business.Departement;

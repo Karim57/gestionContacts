@@ -1,4 +1,4 @@
-package controller;
+package controller.back;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +12,7 @@ import model.business.Departement;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLEnseignantDAO;
 import model.tables.ModeleEnseignant;
-import view.IOEnseignant;
+import view.back.IOEnseignant;
 
 public class ControleurEnseignant implements ActionListener, DocumentListener, ListSelectionListener, ItemListener {
 

@@ -1,6 +1,6 @@
-package view;
+package view.back;
 
-import controller.ControleurPrincipal;
+import controller.back.ControleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -12,28 +12,27 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
-import javax.swing.ScrollPaneLayout;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import model.business.Contact;
+import view.JTableDonnees;
+import view.VueAbstraite;
 
-public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
+public class VuePrincipale extends VueAbstraite implements IOPrincipale {
 
     private ControleurPrincipal monControleur;
 
@@ -50,7 +49,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
     private JWindow wSplashScreen;
     private JLabel lMessage;
 
-    public VueFenetrePrincipale() {
+    public VuePrincipale() {
 
         super("Gestion des événements");
         try {
@@ -76,7 +75,7 @@ public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
             this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         } catch (InterruptedException ex) {
-            Logger.getLogger(VueFenetrePrincipale.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VuePrincipale.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

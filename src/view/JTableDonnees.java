@@ -33,7 +33,7 @@ public class JTableDonnees extends JTable {
         }
     }
 
-    protected void filtrer(String... lesFiltres) {
+    public void filtrer(String[] lesFiltres) {
         TableRowSorter sorter = new TableRowSorter(this.modele);
         List<RowFilter<Object, Object>> listeFilters = new ArrayList<RowFilter<Object, Object>>();
 

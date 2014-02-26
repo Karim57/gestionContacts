@@ -1,6 +1,8 @@
-package view;
+package view.back;
 
-import controller.ControleurEnseignant;
+import view.IObservable;
+import view.back.IOEnseignant;
+import controller.back.ControleurEnseignant;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,8 +19,10 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.TableRowSorter;
 import model.business.Contact;
 import model.business.Departement;
+import view.JTableDonnees;
+import view.VueAbstraite;
 
-public class VueEnseignants extends vueAbstraite implements IObservable, IOEnseignant {
+public class VueEnseignants extends VueAbstraite implements IObservable, IOEnseignant {
 
     private ControleurEnseignant monControleur;
 
@@ -52,11 +56,6 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
         this.setVisible(true);
 
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    }
-
-    @Override
-    public String getLibelle() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -99,11 +98,6 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
 
     @Override
     public int getLigneSelectionnee() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getActivePane() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -206,11 +200,6 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
     }
 
     @Override
-    public void filtrer(String[] search) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void afficheAjoutModif() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -227,11 +216,6 @@ public class VueEnseignants extends vueAbstraite implements IObservable, IOEnsei
 
     @Override
     public int[] getLesLignesSelectionnee() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void construitProfil(Contact c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

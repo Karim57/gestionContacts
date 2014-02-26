@@ -13,6 +13,7 @@ import model.dao.xml.XMLDepartementDAO;
 import model.dao.xml.XMLEnseignantDAO;
 import model.dao.xml.XMLFormationDAO;
 import model.dao.xml.XMLManifestationDAO;
+import view.back.VuePrincipale;
 
 public class Principale {
 
@@ -87,6 +88,8 @@ public class Principale {
         
         contact.setEmailContact("email@gmail.com");
         XMLContactDAO.getInstance().update(contact);
+        
+        new VuePrincipale();
 
     }
 }
