@@ -3,7 +3,6 @@ package model.dao.sql;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import model.business.Contact;
@@ -37,13 +36,36 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         ArrayList<Contact> listeContacts = new ArrayList<Contact>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_contact FROM contact";
+        String sql = "SELECT * FROM contact c, manifestation m, departement d, enseignant e "
+                + "WHERE c.id_manifestation = m.id_manif "
+                + "AND c.id_enseignant = e.id_ens "
+                + "AND e.id_dpt = d.id_dpt";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Contact contact = this.readById(res.getInt("id_contact"));
+
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+                Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
+
+                Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
+
+                Contact contact = new Contact(res.getInt("id_contact"),
+                        res.getString("nom_contact"),
+                        res.getString("prenom_contact"),
+                        res.getString("email_contact"),
+                        res.getString("etudes1_contact"),
+                        res.getString("etudes2_contact"),
+                        res.getString("description_contact"),
+                        res.getDate("date_contact"),
+                        res.getTime("heure_contact"),
+                        manifestation,
+                        enseignant,
+                        null);
+
+                this.remplitFormation(contact);
+
                 listeContacts.add(contact);
             }
         } catch (SQLException se) {
@@ -55,33 +77,37 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         return listeContacts;
     }
 
-    @Override
     public Contact readById(int id) {
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT * FROM contact WHERE id_contact = " + id;
+        String sql = "SELECT * FROM contact c, manifestation m, departement d, enseignant e "
+                + "WHERE c.id_manifestation = m.id_manif "
+                + "AND c.id_enseignant = e.id_ens "
+                + "AND e.id_dpt = d.id_dpt "
+                + "AND id_contact = " + id;
         Contact contact = null;
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                contact = new Contact();
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+                Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
 
-                contact.setNomContact(res.getString("nom_contact"));
-                contact.setPrenomContact(res.getString("prenom_contact"));
-                contact.setEmailContact(res.getString("email_contact"));
-                contact.setEtudes1Contact(res.getString("etudes1_contact"));
-                contact.setEtudes2Contact(res.getString("etudes2_contact"));
-                contact.setDescriptionContact(res.getString("description_contact"));
-                contact.setDateContact(res.getDate("date_contact"));
-                contact.setHeureContact(res.getTime("heure_contact"));
+                Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
 
-                Manifestation m = SQLManifestationDAO.getInstance().readById(res.getInt("id_manif"));
-                contact.setManifestation(m);
-
-                Enseignant e = SQLEnseignantDAO.getInstance().readById(res.getInt("id_enseignant"));
-                contact.setEnseignant(e);
+                contact = new Contact(res.getInt("id_contact"),
+                        res.getString("nom_contact"),
+                        res.getString("prenom_contact"),
+                        res.getString("email_contact"),
+                        res.getString("etudes1_contact"),
+                        res.getString("etudes2_contact"),
+                        res.getString("description_contact"),
+                        res.getDate("date_contact"),
+                        res.getTime("heure_contact"),
+                        manifestation,
+                        enseignant,
+                        null);
 
                 this.remplitFormation(contact);
             }
@@ -98,10 +124,10 @@ public class SQLContactDAO implements DAOInterface<Contact> {
     private void remplitFormation(Contact contact) {
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT * FROM contact c, formation f, rensignements r "
+        String sql = "SELECT * FROM contact c, formation f, renseignements r "
                 + "WHERE c.id_contact = r.id_contact "
                 + "AND r.id_formation = f.id_formation "
-                + "AND id_contact = " + contact.getIdContact();
+                + "AND c.id_contact = " + contact.getIdContact();
 
         try {
             Statement st = connection.createStatement();

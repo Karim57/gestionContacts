@@ -1,6 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <enseignants>
   <enseignant id="1">
     <nom_ens>Laroche</nom_ens>
     <prenom_ens>Pierre</prenom_ens>
+  </enseignant>
+  <enseignant id="3">
+    <nom_ens>Dosne</nom_ens>
+    <prenom_ens>Isabelle</prenom_ens>
+  </enseignant>
+  <enseignant id="4">
+    <nom_ens>Nagel</nom_ens>
+    <prenom_ens>Cyril</prenom_ens>
   </enseignant>
 </enseignants>

@@ -1,5 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <manifestations>
   <manifestation id="1">
     <libelle_manif>Porte ouverte</libelle_manif>
+  </manifestation>
+  <manifestation id="3">
+    <libelle_manif>Reunion annulée</libelle_manif>
+  </manifestation>
+  <manifestation id="4">
+    <libelle_manif>Rentrée des classes</libelle_manif>
   </manifestation>
 </manifestations>

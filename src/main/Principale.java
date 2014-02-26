@@ -1,5 +1,6 @@
 package main;
 
+import java.util.ArrayList;
 import model.business.Contact;
 import model.business.Departement;
 import model.business.Enseignant;
@@ -67,9 +68,16 @@ public class Principale {
         xmlForm.delete(f2);
         xmlForm.modifier(f4, "LP Management");
         
-        Contact contact = new Contact(1,m1,e1);
+        ArrayList<Formation> listeFormations = new ArrayList<Formation>(); 
+        listeFormations.add(f1);
+        listeFormations.add(f2);
+        listeFormations.add(f3);
+        listeFormations.add(f4);
+                
+        
+        Contact contact = new Contact(1,"EZZAHIRI", "Karim", "blabla@gmail.com", "LPSIL", "BAC S", "Reunion de pré-renter", m4, e2, listeFormations);
         XMLContactDAO xmlContact = new XMLContactDAO();
-        xmlContact.create(contact,xmlManif, xmlEns);
+        xmlContact.create(contact);
                 
         //new VueFenetrePrincipale();
     }
