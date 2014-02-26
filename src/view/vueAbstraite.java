@@ -12,10 +12,8 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -31,7 +29,14 @@ public abstract class vueAbstraite extends JFrame {
     protected JButton bNouveau;
     protected JButton bModifier;
     protected JButton bSupprimer;
-    protected JButton bManifDefaut;
+    protected JButton bExporter;
+    protected JButton bImporter;
+
+    protected JButton bOuvreEns;
+    protected JButton bOuvreDpt;
+
+    protected JButton bProfil;
+    protected JButton bStats;
 
     protected JComboBox<Departement> cListeDpt;
 
@@ -139,43 +144,47 @@ public abstract class vueAbstraite extends JFrame {
 
         ClassLoader cl = this.getClass().getClassLoader();
 
-        Dimension dimButtons = new Dimension(40, 30);
         Color bgColor = new Color(240, 240, 240);
 
         this.bNouveau = new JButton(new ImageIcon(cl.getResource("view/images/add2.png")));
-        this.bNouveau.setActionCommand("Nouveau");
-        this.bNouveau.setBorderPainted(false);
-        this.bNouveau.setFocusPainted(false);
-        this.bNouveau.setBackground(bgColor);
-        this.bNouveau.setPreferredSize(dimButtons);
+        this.configurerButtons(bNouveau, "Nouveau");
 
         this.bModifier = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
-        this.bModifier.setActionCommand("Modifier");
-        this.bModifier.setBorderPainted(false);
-        this.bModifier.setFocusPainted(false);
-        this.bModifier.setBackground(bgColor);
-        this.bModifier.setPreferredSize(dimButtons);
+        this.configurerButtons(bModifier, "Modifier");
 
         this.bSupprimer = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
-        this.bSupprimer.setBorderPainted(false);
-        this.bSupprimer.setFocusPainted(false);
-        this.bSupprimer.setActionCommand("Supprimer");
+        this.configurerButtons(bSupprimer, "Supprimer");
         this.bSupprimer.setToolTipText("Supprimer");
-        this.bSupprimer.setBackground(bgColor);
-        this.bSupprimer.setPreferredSize(dimButtons);
 
-        this.bManifDefaut = new JButton(new ImageIcon(cl.getResource("view/images/xml.png")));
-        this.bManifDefaut.setBorderPainted(false);
-        this.bManifDefaut.setFocusPainted(false);
-        this.bManifDefaut.setActionCommand("ManifDefaut");
-        this.bManifDefaut.setBackground(bgColor);
-        this.bManifDefaut.setPreferredSize(dimButtons);
+        this.bOuvreEns = new JButton(new ImageIcon(cl.getResource("view/images/person.png")));
+        this.configurerButtons(bOuvreEns, "Enseignant");
+
+        this.bOuvreDpt = new JButton(new ImageIcon(cl.getResource("view/images/dpt.png")));
+        this.configurerButtons(bOuvreDpt, "Departement");
+
+        this.bProfil = new JButton(new ImageIcon(cl.getResource("view/images/profil.png")));
+        this.configurerButtons(bProfil, "Profil");
+
+        this.bExporter = new JButton(new ImageIcon(cl.getResource("view/images/export.png")));
+        this.configurerButtons(bExporter, "Exporter");
+
+        this.bImporter = new JButton(new ImageIcon(cl.getResource("view/images/import.png")));
+        this.configurerButtons(bImporter, "Importer");
+
+        this.bStats = new JButton(new ImageIcon(cl.getResource("view/images/stats.png")));
+        this.configurerButtons(bStats, "Stats");
 
         JSeparator js = new JSeparator(JSeparator.VERTICAL);
-        js.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
+        //js.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
 
         JSeparator js2 = new JSeparator(JSeparator.VERTICAL);
-        js2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
+        //js2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
+
+        JSeparator js3 = new JSeparator(JSeparator.VERTICAL);
+        // js3.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
+
+        JSeparator js4 = new JSeparator(JSeparator.VERTICAL);
+        //js4.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
 
         JPanel p = new JPanel(new GridBagLayout());
 
@@ -191,7 +200,7 @@ public abstract class vueAbstraite extends JFrame {
         p.add(this.bNouveau, gbc);
 
         gbc.gridx = 1;
-        p.add(js, gbc);
+        //p.add(js, gbc);
 
         gbc.gridx = 2;
         p.add(bModifier, gbc);
@@ -203,9 +212,39 @@ public abstract class vueAbstraite extends JFrame {
         p.add(js2, gbc);
 
         gbc.gridx = 5;
-        p.add(this.bManifDefaut, gbc);
+        p.add(this.bOuvreEns, gbc);
+
+        gbc.gridx = 6;
+        p.add(this.bOuvreDpt, gbc);
+
+        gbc.gridx = 8;
+        p.add(this.bProfil, gbc);
+
+        gbc.gridx = 9;
+        p.add(js4, gbc);
+
+        gbc.gridx = 10;
+        p.add(this.bExporter, gbc);
+
+        gbc.gridx = 11;
+        p.add(this.bImporter, gbc);
+
+        gbc.gridx = 12;
+        p.add(this.bStats, gbc);
 
         return p;
+    }
+
+    private void configurerButtons(JButton b, String ac) {
+
+        Dimension dimButtons = new Dimension(40, 30);
+        Color bgColor = new Color(240, 240, 240);
+
+        b.setBorderPainted(false);
+        b.setFocusPainted(false);
+        b.setActionCommand(ac);
+        b.setBackground(bgColor);
+        b.setPreferredSize(dimButtons);
     }
 
 }

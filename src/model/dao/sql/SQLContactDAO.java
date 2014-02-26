@@ -39,7 +39,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         String sql = "SELECT * FROM contact c, manifestation m, departement d, enseignant e "
                 + "WHERE c.id_manifestation = m.id_manif "
                 + "AND c.id_enseignant = e.id_ens "
-                + "AND e.id_ens = d.id_dpt";
+                + "AND e.id_dpt = d.id_dpt";
 
         try {
             Statement st = connection.createStatement();
@@ -83,7 +83,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         String sql = "SELECT * FROM contact c, manifestation m, departement d, enseignant e "
                 + "WHERE c.id_manifestation = m.id_manif "
                 + "AND c.id_enseignant = e.id_ens "
-                + "AND e.id_ens = d.id_dpt "
+                + "AND e.id_dpt = d.id_dpt "
                 + "AND id_contact = " + id;
         Contact contact = null;
 
