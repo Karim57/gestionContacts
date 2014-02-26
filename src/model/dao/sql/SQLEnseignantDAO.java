@@ -34,13 +34,15 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         ArrayList<Enseignant> listeEnseignants = new ArrayList<Enseignant>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_ens FROM enseignant";
+        String sql = "SELECT * FROM enseignant e, departement d "
+                + "WHERE e.id_dpt = d.id_dpt";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Enseignant enseignant = this.readById(res.getInt("id_ens"));
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+                Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
                 listeEnseignants.add(enseignant);
             }
         } catch (SQLException se) {
@@ -52,11 +54,38 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         return listeEnseignants;
     }
 
-    @Override
+    public ArrayList<Enseignant> readAllByDpt(int id_dpt) {
+
+        ArrayList<Enseignant> listeEnseignants = new ArrayList<Enseignant>();
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT * FROM enseignant e, departement d "
+                + "WHERE e.id_dpt = d.id_dpt "
+                + "AND d.id_dpt = " + id_dpt;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            while (res.next()) {
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+                Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
+                listeEnseignants.add(enseignant);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return listeEnseignants;
+    }
+
     public Enseignant readById(int id) {
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT * FROM enseignant e, departement d WHERE e.id_dpt = d.id_dpt AND id_enseignant = " + id;
+        String sql = "SELECT * FROM enseignant e, departement d "
+                + "WHERE e.id_dpt = d.id_dpt "
+                + "AND id_enseignant = " + id;
         Enseignant enseignant = null;
 
         try {

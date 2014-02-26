@@ -34,13 +34,13 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         ArrayList<Departement> listeDepartement = new ArrayList<Departement>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_dpt FROM departement";
+        String sql = "SELECT * FROM departement";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Departement departement = this.readById(res.getInt("id_dpt"));
+                Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
                 listeDepartement.add(departement);
             }
         } catch (SQLException se) {
@@ -52,7 +52,6 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         return listeDepartement;
     }
 
-    @Override
     public Departement readById(int id) {
 
         Connection connection = this.connect.getConnexion();
@@ -104,11 +103,12 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
     @Override
     public boolean update(Departement departement) {
         Connection connection = this.connect.getConnexion();
-        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt= ?";
+        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt = ?";
 
         boolean updated = false;
 
         try {
+            System.err.println(departement.getIdDepartement());
             PreparedStatement stU = connection.prepareStatement(update);
 
             stU.setString(1, departement.getLibelleDepartement());
@@ -122,7 +122,7 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         } finally {
             this.connect.fermeConnexion();
         }
-
+        System.err.println(updated);
         return updated;
     }
 

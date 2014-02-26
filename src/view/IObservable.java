@@ -1,21 +1,39 @@
 package view;
 
-import model.business.Manifestation;
+import model.business.Contact;
 
 public interface IObservable {
 
     public String getLibelle();
 
+    public String getSearch();
+
     public void close();
 
-    public void activeButton();
+    public void gereButtonsActifs();
 
-    public void construitAjout(int ajoutOuModif);
+    public void construitAjoutModif();
+
+    public void afficheAjoutModif();
 
     public int getLigneSelectionnee();
 
-    public void remplitChamps(Manifestation manifestation);
+    public int[] getLesLignesSelectionnee();
 
     public int getActivePane();
+
+    public void remplitChamps(String libelle);
+
+    public void prepareModif();
+
+    public void autoriseAjoutModif();
+
+    public void filtrer(String[] search);
+
+    public int confirmation(String message, String titre, int typeMessage, int icone);
+
+    public void afficheErreur(String message, String titre, int typeMessage);
+
+    public void construitProfil(Contact c);
 
 }

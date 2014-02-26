@@ -1,5 +1,7 @@
 package model.tables;
 
+import java.util.ArrayList;
+import model.business.Departement;
 import model.business.Formation;
 
 public class ModeleFormation extends ModeleGenerique<Formation> {
@@ -27,4 +29,5 @@ public class ModeleFormation extends ModeleGenerique<Formation> {
         }
         return o;
     }
+
 }

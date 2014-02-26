@@ -33,13 +33,14 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
         ArrayList<Formation> listeFormations = new ArrayList<Formation>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_form FROM formation";
+        String sql = "SELECT * FROM formation";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Formation formation = this.readById(res.getInt("id_form"));
+                Departement departement = SQLDepartementDAO.getInstance().readById(res.getInt("id_dpt"));
+                Formation formation = new Formation(res.getInt("id_form"), res.getString("libelle_form"), departement);
                 listeFormations.add(formation);
             }
         } catch (SQLException se) {
@@ -51,7 +52,6 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
         return listeFormations;
     }
 
-    @Override
     public Formation readById(int id) {
 
         Connection connection = this.connect.getConnexion();

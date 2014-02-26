@@ -33,13 +33,13 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
         ArrayList<Manifestation> listeManifestation = new ArrayList<Manifestation>();
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT id_manif FROM manifestation";
+        String sql = "SELECT * FROM manifestation";
 
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
             while (res.next()) {
-                Manifestation manifestation = this.readById(res.getInt("id_manif"));
+                Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
                 listeManifestation.add(manifestation);
             }
         } catch (SQLException se) {
@@ -51,7 +51,6 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
         return listeManifestation;
     }
 
-    @Override
     public Manifestation readById(int id) {
 
         Connection connection = this.connect.getConnexion();
@@ -129,14 +128,12 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     @Override
     public boolean delete(Manifestation manifestation) {
         Connection connection = this.connect.getConnexion();
-        String delete = "DELETE FROM manifestation where id_manif = ?";
+        String delete = "DELETE FROM manifestation WHERE id_manif = " + manifestation.getIdManif();
 
         boolean deleted = false;
 
         try {
             PreparedStatement stD = connection.prepareStatement(delete);
-
-            stD.setInt(1, manifestation.getIdManif());
             stD.execute();
 
             deleted = stD.executeUpdate(delete) > 0;
@@ -144,6 +141,7 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
+            se.printStackTrace();
         } finally {
             this.connect.fermeConnexion();
         }
@@ -157,4 +155,5 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
             this.delete(manifestation);
         }
     }
+
 }
