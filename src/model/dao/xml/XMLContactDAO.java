@@ -1,10 +1,12 @@
 package model.dao.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import model.business.Contact;
 import model.business.Formation;
 
@@ -44,7 +46,25 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
     @Override
     public ArrayList<Contact> readAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          ArrayList<Contact> liste = new  ArrayList<>();
+
+       try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Element root = doc.getRootElement();
+            
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                               
+      //          liste.add(new Contact(node.getAttribute("id").getIntValue(),node.getChildText("manifestation"),node.getChildText("enseignant"),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),node.getChildText("date"),,node.getChildText("heure"),node.getChildText("description")));
+            }
+
+        } catch (IOException | JDOMException io) {
+            System.out.println(io.getMessage());
+        }
+       return liste;
     }
 
     @Override
