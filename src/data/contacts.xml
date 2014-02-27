@@ -9,9 +9,13 @@
     <etude1>LPSIL</etude1>
     <etude2>BAC S</etude2>
     <date>2014-02-27</date>
-    <heure>15:47:21</heure>
+    <heure>16:52:00</heure>
     <description>Reunion de pré-renter</description>
-    <formations />
+    <formations>
+      <formation>4</formation>
+      <formation>1</formation>
+      <formation>3</formation>
+    </formations>
   </contact>
   <contact id="2">
     <manifestation>1</manifestation>
@@ -22,7 +26,7 @@
     <etude1>LPSIL</etude1>
     <etude2>BAC S</etude2>
     <date>2014-02-27</date>
-    <heure>15:47:21</heure>
+    <heure>16:52:00</heure>
     <description>Reunion de pré-renter</description>
     <formations />
   </contact>

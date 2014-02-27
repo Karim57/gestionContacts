@@ -78,6 +78,9 @@ public class Principale {
         listeFormations.add(f4);
 
         Contact c1 = new Contact(1,m4, e2, "EZZAHIRI", "Karim", "blabla@gmail.com", "LPSIL", "BAC S", "Reunion de pré-renter");
+        c1.addFormation(f4);
+        c1.addFormation(f1);
+        c1.addFormation(f3);
         Contact c2 = new Contact(2,m1, e1, "Mirak", "Karim", "blabla@gmail.com", "LPSIL", "BAC S", "Reunion de pré-renter");
 
         XMLContactDAO xmlContact = new XMLContactDAO();
