@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import model.business.Departement;
 
-public abstract class VueAbstraite extends JFrame {
+public abstract class VueAbstract extends JFrame {
 
     protected JButton bSubmit;
     protected JButton bCancel;
@@ -42,7 +42,10 @@ public abstract class VueAbstraite extends JFrame {
 
     protected JTextField tSearch;
 
-    public VueAbstraite(String titre) {
+    protected JSeparator js2;
+    protected JSeparator js4;
+
+    public VueAbstract(String titre) {
         super(titre);
     }
 
@@ -174,17 +177,9 @@ public abstract class VueAbstraite extends JFrame {
         this.bStats = new JButton(new ImageIcon(cl.getResource("view/images/stats.png")));
         this.configurerButtons(bStats, "Stats");
 
-        JSeparator js = new JSeparator(JSeparator.VERTICAL);
-        //js.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
+        js2 = new JSeparator(JSeparator.VERTICAL);
 
-        JSeparator js2 = new JSeparator(JSeparator.VERTICAL);
-        //js2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
-
-        JSeparator js3 = new JSeparator(JSeparator.VERTICAL);
-        // js3.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
-
-        JSeparator js4 = new JSeparator(JSeparator.VERTICAL);
-        //js4.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
+        js4 = new JSeparator(JSeparator.VERTICAL);
 
         JPanel p = new JPanel(new GridBagLayout());
 

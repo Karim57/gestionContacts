@@ -23,6 +23,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.JWindow;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
@@ -30,9 +31,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import model.business.Contact;
 import view.JTableDonnees;
-import view.VueAbstraite;
+import view.VueAbstract;
 
-public class VuePrincipale extends VueAbstraite implements IOPrincipale {
+public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
     private ControleurPrincipal monControleur;
 
@@ -49,6 +50,8 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
     private JWindow wSplashScreen;
     private JLabel lMessage;
 
+    private JToolBar pOutils;
+
     public VuePrincipale() {
 
         super("Gestion des événements");
@@ -59,7 +62,9 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
             this.monControleur = new ControleurPrincipal(this);
             this.lMessage.setText("Création de l'interface graphique");
             Thread.sleep(3000);
-            this.add(super.creerBarreOutils(), BorderLayout.NORTH);
+            pOutils = super.creerBarreOutils();
+
+            this.add(pOutils, BorderLayout.NORTH);
             this.add(this.creerPanelPrincipal(), BorderLayout.CENTER);
 
             this.gereEcouteur();
@@ -131,9 +136,13 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
         super.bModifier.addActionListener(monControleur);
 
         super.bExporter.addActionListener(monControleur);
+        super.bImporter.addActionListener(monControleur);
         super.bProfil.addActionListener(monControleur);
 
         super.bOuvreEns.addActionListener(monControleur);
+        super.bOuvreDpt.addActionListener(monControleur);
+
+        super.bStats.addActionListener(monControleur);
 
         this.tpPrincipal.addChangeListener(monControleur);
 
@@ -141,6 +150,16 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
 
         this.tableManifestations.getSelectionModel().addListSelectionListener(monControleur);
         this.tableDepartements.getSelectionModel().addListSelectionListener(monControleur);
+        this.tableContacts.getSelectionModel().addListSelectionListener(monControleur);
+
+        pOutils.addMouseListener(monControleur);
+        tpPrincipal.addMouseListener(monControleur);
+
+        this.tableManifestations.addMouseListener(monControleur);
+        this.tableDepartements.addMouseListener(monControleur);
+        this.tableContacts.addMouseListener(monControleur);
+
+        this.addMouseListener(monControleur);
 
     }
 
@@ -160,12 +179,15 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
 
         this.tableManifestations = new JTableDonnees(null, this.monControleur.getDonneesManifestation());
         this.tpPrincipal.addTab("Manifestations", this.creerPanelTable(this.tableManifestations));
+        this.tableManifestations.filtrer(null);
 
         this.tableDepartements = new JTableDonnees(null, this.monControleur.getDonneesDepartement());
         this.tpPrincipal.addTab("Départements", this.creerPanelTable(this.tableDepartements));
+        this.tableDepartements.filtrer(null);
 
         this.tableContacts = new JTableDonnees(null, this.monControleur.getDonneesContact());
         this.tpPrincipal.addTab("Contacts", this.creerPanelTable(this.tableContacts));
+        this.tableContacts.filtrer(null);
 
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -204,16 +226,24 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
         switch (this.tpPrincipal.getSelectedIndex()) {
             case 0:
                 super.bNouveau.setEnabled(true);
-                super.bNouveau.setToolTipText("Ajouter une manifestation");
                 super.bModifier.setEnabled(true);
-                super.bModifier.setToolTipText("Modifier cette manifestation");
                 super.bSupprimer.setEnabled(true);
-                super.bExporter.setEnabled(false);
+                super.bExporter.setEnabled(true);
+                super.bStats.setEnabled(true);
+
+                super.bImporter.setEnabled(false);
+                super.bOuvreDpt.setEnabled(false);
+                super.bOuvreEns.setEnabled(false);
+                super.bProfil.setEnabled(false);
 
                 if (this.tableManifestations.getSelectedRowCount() == 1) {
                     super.bModifier.setEnabled(true);
+                    super.bStats.setEnabled(true);
+                    super.bExporter.setEnabled(true);
                 } else {
                     super.bModifier.setEnabled(false);
+                    super.bStats.setEnabled(false);
+                    super.bExporter.setEnabled(false);
                 }
 
                 if (this.tableManifestations.getSelectedRowCount() > 0) {
@@ -225,11 +255,15 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
                 break;
             case 1:
                 super.bNouveau.setEnabled(true);
-                super.bNouveau.setToolTipText("Ajouter un département ");
                 super.bModifier.setEnabled(true);
-                super.bModifier.setToolTipText("Modifier ce département");
                 super.bSupprimer.setEnabled(true);
+                super.bOuvreDpt.setEnabled(true);
+                super.bOuvreEns.setEnabled(true);
+
                 super.bExporter.setEnabled(false);
+                super.bStats.setEnabled(false);
+                super.bImporter.setEnabled(false);
+                super.bProfil.setEnabled(false);
 
                 if (this.tableDepartements.getSelectedRowCount() == 1) {
                     super.bModifier.setEnabled(true);
@@ -242,13 +276,33 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
                 } else {
                     super.bSupprimer.setEnabled(false);
                 }
+
+                if ((this.tableDepartements.getSelectedRowCount() <= 1)) {
+                    super.bOuvreDpt.setEnabled(true);
+                    super.bOuvreEns.setEnabled(true);
+                } else {
+                    super.bOuvreDpt.setEnabled(false);
+                    super.bOuvreEns.setEnabled(false);
+                }
                 break;
             case 2:
+                super.bImporter.setEnabled(true);
+                super.bProfil.setEnabled(true);
+
                 super.bNouveau.setEnabled(false);
                 super.bModifier.setEnabled(false);
                 super.bSupprimer.setEnabled(false);
-                super.bExporter.setEnabled(true);
-                super.bExporter.setToolTipText("Importer");
+                super.bOuvreDpt.setEnabled(false);
+                super.bOuvreEns.setEnabled(false);
+                super.bExporter.setEnabled(false);
+                super.bStats.setEnabled(false);
+
+                if ((this.tableContacts.getSelectedRowCount() == 1)) {
+                    super.bProfil.setEnabled(true);
+                } else {
+                    super.bProfil.setEnabled(false);
+                }
+
                 break;
         }
     }
@@ -471,13 +525,13 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
         int selectedRow = 0;
         switch (this.tpPrincipal.getSelectedIndex()) {
             case 0:
-                selectedRow = this.tableManifestations.getSelectedRow();
+                selectedRow = this.tableManifestations.convertRowIndexToModel(this.tableManifestations.getSelectedRow());
                 break;
             case 1:
-                selectedRow = this.tableDepartements.getSelectedRow();
+                selectedRow = this.tableDepartements.convertRowIndexToModel(this.tableDepartements.getSelectedRow());
                 break;
             case 2:
-                selectedRow = this.tableContacts.getSelectedRow();
+                selectedRow = this.tableContacts.convertRowIndexToModel(this.tableContacts.getSelectedRow());
                 break;
         }
         return selectedRow;
@@ -490,7 +544,7 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
 
     @Override
     public void autoriseAjoutModif() {
-        this.bSubmit.setEnabled(this.tLibelle.getText().trim().length() > 0);
+        super.bSubmit.setEnabled(this.tLibelle.getText().trim().length() > 0);
     }
 
     @Override
@@ -503,6 +557,12 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
         switch (this.tpPrincipal.getSelectedIndex()) {
             case 0:
                 this.tableManifestations.filtrer(search);
+                break;
+            case 1:
+                this.tableDepartements.filtrer(search);
+                break;
+            case 2:
+                this.tableContacts.filtrer(search);
                 break;
         }
     }
@@ -522,15 +582,22 @@ public class VuePrincipale extends VueAbstraite implements IOPrincipale {
         int[] selectedRows = {0};
         switch (this.tpPrincipal.getSelectedIndex()) {
             case 0:
-                selectedRows = this.tableManifestations.getSelectedRows();
+                selectedRows = this.tableManifestations.getLignesSelectionnees();
                 break;
             case 1:
-                selectedRows = this.tableDepartements.getSelectedRows();
+                selectedRows = this.tableDepartements.getLignesSelectionnees();
                 break;
             case 2:
-                selectedRows = this.tableContacts.getSelectedRows();
+                selectedRows = this.tableContacts.getLignesSelectionnees();
                 break;
         }
         return selectedRows;
+    }
+
+    @Override
+    public void annulerSelectionTables() {
+        this.tableContacts.clearSelection();
+        this.tableDepartements.clearSelection();
+        this.tableManifestations.clearSelection();
     }
 }

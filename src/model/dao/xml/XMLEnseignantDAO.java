@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import model.business.Departement;
 import model.business.Enseignant;
 import model.business.Manifestation;
 
@@ -30,12 +31,11 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     private final XMLChemin chemin;
     private final String nomFichier;
     private Element racine;
-    
+
     /*
-    public XMLChemin getChemin() {
-    return chemin;
-    }*/
-    
+     public XMLChemin getChemin() {
+     return chemin;
+     }*/
     public String getNomFicher() {
         return nomFichier;
     }
@@ -51,25 +51,24 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public ArrayList<Enseignant> readAll() {
-         ArrayList<Enseignant> liste = new  ArrayList<>();
+        ArrayList<Enseignant> liste = new ArrayList<>();
 
-       try {
+        try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.nomFichier));
             Element root = doc.getRootElement();
-            
+
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                               
-                liste.add(new Enseignant(node.getAttribute("id").getIntValue(),node.getChildText("nom_ens"),node.getChildText("prenom_ens")));
+                liste.add(new Enseignant(node.getAttribute("id").getIntValue(), node.getChildText("nom_ens"), node.getChildText("prenom_ens")));
             }
 
         } catch (IOException | JDOMException io) {
             System.out.println(io.getMessage());
         }
-       return liste;
+        return liste;
     }
 
     @Override
@@ -85,11 +84,11 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
         Element nom_ens = new Element("nom_ens");
         nom_ens.setText(enseignant.getNomEnseignant());
         ens.addContent(nom_ens);
-        
+
         Element prenom_ens = new Element("prenom_ens");
         prenom_ens.setText(enseignant.getPrenomEnseignant());
-        ens.addContent(prenom_ens);     
-        
+        ens.addContent(prenom_ens);
+
         this.sauvegarde();
 
         return 1;
@@ -120,22 +119,22 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             Element nom_ens = new Element("nom_ens");
             nom_ens.setText(enseignant.getNomEnseignant());
             ens.addContent(nom_ens);
-            
+
             Element prenom_ens = new Element("prenom_ens");
             prenom_ens.setText(enseignant.getPrenomEnseignant());
             ens.addContent(prenom_ens);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            
+
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
     }
-    
+
     @Override
     public boolean update(Enseignant enseignant) {
-      SAXBuilder builder = new SAXBuilder();
+        SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
         try {
@@ -147,8 +146,8 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             for (Element element : root.getChildren()) {
 
                 if (numEns.equals(element.getAttributeValue("id"))) {
-                     element.getChild("nom_ens").setText(enseignant.getNomEnseignant());
-                     element.getChild("prenom_ens").setText(enseignant.getPrenomEnseignant());
+                    element.getChild("nom_ens").setText(enseignant.getNomEnseignant());
+                    element.getChild("prenom_ens").setText(enseignant.getPrenomEnseignant());
                     break;
                 }
 
@@ -167,7 +166,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public boolean delete(Enseignant enseignant) {
-         SAXBuilder builder = new SAXBuilder();
+        SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
         try {

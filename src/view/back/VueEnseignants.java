@@ -1,9 +1,9 @@
 package view.back;
 
 import view.IObservable;
-import view.back.IOEnseignant;
 import controller.back.ControleurEnseignant;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,6 +14,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
@@ -23,9 +24,9 @@ import javax.swing.table.TableRowSorter;
 import model.business.Departement;
 import model.business.Enseignant;
 import view.JTableDonnees;
-import view.VueAbstraite;
+import view.VueAbstract;
 
-public class VueEnseignants extends VueAbstraite implements IObservable, IOEnseignant {
+public class VueEnseignants extends VueAbstract implements IObservable, IOEnseignant {
 
     private ControleurEnseignant monControleur;
 
@@ -37,11 +38,6 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     private JTableDonnees tableEnseignants;
 
-    public VueEnseignants(Departement departement) {
-        this();
-        this.setDpt(departement);
-    }
-
     public VueEnseignants() {
 
         super("Gestion des enseignants");
@@ -52,11 +48,13 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
         this.add(this.creerPanelPrincipal(), BorderLayout.CENTER);
 
         this.monControleur.remplitComboDpt();
+        super.cListeDpt.setSelectedIndex(0);
 
         this.gereEcouteur();
+        this.gereButtonsActifs();
 
-        this.setSize(700, 500);
-        this.setLocation(300, 100);
+        this.setSize(700, 400);
+        this.setLocation(300, 200);
 
         this.setVisible(true);
 
@@ -65,12 +63,37 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.frameAjoutModif.dispose();
     }
 
     @Override
     public void gereButtonsActifs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super.bNouveau.setEnabled(true);
+        super.bModifier.setEnabled(true);
+        super.bSupprimer.setEnabled(true);
+
+        super.bExporter.setVisible(false);
+        super.bStats.setVisible(false);
+        super.bImporter.setVisible(false);
+        super.bOuvreDpt.setVisible(false);
+        super.bOuvreEns.setVisible(false);
+        super.bProfil.setVisible(false);
+
+        super.js2.setVisible(true);
+        super.js4.setVisible(false);
+
+        if (this.tableEnseignants.getSelectedRowCount() == 1) {
+            super.bModifier.setEnabled(true);
+        } else {
+            super.bModifier.setEnabled(false);
+        }
+
+        if (this.tableEnseignants.getSelectedRowCount() > 0) {
+            super.bSupprimer.setEnabled(true);
+        } else {
+            super.bSupprimer.setEnabled(false);
+        }
+
     }
 
     @Override
@@ -96,7 +119,6 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
         this.frameAjoutModif.setSize(400, 170);
         this.frameAjoutModif.setResizable(false);
         this.frameAjoutModif.setLocation(450, 300);
-        this.frameAjoutModif.setVisible(true);
 
         this.frameAjoutModif.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
@@ -170,22 +192,28 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     @Override
     public int getLigneSelectionnee() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.tableEnseignants.convertRowIndexToModel(this.tableEnseignants.getSelectedRow());
     }
 
     @Override
     public void remplitChamps(Enseignant e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.tNom.setText(e.getNomEnseignant());
+        this.tPrenom.setText(e.getPrenomEnseignant());
+        this.cDepartements.setSelectedItem(e.getDepartement());
     }
 
     @Override
     public void prepareModif() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.frameAjoutModif.setTitle("Modifier un enseignant");
+
+        super.bSubmit.setText("Modifer");
+        super.bSubmit.setActionCommand("submitModif");
     }
 
     @Override
     public void autoriseAjoutModif() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super.bSubmit.setEnabled(this.tNom.getText().trim().length() > 0
+                && this.tPrenom.getText().trim().length() > 0);
     }
 
     @Override
@@ -195,12 +223,19 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
         super.cListeDpt.insertItemAt("Tous les départements", 0);
     }
 
+    @Override
+    public void setListeDepartementAM(ArrayList<Departement> liste) {
+        DefaultComboBoxModel modelDpt = new DefaultComboBoxModel<Departement>(liste.toArray(new Departement[liste.size()]));
+        this.cDepartements.setModel(modelDpt);
+    }
+
     private JPanel creerPanelPrincipal() {
 
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
 
         this.tableEnseignants = new JTableDonnees(null, this.monControleur.getDonneesEnseignant());
+        this.tableEnseignants.filtrer(null);
 
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -224,19 +259,18 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
         super.cListeDpt.addItemListener(monControleur);
 
         super.tSearch.getDocument().addDocumentListener(monControleur);
+
+        this.tableEnseignants.getSelectionModel().addListSelectionListener(monControleur);
+
     }
 
     private void gereEcouteurAM() {
 
         this.tNom.getDocument().addDocumentListener(monControleur);
+        this.tPrenom.getDocument().addDocumentListener(monControleur);
 
         super.bSubmit.addActionListener(monControleur);
         super.bCancel.addActionListener(monControleur);
-    }
-
-    @Override
-    public Departement getDptSelected() {
-        return (Departement) this.cListeDpt.getSelectedItem();
     }
 
     @Override
@@ -274,26 +308,27 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     @Override
     public void afficheAjoutModif() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.frameAjoutModif.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        this.frameAjoutModif.setVisible(true);
     }
 
     @Override
     public int confirmation(String message, String titre, int typeMessage, int icone) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return JOptionPane.showConfirmDialog(this, message, titre, typeMessage, icone, null);
     }
 
     @Override
     public void afficheErreur(String message, String titre, int typeMessage) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JOptionPane.showMessageDialog(this, message, titre, typeMessage);
     }
 
     @Override
     public int[] getLesLignesSelectionnee() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.tableEnseignants.getLignesSelectionnees();
     }
 
     @Override
-    public int getSelectedDepartement() {
+    public int getSelectedDepartementIndex() {
         return super.cListeDpt.getSelectedIndex();
     }
 
@@ -303,6 +338,26 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
         } else {
             super.cListeDpt.setSelectedItem(d);
         }
+    }
+
+    @Override
+    public String getNom() {
+        return this.tNom.getText();
+    }
+
+    @Override
+    public String getPrenom() {
+        return this.tPrenom.getText();
+    }
+
+    @Override
+    public Departement getDptAjoutModif() {
+        return (Departement) this.cDepartements.getSelectedItem();
+    }
+
+    @Override
+    public Departement getDptFiltre() {
+        return (Departement) this.cListeDpt.getSelectedItem();
     }
 
 }

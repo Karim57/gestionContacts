@@ -15,4 +15,6 @@ public interface IOPrincipale extends IObservable {
 
     public void filtrer(String[] search);
 
+    public void annulerSelectionTables();
+
 }

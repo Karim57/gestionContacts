@@ -2,6 +2,8 @@ package controller.back;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.event.ChangeEvent;
@@ -12,7 +14,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.business.Contact;
 import model.business.Departement;
-import model.business.Enseignant;
 import model.business.Manifestation;
 import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
@@ -24,8 +25,9 @@ import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
 import view.back.IOPrincipale;
 import view.back.VueEnseignants;
+import view.back.VueFormation;
 
-public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener {
+public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener, MouseListener {
 
     private IOPrincipale vue;
     private ModeleManifestation donneesManifestation;
@@ -33,8 +35,10 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     private ModeleContact donneesContact;
 
     private VueEnseignants vueEnseignants;
+    private VueFormation vueFormations;
 
     private static boolean enseignantOuverte = false;
+    private static boolean formationOuverte = false;
 
     private String[] search = {""};
 
@@ -44,19 +48,20 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String s = e.getActionCommand();
 
         switch (this.vue.getActivePane()) {
             case 0:
-                this.gereActionCommandManif(s);
+                this.gereActionCommandManif(e);
                 break;
             case 1:
-                this.gereActionCommandDepartement(s);
+                this.gereActionCommandDepartement(e);
                 break;
             case 2:
-                this.gereActionCommandContact(s);
+                this.gereActionCommandContact(e);
                 break;
         }
+
+        String s = e.getActionCommand();
 
         // Bouttons généralistes
         if (s.equals("Annuler")) {
@@ -65,7 +70,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     }
 
-    private void gereActionCommandManif(String s) {
+    private void gereActionCommandManif(ActionEvent e) {
+
+        String s = e.getActionCommand();
 
         // Gestion des bouttons à l'accueil
         if (s.equals("Nouveau")) {
@@ -117,7 +124,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     }
 
-    private void gereActionCommandDepartement(String s) {
+    private void gereActionCommandDepartement(ActionEvent e) {
+
+        String s = e.getActionCommand();
 
         if (s.equals("Nouveau")) {
             this.vue.construitAjoutModif();
@@ -126,7 +135,10 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
         if (s.equals("Modifier")) {
             Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
+            this.vue.construitAjoutModif();
+            this.vue.prepareModif();
             this.vue.remplitChamps(departement.getLibelleDepartement());
+
             this.vue.afficheAjoutModif();
         }
 
@@ -135,6 +147,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Enseignant")) {
+
             Departement d = null;
             if (this.vue.getLesLignesSelectionnee().length == 1) {
                 int l = this.vue.getLigneSelectionnee();
@@ -142,7 +155,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
             }
 
             if (!enseignantOuverte) {
-                vueEnseignants = new VueEnseignants(d);
+                vueEnseignants = new VueEnseignants();
+                vueEnseignants.setName("Enseignants");
+                vueEnseignants.setDpt(d);
                 enseignantOuverte = true;
                 vueEnseignants.addWindowListener(this);
             } else {
@@ -152,6 +167,22 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Formation")) {
+            Departement d = null;
+            if (this.vue.getLesLignesSelectionnee().length == 1) {
+                int l = this.vue.getLigneSelectionnee();
+                d = this.donneesDepartement.getValueAt(l);
+            }
+
+            if (!formationOuverte) {
+                vueFormations = new VueFormation();
+                vueFormations.setName("Formations");
+                vueFormations.setDpt(d);
+                formationOuverte = true;
+                vueFormations.addWindowListener(this);
+            } else {
+                vueFormations.setDpt(d);
+                vueFormations.toFront();
+            }
 
         }
 
@@ -174,7 +205,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
     }
 
-    private void gereActionCommandContact(String s) {
+    private void gereActionCommandContact(ActionEvent e) {
+
+        String s = e.getActionCommand();
 
         if (s.equals("Profil")) {
             Contact contact = this.donneesContact.getValueAt(this.vue.getLigneSelectionnee());
@@ -316,9 +349,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        if (e.getDocument().getProperty("id") == "tAjoutModif") {
+        if (e.getDocument().getProperty("id").equals("tAjoutModif")) {
             this.vue.autoriseAjoutModif();
-        } else if (e.getDocument().getProperty("id") == "tSearch") {
+        } else if (e.getDocument().getProperty("id").equals("tSearch")) {
             this.search = this.vue.getSearch().split(" ");
             this.vue.filtrer(this.search);
         }
@@ -336,17 +369,25 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void windowOpened(WindowEvent we) {
-        enseignantOuverte = true;
+        if (we.getWindow().getName().equals("Enseignants")) {
+            enseignantOuverte = true;
+        } else if (we.getWindow().getName().equals("Formations")) {
+            formationOuverte = true;
+        }
     }
 
     @Override
     public void windowClosing(WindowEvent we) {
-        enseignantOuverte = false;
+        if (we.getWindow().getName().equals("Enseignants")) {
+            enseignantOuverte = false;
+        } else if (we.getWindow().getName().equals("Formations")) {
+            formationOuverte = false;
+        }
     }
 
     @Override
     public void windowClosed(WindowEvent we) {
-        enseignantOuverte = false;
+        this.windowClosing(we);
     }
 
     @Override
@@ -359,11 +400,34 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void windowActivated(WindowEvent we) {
-        enseignantOuverte = true;
+        this.windowOpened(we);
     }
 
     @Override
     public void windowDeactivated(WindowEvent we) {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            this.vue.annulerSelectionTables();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
     }
 
 }

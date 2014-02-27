@@ -10,46 +10,48 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.business.Departement;
 import model.business.Enseignant;
+import model.business.Formation;
 import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLEnseignantDAO;
-import model.tables.ModeleEnseignant;
-import view.back.IOEnseignant;
+import model.dao.sql.SQLFormationDAO;
+import model.tables.ModeleFormation;
+import view.back.IOFormation;
 
-public class ControleurEnseignant implements ActionListener, DocumentListener, ListSelectionListener, ItemListener {
+public class ControleurFormation implements ActionListener, DocumentListener, ListSelectionListener, ItemListener {
 
-    private IOEnseignant vue;
-    private ModeleEnseignant donneesEnseignant;
+    private IOFormation vue;
+    private ModeleFormation donneesFormation;
 
-    private String[] searchNomPrenom = {""};
+    private String[] search = {""};
     private String searchDpt = "";
 
-    public ControleurEnseignant(IOEnseignant v) {
+    public ControleurFormation(IOFormation v) {
         this.vue = v;
     }
 
-    public ModeleEnseignant getDonneesEnseignant() {
-        String[] champsForm = {"Nom", "Prenom", "Département"};
-        this.donneesEnseignant = new ModeleEnseignant(champsForm);
-        this.donneesEnseignant.setDonnees(SQLEnseignantDAO.getInstance().readAll());
+    public ModeleFormation getDonneesFormation() {
+        String[] champsForm = {"Libellé", "Département"};
+        this.donneesFormation = new ModeleFormation(champsForm);
+        this.donneesFormation.setDonnees(SQLFormationDAO.getInstance().readAll());
 
-        return donneesEnseignant;
+        return donneesFormation;
     }
 
     public void remplitComboDpt() {
         this.vue.setListeDepartement(SQLDepartementDAO.getInstance().readAll());
     }
 
-    private boolean supprimerDesEnseignants(int tab[]) {
+    private boolean supprimerDesFormations(int tab[]) {
 
         for (int i : tab) {
-            Enseignant e = this.donneesEnseignant.getValueAt(i);
-            if (SQLContactDAO.getInstance().nbContactsParEns(e) == 0) {
-                this.donneesEnseignant.supprimerElement(e);
+            Formation f = this.donneesFormation.getValueAt(i);
+            if (SQLContactDAO.getInstance().nbContactsParFormation(f) == 0) {
+                this.donneesFormation.supprimerElement(f);
             } else {
-                this.vue.afficheErreur("Impossible de supprimer un enseignant lié à un contact, opération annulée.",
+                this.vue.afficheErreur("Impossible de supprimer une formation lié à un contact, opération annulée.",
                         "Erreur lors de la suppression", 0);
-                this.donneesEnseignant.videElementsASupprimer();
+                this.donneesFormation.videElementsASupprimer();
                 return false;
             }
         }
@@ -57,20 +59,19 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
         int response = -1;
 
         if (tab.length > 1) {
-            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer " + tab.length + " enseigants ?",
+            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer " + tab.length + " formation ?",
                     "Confirmation de suppression groupée", 2, 3);
         } else {
-            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer cet enseignant ?",
-                    this.donneesEnseignant.getElementsASupprimer().get(0).getNomEnseignant() + " "
-                    + this.donneesEnseignant.getElementsASupprimer().get(0).getPrenomEnseignant(), 2, 3);
+            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer cette formation ?",
+                    this.donneesFormation.getElementsASupprimer().get(0).getLibelleFormation(), 2, 3);
         }
 
         if (response == 0) {
-            this.donneesEnseignant.confirmerSuppression();
-            SQLEnseignantDAO.getInstance().deleteList(this.donneesEnseignant.getElementsASupprimer());
+            this.donneesFormation.confirmerSuppression();
+            SQLFormationDAO.getInstance().deleteList(this.donneesFormation.getElementsASupprimer());
         }
 
-        this.donneesEnseignant.videElementsASupprimer();
+        this.donneesFormation.videElementsASupprimer();
         return true;
     }
 
@@ -89,9 +90,9 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
             this.vue.construitAjoutModif(); // On construit d'abord le frame
             this.vue.prepareModif(); // sinon on peut pas remplir
 
-            Enseignant enseignant = this.donneesEnseignant.getValueAt(this.vue.getLigneSelectionnee());
+            Formation formation = this.donneesFormation.getValueAt(this.vue.getLigneSelectionnee());
             this.vue.setListeDepartementAM(SQLDepartementDAO.getInstance().readAll());
-            this.vue.remplitChamps(enseignant);
+            this.vue.remplitChamps(formation);
 
             // On l'affiche en modal à la fin,
             // Sinon le remplissage va pas marcher (vue bloquée)
@@ -99,34 +100,34 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
         }
 
         if (s.equals("Supprimer")) {
-            this.supprimerDesEnseignants(this.vue.getLesLignesSelectionnee());
+            this.supprimerDesFormations(this.vue.getLesLignesSelectionnee());
         }
 
         if (s.equals("submitAjout")) {
-            String nom = this.vue.getNom();
-            String prenom = this.vue.getPrenom();
+            String libelle = this.vue.getLibelle();
             Departement d = this.vue.getDptAjoutModif();
 
-            Enseignant enseignant = new Enseignant(nom, prenom, d);
-            this.donneesEnseignant.ajouterElement(enseignant);
-            SQLEnseignantDAO.getInstance().create(enseignant);
+            Formation formation = new Formation(libelle, d);
+            this.donneesFormation.ajouterElement(formation);
+            SQLFormationDAO.getInstance().create(formation);
             this.vue.close();
         }
 
         if (s.equals("submitModif")) {
-            String nom = this.vue.getNom();
-            String prenom = this.vue.getPrenom();
+            String libelle = this.vue.getLibelle();
             Departement d = this.vue.getDptAjoutModif();
 
-            Enseignant enseignant = this.donneesEnseignant.getValueAt(this.vue.getLigneSelectionnee());
-            enseignant.setNomEnseignant(nom);
-            enseignant.setPrenomEnseignant(prenom);
-            enseignant.setDepartement(d);
-            this.donneesEnseignant.setRow(this.vue.getLigneSelectionnee(), enseignant);
-            SQLEnseignantDAO.getInstance().update(enseignant);
+            Formation formation = this.donneesFormation.getValueAt(this.vue.getLigneSelectionnee());
+            formation.setLibelleFormation(libelle);
+            formation.setDepartement(d);
+            this.donneesFormation.setRow(this.vue.getLigneSelectionnee(), formation);
+            SQLFormationDAO.getInstance().update(formation);
             this.vue.close();
         }
 
+        if (s.equals("Stats")) {
+
+        }
     }
 
     @Override
@@ -146,8 +147,8 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
                 || e.getDocument().getProperty("id").equals("tAjoutModifPrenom")) {
             this.vue.autoriseAjoutModif();
         } else if (e.getDocument().getProperty("id") == "tSearch") {
-            searchNomPrenom = this.vue.getSearch().split(" ");
-            this.vue.filtrer(this.searchNomPrenom, this.searchDpt);
+            search = this.vue.getSearch().split(" ");
+            this.vue.filtrer(this.search, this.searchDpt);
         }
 
     }
@@ -165,7 +166,7 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
         } else {
             this.searchDpt = this.vue.getDptFiltre().toString();
         }
-        this.vue.filtrer(this.searchNomPrenom, this.searchDpt);
+        this.vue.filtrer(this.search, this.searchDpt);
     }
 
 }

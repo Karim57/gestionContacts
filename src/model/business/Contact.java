@@ -3,6 +3,7 @@ package model.business;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.Objects;
 
 public class Contact implements Comparable<Contact> {
 
@@ -149,6 +150,72 @@ public class Contact implements Comparable<Contact> {
         if (this.listeFormations.size() < 4) {
             this.listeFormations.add(formation);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + this.idContact;
+        hash = 79 * hash + Objects.hashCode(this.nomContact);
+        hash = 79 * hash + Objects.hashCode(this.prenomContact);
+        hash = 79 * hash + Objects.hashCode(this.emailContact);
+        hash = 79 * hash + Objects.hashCode(this.etudes1Contact);
+        hash = 79 * hash + Objects.hashCode(this.etudes2Contact);
+        hash = 79 * hash + Objects.hashCode(this.descriptionContact);
+        hash = 79 * hash + Objects.hashCode(this.dateContact);
+        hash = 79 * hash + Objects.hashCode(this.heureContact);
+        hash = 79 * hash + Objects.hashCode(this.manifestation);
+        hash = 79 * hash + Objects.hashCode(this.enseignant);
+        hash = 79 * hash + Objects.hashCode(this.listeFormations);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Contact other = (Contact) obj;
+        if (this.idContact != other.idContact) {
+            return false;
+        }
+        if (!Objects.equals(this.nomContact, other.nomContact)) {
+            return false;
+        }
+        if (!Objects.equals(this.prenomContact, other.prenomContact)) {
+            return false;
+        }
+        if (!Objects.equals(this.emailContact, other.emailContact)) {
+            return false;
+        }
+        if (!Objects.equals(this.etudes1Contact, other.etudes1Contact)) {
+            return false;
+        }
+        if (!Objects.equals(this.etudes2Contact, other.etudes2Contact)) {
+            return false;
+        }
+        if (!Objects.equals(this.descriptionContact, other.descriptionContact)) {
+            return false;
+        }
+        if (!Objects.equals(this.dateContact, other.dateContact)) {
+            return false;
+        }
+        if (!Objects.equals(this.heureContact, other.heureContact)) {
+            return false;
+        }
+        if (!Objects.equals(this.manifestation, other.manifestation)) {
+            return false;
+        }
+        if (!Objects.equals(this.enseignant, other.enseignant)) {
+            return false;
+        }
+        if (!Objects.equals(this.listeFormations, other.listeFormations)) {
+            return false;
+        }
+        return true;
     }
 
 }

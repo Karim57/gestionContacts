@@ -108,7 +108,6 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         boolean updated = false;
 
         try {
-            System.err.println(departement.getIdDepartement());
             PreparedStatement stU = connection.prepareStatement(update);
 
             stU.setString(1, departement.getLibelleDepartement());
@@ -122,7 +121,6 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         } finally {
             this.connect.fermeConnexion();
         }
-        System.err.println(updated);
         return updated;
     }
 

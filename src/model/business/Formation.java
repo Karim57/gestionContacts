@@ -9,7 +9,12 @@ public class Formation implements Comparable<Formation> {
     public Formation(String libelleFormation) {
         this.libelleFormation = libelleFormation;
     }
-    
+
+    public Formation(String libelleFormation, Departement d) {
+        this(libelleFormation);
+        this.setDepartement(d);
+    }
+
     public Formation(int idFormation, String libelleFormation) {
         this.idFormation = idFormation;
         this.libelleFormation = libelleFormation;

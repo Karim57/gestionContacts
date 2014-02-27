@@ -33,21 +33,45 @@ public class JTableDonnees extends JTable {
         }
     }
 
+    /**
+     * Filtre la JTable
+     *
+     * @param lesFiltres tableaux des mots recherchés
+     */
     public void filtrer(String[] lesFiltres) {
         TableRowSorter sorter = new TableRowSorter(this.modele);
         List<RowFilter<Object, Object>> listeFilters = new ArrayList<RowFilter<Object, Object>>();
 
-        for (String s : lesFiltres) {
-            s = s.trim();
-            List<RowFilter<Object, Object>> filtreUnMot = new ArrayList<RowFilter<Object, Object>>();
-            for (int i = 0; i < this.modele.getColumnCount(); i++) {
-                filtreUnMot.add(RowFilter.regexFilter("(?i)" + s, i));
+        if (lesFiltres != null) {
+            for (String s : lesFiltres) {
+                s = s.trim();
+                List<RowFilter<Object, Object>> filtreUnMot = new ArrayList<RowFilter<Object, Object>>();
+                for (int i = 0; i < this.modele.getColumnCount(); i++) {
+                    filtreUnMot.add(RowFilter.regexFilter("(?i)" + s, i));
+                }
+                listeFilters.add(RowFilter.orFilter(filtreUnMot));
             }
-            listeFilters.add(RowFilter.orFilter(filtreUnMot));
+            sorter.setRowFilter(RowFilter.andFilter(listeFilters));
         }
 
-        sorter.setRowFilter(RowFilter.andFilter(listeFilters));
         this.setRowSorter(sorter);
+    }
+
+    /**
+     * Obligatoire sinon problème d'index lors de la suppression groupée
+     *
+     * @return la table des ligne sélectionnée
+     */
+    public int[] getLignesSelectionnees() {
+
+        int[] tab = new int[this.getSelectedRows().length];
+
+        for (int i = 0; i < this.getSelectedRows().length; i++) {
+            tab[i] = this.convertRowIndexToModel(
+                    this.getSelectedRows()[i]);
+        }
+
+        return tab;
     }
 
     @Override
