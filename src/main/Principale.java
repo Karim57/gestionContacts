@@ -25,22 +25,11 @@ public class Principale {
 
        // VueFenetrePrincipale vuePrincipale = new VueFenetrePrincipale();
 
-        // List<Float> donnees = new ArrayList<Float>();
-        //	List<String> l1 = new ArrayList<String>();
-        //	List<String> l2 = new ArrayList<String>();
-        //	l2.add("0");
-        //	l1.add("1");
-        /*		l1.add("2");
-         l1.add("3");
-         l1.add("4");
-         donnees.add(2f);
-         donnees.add(3f);
-         donnees.add(4f);
-         donnees.add(4f);*/
+       
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setBounds(10, 10, 500, 500);
-        JFreeChart s = ChartFactory.createBarChart("Voici le titre", "Abscisse", "Ordonnées", SQLStatsDAO.getInstance().getNbContactsParDpt());
+        JFreeChart s = ChartFactory.createBarChart("Histogramme", "Formations", "Contacts", SQLStatsDAO.getInstance().getNbContactsParDpt());
         ChartPanel p = new ChartPanel(s);;
         f.add(p);
         f.setVisible(true);
