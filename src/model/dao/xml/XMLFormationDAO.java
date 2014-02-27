@@ -11,6 +11,7 @@ import model.business.Formation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
+import model.dao.sql.SQLDepartementDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
@@ -56,8 +57,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-
-                liste.add(new Formation(node.getAttribute("id").getIntValue(), node.getChildText("libelle_form")));
+                liste.add(new Formation(node.getAttribute("id").getIntValue(), node.getChildText("libelle_form"), SQLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
         } catch (IOException | JDOMException io) {
@@ -79,6 +79,10 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
         Element libelle_form = new Element("libelle_form");
         libelle_form.setText(formation.getLibelleFormation());
         form.addContent(libelle_form);
+        
+        Element id_dpt = new Element("id_dpt");
+        id_dpt.setText(Integer.toString(formation.getDepartement().getIdDepartement()));
+        form.addContent(id_dpt);
         this.sauvegarde();
 
         return 1;
@@ -109,6 +113,10 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             Element libelle_form = new Element("libelle_form");
             libelle_form.setText(formation.getLibelleFormation());
             form.addContent(libelle_form);
+            
+            Element id_dpt = new Element("id_dpt");
+            id_dpt.setText(Integer.toString(formation.getDepartement().getIdDepartement()));
+            form.addContent(id_dpt);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));

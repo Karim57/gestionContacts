@@ -3,13 +3,16 @@
   <enseignant id="1">
     <nom_ens>Laroche</nom_ens>
     <prenom_ens>Pierre</prenom_ens>
+    <id_dpt>1</id_dpt>
   </enseignant>
   <enseignant id="3">
     <nom_ens>Dosne</nom_ens>
     <prenom_ens>Isabelle</prenom_ens>
+    <id_dpt>3</id_dpt>
   </enseignant>
   <enseignant id="4">
     <nom_ens>Nagel</nom_ens>
     <prenom_ens>Cyril</prenom_ens>
+    <id_dpt>1</id_dpt>
   </enseignant>
 </enseignants>

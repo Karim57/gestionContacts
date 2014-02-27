@@ -12,6 +12,7 @@ import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
+import model.dao.sql.SQLDepartementDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
@@ -63,7 +64,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
                                
-                liste.add(new Enseignant(node.getAttribute("id").getIntValue(),node.getChildText("nom_ens"),node.getChildText("prenom_ens")));
+                liste.add(new Enseignant(node.getAttribute("id").getIntValue(),node.getChildText("nom_ens"),node.getChildText("prenom_ens"), SQLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
         } catch (IOException | JDOMException io) {
@@ -89,6 +90,10 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
         Element prenom_ens = new Element("prenom_ens");
         prenom_ens.setText(enseignant.getPrenomEnseignant());
         ens.addContent(prenom_ens);     
+        
+        Element id_dpt = new Element("id_dpt");
+        id_dpt.setText(Integer.toString(enseignant.getDepartement().getIdDepartement()));
+        ens.addContent(id_dpt);
         
         this.sauvegarde();
 
@@ -124,6 +129,10 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             Element prenom_ens = new Element("prenom_ens");
             prenom_ens.setText(enseignant.getPrenomEnseignant());
             ens.addContent(prenom_ens);
+            
+            Element id_dpt = new Element("id_dpt");
+            id_dpt.setText(Integer.toString(enseignant.getDepartement().getIdDepartement()));
+            ens.addContent(id_dpt);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
