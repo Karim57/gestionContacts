@@ -10,11 +10,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,6 +31,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileSystemView;
 import model.business.Contact;
 import view.JTableDonnees;
 import view.VueAbstract;
@@ -38,6 +41,8 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
     private ControleurPrincipal monControleur;
 
     private JTabbedPane tpPrincipal;
+
+    private JFileChooser chooser;
 
     private JDialog frameAjoutModif;
 
@@ -128,6 +133,24 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
         this.wSplashScreen.setLocation(dim.width / 2 - wSplashScreen.getSize().width / 2, dim.height / 3 - wSplashScreen.getSize().height / 2);
         this.wSplashScreen.setVisible(true);
 
+    }
+
+    public File fileChooser() {
+
+        File f = null;
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        chooser = new JFileChooser();
+        chooser.setCurrentDirectory(fsv.getRoots()[0]);
+        chooser.setDialogTitle("Dossier d'exportation");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setApproveButtonText("Choisir");
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            f = chooser.getSelectedFile();
+        }
+
+        return f;
     }
 
     private void gereEcouteur() {
