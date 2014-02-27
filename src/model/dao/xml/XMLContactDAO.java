@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Contact;
@@ -60,9 +61,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                      Date.valueOf(node.getChildText("date"));
-                      node.getChildText("heure");
-              liste.add(new Contact(node.getAttribute("id").getIntValue(),SQLManifestationDAO.getInstance().readById( Integer.parseInt(node.getChildText("manifestation"))),SQLEnseignantDAO.getInstance().readById( Integer.parseInt(node.getChildText("enseignant"))),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),node.getChildText("description")));
+              liste.add(new Contact(node.getAttribute("id").getIntValue(),SQLManifestationDAO.getInstance().readById( Integer.parseInt(node.getChildText("manifestation"))),SQLEnseignantDAO.getInstance().readById( Integer.parseInt(node.getChildText("enseignant"))),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),Date.valueOf(node.getChildText("date")),Time.valueOf(node.getChildText("heure")),node.getChildText("description")));
             }
 
         } catch (IOException | JDOMException io) {

@@ -85,7 +85,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         Connection connection = this.connect.getConnexion();
         String sql = "SELECT * FROM enseignant e, departement d "
                 + "WHERE e.id_dpt = d.id_dpt "
-                + "AND id_enseignant = " + id;
+                + "AND id_ens = " + id;
         Enseignant enseignant = null;
 
         try {

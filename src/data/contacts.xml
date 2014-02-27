@@ -8,14 +8,22 @@
     <email>email@gmail.com</email>
     <etude1>LPSIL</etude1>
     <etude2>BAC S</etude2>
-    <date>2014-02-26</date>
-    <heure>23:29:13</heure>
+    <date>2014-02-27</date>
+    <heure>15:47:21</heure>
     <description>Reunion de pré-renter</description>
-    <formations>
-      <formation>1</formation>
-      <formation>2</formation>
-      <formation>3</formation>
-      <formation>4</formation>
-    </formations>
+    <formations />
+  </contact>
+  <contact id="2">
+    <manifestation>1</manifestation>
+    <enseignant>1</enseignant>
+    <nom>Mirak</nom>
+    <prenom>Karim</prenom>
+    <email>blabla@gmail.com</email>
+    <etude1>LPSIL</etude1>
+    <etude2>BAC S</etude2>
+    <date>2014-02-27</date>
+    <heure>15:47:21</heure>
+    <description>Reunion de pré-renter</description>
+    <formations />
   </contact>
 </contacts>
