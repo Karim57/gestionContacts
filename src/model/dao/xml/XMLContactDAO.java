@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Contact;
@@ -12,6 +13,8 @@ import model.business.Formation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
+import model.dao.sql.SQLEnseignantDAO;
+import model.dao.sql.SQLManifestationDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
@@ -57,8 +60,9 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                               
-      //          liste.add(new Contact(node.getAttribute("id").getIntValue(),node.getChildText("manifestation"),node.getChildText("enseignant"),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),node.getChildText("date"),,node.getChildText("heure"),node.getChildText("description")));
+                      Date.valueOf(node.getChildText("date"));
+                      node.getChildText("heure");
+              liste.add(new Contact(node.getAttribute("id").getIntValue(),SQLManifestationDAO.getInstance().readById( Integer.parseInt(node.getChildText("manifestation"))),SQLEnseignantDAO.getInstance().readById( Integer.parseInt(node.getChildText("enseignant"))),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),node.getChildText("description")));
             }
 
         } catch (IOException | JDOMException io) {
