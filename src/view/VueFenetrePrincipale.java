@@ -1,204 +1,154 @@
 package view;
 
-import controller.ControlleurPrincipal;
+import controller.ControleurPrincipal;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
+import javax.swing.JWindow;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import model.business.Manifestation;
-import view.IObservable;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import model.business.Contact;
 
-public class VueFenetrePrincipale extends JFrame implements IObservable {
+public class VueFenetrePrincipale extends vueAbstraite implements IObservable {
 
-    private ControlleurPrincipal monControleur;
-    private JButton bNouveau;
+    private ControleurPrincipal monControleur;
 
-    JTabbedPane tpPrincipal;
+    private JTabbedPane tpPrincipal;
+
+    private JDialog frameAjoutModif;
 
     private JTextField tLibelle;
-    private JButton bSubmit;
-    private JButton bCancel;
-    private JButton bSupprimer;
 
     private JTableDonnees tableManifestations;
-    private JTableDonnees tableEnseignants;
     private JTableDonnees tableContacts;
-    private JTableDonnees tableFormations;
     private JTableDonnees tableDepartements;
+
+    private JWindow wSplashScreen;
+    private JLabel lMessage;
 
     public VueFenetrePrincipale() {
 
         super("Gestion des événements");
-        this.monControleur = new ControlleurPrincipal(this);
+        try {
+            this.creerSplashScreen();
+            this.lMessage.setText("Chargement des données ...");
+            Thread.sleep(2000);
+            this.monControleur = new ControleurPrincipal(this);
+            this.lMessage.setText("Création de l'interface graphique");
+            Thread.sleep(3000);
+            this.add(creerBarreOutils(), BorderLayout.NORTH);
+            this.add(creerPanelPrincipal(), BorderLayout.CENTER);
 
-        this.setJMenuBar(this.creerBarreMenu());
-        this.add(creerBarreOutils(), BorderLayout.NORTH);
-        this.add(creerPanelPrincipal(), BorderLayout.CENTER);
+            this.gereEcouteur();
 
-        this.gereEcouteur();
+            this.gereButtonsActifs();
 
-        this.setSize(700, 500);
-        this.setLocation(300, 100);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            this.setSize(1000, 600);
+            this.setLocation(300, 100);
+
+            wSplashScreen.dispose();
+
+            this.setVisible(true);
+
+            this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(VueFenetrePrincipale.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void creerSplashScreen() {
+        wSplashScreen = new JWindow();
+
+        JLabel lTitre = new JLabel("Gestionnaire de rencontres étudiants");
+        lTitre.setFont(new Font(null, WIDTH, 26));
+        lTitre.setBorder(new EmptyBorder(4, 25, 10, 20));
+
+        ClassLoader cl = this.getClass().getClassLoader();
+        JLabel lLogo = new JLabel(new ImageIcon(cl.getResource("view/images/logo2.png")));
+        lLogo.setBorder(new EmptyBorder(10, 5, 10, 20));
+
+        lMessage = new JLabel();
+
+        lMessage.setForeground(Color.GRAY);
+        lMessage.setFont(new Font(null, 1, 13));
+        lMessage.setBorder(new EmptyBorder(5, 24, 0, 10));
+
+        JLabel lCopyright = new JLabel();
+
+        lCopyright.setForeground(Color.BLACK);
+        lCopyright.setFont(new Font(null, 0, 10));
+        lCopyright.setBorder(new EmptyBorder(4, 24, 4, 10));
+        lCopyright.setText("Copyright (c) Licence Professionnelle Web et Commerce Electronique");
+
+        JPanel pLabel = new JPanel(new BorderLayout());
+        pLabel.setBackground(Color.WHITE);
+        pLabel.setBorder(new MatteBorder(5, 0, 0, 0, Color.darkGray));
+        pLabel.add(lMessage, BorderLayout.NORTH);
+        pLabel.add(lCopyright, BorderLayout.CENTER);
+
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(Color.yellow);
+        p.setBorder(new LineBorder(Color.black, 1));
+        p.add(lLogo, BorderLayout.NORTH);
+        p.add(lTitre, BorderLayout.CENTER);
+        p.add(pLabel, BorderLayout.SOUTH);
+
+        wSplashScreen.add(p);
+        wSplashScreen.pack();
+
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        wSplashScreen.setLocation(dim.width / 2 - wSplashScreen.getSize().width / 2, dim.height / 3 - wSplashScreen.getSize().height / 2);
+        wSplashScreen.setVisible(true);
+
     }
 
     private void gereEcouteur() {
         this.bNouveau.addActionListener(monControleur);
         this.bSupprimer.addActionListener(monControleur);
+        this.bModifier.addActionListener(monControleur);
+
+        this.bExporter.addActionListener(monControleur);
+        this.bProfil.addActionListener(monControleur);
+
         this.tpPrincipal.addChangeListener(monControleur);
-    }
 
-    private JMenuBar creerBarreMenu() {
+        this.tSearch.getDocument().addDocumentListener(monControleur);
 
-        JMenuBar mb = new JMenuBar();
-        mb.setBackground(new Color(245, 246, 247));
-        JMenu file = new JMenu("Fichier");
-
-        ClassLoader cl = this.getClass().getClassLoader();
-
-        JMenuItem newEvent = new JMenuItem("Nouveau", KeyEvent.VK_N);
-        newEvent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-        ImageIcon iconAdd = new ImageIcon(cl.getResource("view/images/add.png"));
-
-        newEvent.setIcon(iconAdd);
-
-        JMenuItem editEvent = new JMenuItem("Editer");
-        JMenuItem deleteEvent = new JMenuItem("Supprimer");
-        JMenuItem generateXMLEvent = new JMenuItem("Générer XML");
-
-        file.add(newEvent);
-        file.add(editEvent);
-        file.add(deleteEvent);
-        file.addSeparator();
-        file.add(generateXMLEvent);
-
-        JMenu view = new JMenu("Fenêtre");
-        JMenuItem manifestation = new JMenuItem("Manifestations");
-        JMenuItem enseignant = new JMenuItem("Enseignants");
-        JMenuItem formation = new JMenuItem("Formations");
-
-        view.add(manifestation);
-        view.add(enseignant);
-        view.add(formation);
-
-        JMenu help = new JMenu("?");
-
-        JMenu settings = new JMenu("Paramètres");
-
-        mb.add(file);
-        mb.add(view);
-        mb.add(settings);
-        mb.add(help);
-
-        return mb;
+        this.tableManifestations.getSelectionModel().addListSelectionListener(monControleur);
+        this.tableDepartements.getSelectionModel().addListSelectionListener(monControleur);
 
     }
 
-    private JToolBar creerBarreOutils() {
+    private void gereEcouteurAM() {
 
-        JToolBar jtb = new JToolBar();
-        jtb.setLayout(new GridBagLayout());
-        jtb.setBorder(new EmptyBorder(0, 5, 0, 0));
-        jtb.setBackground(new Color(240, 240, 240));
-        ClassLoader cl = this.getClass().getClassLoader();
+        this.tLibelle.getDocument().addDocumentListener(monControleur);
 
-        this.bNouveau = new JButton(new ImageIcon(cl.getResource("view/images/add2.png")));
-        this.bNouveau.setActionCommand("Nouveau");
-        this.bNouveau.setBorderPainted(false);
-        this.bNouveau.setFocusPainted(false);
-
-        JButton editEvent = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
-        editEvent.setBorderPainted(false);
-        editEvent.setFocusPainted(false);
-
-        bSupprimer = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
-        bSupprimer.setBorderPainted(false);
-        bSupprimer.setFocusPainted(false);
-        bSupprimer.setActionCommand("Supprimer");
-
-        JButton bsearch = new JButton(new ImageIcon(cl.getResource("view/images/search.png")));
-        bsearch.setBorderPainted(false);
-        bsearch.setFocusPainted(false);
-
-        JButton xmlEvent = new JButton(new ImageIcon(cl.getResource("view/images/xml.png")));
-        xmlEvent.setBorderPainted(false);
-        xmlEvent.setFocusPainted(false);
-
-        JSeparator js = new JSeparator(JSeparator.VERTICAL);
-        js.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
-
-        JSeparator js2 = new JSeparator(JSeparator.VERTICAL);
-        js2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        gbc.weighty = 1;
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        jtb.add(this.bNouveau, gbc);
-
-        gbc.gridx = 1;
-        jtb.add(js, gbc);
-
-        gbc.gridx = 2;
-        jtb.add(editEvent, gbc);
-
-        gbc.gridx = 3;
-        jtb.add(bSupprimer, gbc);
-
-        gbc.gridx = 4;
-        jtb.add(js2, gbc);
-
-        gbc.gridx = 5;
-        jtb.add(xmlEvent, gbc);
-
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.weightx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 200, 0, 5);
-        gbc.gridx = 6;
-        JTextField search = new JTextField(100);
-        jtb.add(search, gbc);
-
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 0, 0, 5);
-        gbc.gridx = 7;
-        jtb.add(bsearch, gbc);
-
-        jtb.setFloatable(false);
-
-        jtb.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
-        return jtb;
-
+        this.bSubmit.addActionListener(monControleur);
+        this.bCancel.addActionListener(monControleur);
     }
 
     private JPanel creerPanelPrincipal() {
@@ -210,13 +160,11 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         this.tableManifestations = new JTableDonnees(null, this.monControleur.getDonneesManifestation());
         tpPrincipal.addTab("Manifestations", this.creerPanelTable(this.tableManifestations));
 
-        tpPrincipal.addTab("Enseignants", null);
-
-        tpPrincipal.addTab("Etudiants", null);
-        tpPrincipal.addTab("Formations", null);
-        
         this.tableDepartements = new JTableDonnees(null, this.monControleur.getDonneesDepartement());
-        tpPrincipal.addTab("Départements", this.creerPanelTable(tableDepartements));
+        tpPrincipal.addTab("Départements", this.creerPanelTable(this.tableDepartements));
+
+        this.tableContacts = new JTableDonnees(null, this.monControleur.getDonneesContact());
+        tpPrincipal.addTab("Contacts", this.creerPanelTable(this.tableContacts));
 
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -232,86 +180,239 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
         return p;
     }
 
-    private JPanel creerPanelTable(JTableDonnees table) {
-
-        JPanel jp = new JPanel();
-        jp.setLayout(new GridBagLayout());
-        GridBagConstraints gbc2 = new GridBagConstraints();
-
-        gbc2.anchor = GridBagConstraints.LINE_END;
-        gbc2.weightx = 1;
-        gbc2.fill = GridBagConstraints.HORIZONTAL;
-        gbc2.gridx = 0;
-        gbc2.gridy = 0;
-        table.getTableHeader().setBackground(new Color(245, 246, 247));
-        table.getTableHeader().setFont(new Font("Arial", 1, 12));
-        jp.add(table.getTableHeader(), gbc2);
-
-        gbc2.anchor = GridBagConstraints.LINE_END;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.fill = GridBagConstraints.BOTH;
-        gbc2.gridx = 0;
-        gbc2.gridy = 1;
-        table.setIntercellSpacing(new Dimension(20, 1));
-        jp.add(table, gbc2);
-
-        JScrollPane pane = new JScrollPane(table);
-
-        jp.add(pane, gbc2);
-
-        return jp;
-
+    @Override
+    public void remplitChamps(String libelle) {
+        this.tLibelle.setText(libelle);
     }
 
     @Override
     public String getLibelle() {
-        return null;
+        return this.tLibelle.getText();
     }
 
     @Override
     public void close() {
+        this.frameAjoutModif.dispose();
     }
 
     @Override
-    public void activeButton() {
+    public void gereButtonsActifs() {
+
+        this.cListeDpt.setVisible(false);
+
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                this.bNouveau.setEnabled(true);
+                this.bNouveau.setToolTipText("Ajouter une manifestation");
+                this.bModifier.setEnabled(true);
+                this.bModifier.setToolTipText("Modifier cette manifestation");
+                this.bSupprimer.setEnabled(true);
+                this.bExporter.setEnabled(false);
+
+                if (this.tableManifestations.getSelectedRowCount() == 1) {
+                    this.bModifier.setEnabled(true);
+                } else {
+                    this.bModifier.setEnabled(false);
+                }
+
+                if (this.tableManifestations.getSelectedRowCount() > 0) {
+                    this.bSupprimer.setEnabled(true);
+                } else {
+                    this.bSupprimer.setEnabled(false);
+                }
+
+                break;
+            case 1:
+                this.bNouveau.setEnabled(true);
+                this.bNouveau.setToolTipText("Ajouter un département ");
+                this.bModifier.setEnabled(true);
+                this.bModifier.setToolTipText("Modifier ce département");
+                this.bSupprimer.setEnabled(true);
+                this.bExporter.setEnabled(false);
+
+                if (this.tableDepartements.getSelectedRowCount() == 1) {
+                    this.bModifier.setEnabled(true);
+                } else {
+                    this.bModifier.setEnabled(false);
+                }
+
+                if (this.tableDepartements.getSelectedRowCount() > 0) {
+                    this.bSupprimer.setEnabled(true);
+                } else {
+                    this.bSupprimer.setEnabled(false);
+                }
+                break;
+            case 2:
+                this.bNouveau.setEnabled(false);
+                this.bModifier.setEnabled(false);
+                this.bSupprimer.setEnabled(false);
+                this.bExporter.setEnabled(true);
+                this.bExporter.setToolTipText("Importer");
+                break;
+        }
     }
 
     @Override
-    public void construitAjout(int ajoutOuModif) {
+    public void construitProfil(Contact c) {
 
-        JFrame frame = new JFrame("Ajouter une manifestation");
+        String[] s = {"", ""};
+        Object[][] data = {
+            {"Lieu de la rencontre", c.getManifestation().getLibelleManif()},
+            {"Enseignant", c.getEnseignant().getNomEnseignant() + " " + c.getEnseignant().getPrenomEnseignant()},
+            {"Date", c.getDateContact()},
+            {"Heure", c.getHeureContact()},
+            {"Nom du contact", c.getNomContact()},
+            {"Description", c.getDescriptionContact()}
+        };
+
+        JTable jt = new JTable(data, s);
+        jt.setRowHeight(5, 120);
+
+        JLabel lManifestation = new JLabel("Contact rencontré à : " + c.getManifestation().getLibelleManif());
+        lManifestation.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lNomContact = new JLabel("Nom : " + c.getNomContact());
+        lNomContact.setBorder(new EmptyBorder(15, 0, 0, 0));
+
+        JLabel lPrenomContact = new JLabel("Prenom : " + c.getPrenomContact());
+        lPrenomContact.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lMailContact = new JLabel("E-mail : " + c.getEmailContact());
+        lMailContact.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lEtude1 = new JLabel("Etude 1 : " + c.getEtudes1Contact());
+        lEtude1.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lEtude2 = new JLabel("Etude 2 : " + c.getEtudes2Contact());
+        lEtude2.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JTextArea lDescription = new JTextArea(c.getDescriptionContact());
+        lDescription.setWrapStyleWord(true);
+        lDescription.setEditable(false);
+        lDescription.setLineWrap(true);
+        JScrollPane spDescription = new JScrollPane(lDescription);
+        lDescription.setBorder(new EmptyBorder(3, 20, 0, 15));
+        spDescription.setBorder(new EmptyBorder(0, 0, 0, 0));
+        lDescription.setBackground(new Color(240, 240, 240));
+        JLabel lDescTitle = new JLabel("Description : ");
+        lDescTitle.setBorder(new EmptyBorder(15, 0, 0, 0));
+
+        JLabel lHeure = new JLabel(" à " + c.getHeureContact().toString());
+        lHeure.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lDate = new JLabel(" Le : " + c.getDateContact().toString());
+        lDate.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        JLabel lEns = new JLabel("Enseignant : " + c.getEnseignant().getNomEnseignant() + " " + c.getEnseignant().getPrenomEnseignant());
+        lEns.setBorder(new EmptyBorder(5, 0, 0, 0));
+
+        /*        JLabel lChoix1 = new JLabel("Formation souhaitée 1 : " + c.getListeFormations().get(0).getLibelleFormation());
+         JLabel lChoix2 = new JLabel("Formation souhaitée 2 : " + c.getListeFormations().get(1).getLibelleFormation());
+         JLabel lChoix3 = new JLabel("Formation souhaitée 3 : " + c.getListeFormations().get(2).getLibelleFormation());
+         JLabel lChoix4 = new JLabel("Formation souhaitée 3 : " + c.getListeFormations().get(3).getLibelleFormation());*/
+        JDialog vueProfil = new JDialog(this, "Aperçu d'un contact");
+        JPanel pInfosRencontre = new JPanel();
+        pInfosRencontre.setLayout(new BoxLayout(pInfosRencontre, BoxLayout.Y_AXIS));
+
+        pInfosRencontre.add(lManifestation);
+        pInfosRencontre.add(lEns);
+        pInfosRencontre.add(lDate);
+        pInfosRencontre.add(lHeure);
+
+        JPanel pInfosContact = new JPanel();
+        pInfosContact.setLayout(new BoxLayout(pInfosContact, BoxLayout.Y_AXIS));
+
+        pInfosContact.add(lNomContact);
+        pInfosContact.add(lPrenomContact);
+        pInfosContact.add(lMailContact);
+        pInfosContact.add(lEtude1);
+        pInfosContact.add(lEtude2);
+
+        pInfosContact.add(lDescTitle);
+
+        JPanel pTotal = new JPanel();
+
+        pTotal.setLayout(new BoxLayout(pTotal, BoxLayout.Y_AXIS));
+
+        pTotal.add(pInfosRencontre, BorderLayout.NORTH);
+        pTotal.add(pInfosContact, BorderLayout.CENTER);
+        pTotal.add(spDescription, BorderLayout.SOUTH);
+
+        vueProfil.add(pTotal);
+
+        vueProfil.pack();
+        vueProfil.setSize(600, 350);
+        vueProfil.setLocation(400, 200);
+        vueProfil.setModal(true);
+        vueProfil.setVisible(true);
+
+    }
+
+    @Override
+    public void construitAjoutModif() {
+
+        frameAjoutModif = new JDialog(this, "");
+        frameAjoutModif.setAlwaysOnTop(true);
+
+        if (this.tpPrincipal.getSelectedIndex() == 0) {
+            frameAjoutModif.setTitle("Ajouter une manifestaion");
+        } else if (this.tpPrincipal.getSelectedIndex() == 1) {
+            frameAjoutModif.setTitle("Ajouter un département");
+        }
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
 
-        JPanel pSaisie = this.construitPanelSaisieManifestation();
+        JPanel pSaisie = this.construitPanelSaisieAjout();
         JPanel pValidation = this.construitPanelButtons();
-
-        if (ajoutOuModif == 1) {
-            bSubmit.setActionCommand("Modifier");
-            bSubmit.setText("Modifier");
-            frame.setTitle("Modifier une manifestation");
-        }
 
         p.add(pSaisie);
         p.add(pValidation);
 
-        frame.add(p);
+        this.gereEcouteurAM();
 
-        frame.setSize(400, 100);
-        frame.setResizable(false);
-        frame.setLocation(450, 300);
-        frame.setVisible(true);
+        frameAjoutModif.add(p);
+
+        frameAjoutModif.setSize(400, 100);
+        frameAjoutModif.setResizable(false);
+        frameAjoutModif.setLocation(450, 300);
+
+        frameAjoutModif.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     }
 
-    private JPanel construitPanelSaisieManifestation() {
+    @Override
+    public void afficheAjoutModif() {
+        frameAjoutModif.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        frameAjoutModif.setVisible(true);
+    }
+
+    @Override
+    public void prepareModif() {
+
+        if (this.tpPrincipal.getSelectedIndex() == 0) {
+            frameAjoutModif.setTitle("Modifier une manifestaion");
+        } else if (this.tpPrincipal.getSelectedIndex() == 1) {
+            frameAjoutModif.setTitle("Modifier un département");
+        }
+        this.bSubmit.setText("Modifer");
+        this.bSubmit.setActionCommand("submitModif");
+    }
+
+    private JPanel construitPanelSaisieAjout() {
 
         JPanel panelAjout = new JPanel();
 
-        JLabel lLibelle = new JLabel("Nom de la manifestation : ");
+        JLabel lLibelle = new JLabel();
+
+        if (this.tpPrincipal.getSelectedIndex() == 0) {
+            lLibelle.setText("Libellé la manifestation");
+        } else if (this.tpPrincipal.getSelectedIndex() == 1) {
+            lLibelle.setText("Libellé du département");
+        }
+
         this.tLibelle = new JTextField(255);
+        tLibelle.getDocument().putProperty("id", "tAjoutModif");
 
         panelAjout.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -334,30 +435,6 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
 
     }
 
-    private JPanel construitPanelButtons() {
-
-        JPanel panelButton = new JPanel();
-
-        panelButton.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.gridy = 0;
-        gbc.gridx = 0;
-        gbc.insets = new Insets(0, 0, 2, 10);
-        this.bCancel = new JButton("Annuler");
-        panelButton.add(this.bCancel, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = new Insets(0, 0, 2, 10);
-        this.bSubmit = new JButton("Ajouter");
-        this.bSubmit.setEnabled(false);
-        panelButton.add(this.bSubmit, gbc);
-
-        return panelButton;
-    }
-
     @Override
     public int getLigneSelectionnee() {
         int selectedRow = 0;
@@ -366,19 +443,63 @@ public class VueFenetrePrincipale extends JFrame implements IObservable {
                 selectedRow = this.tableManifestations.getSelectedRow();
                 break;
             case 1:
-                selectedRow = this.tableEnseignants.getSelectedRow();
+                selectedRow = this.tableDepartements.getSelectedRow();
+                break;
+            case 2:
+                selectedRow = this.tableContacts.getSelectedRow();
                 break;
         }
         return selectedRow;
     }
 
     @Override
-    public void remplitChamps(Manifestation manifestation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int getActivePane() {
+        return this.tpPrincipal.getSelectedIndex();
     }
 
     @Override
-    public int getActivePane() {
-        return this.tpPrincipal.getSelectedIndex();
+    public void autoriseAjoutModif() {
+        this.bSubmit.setEnabled(this.tLibelle.getText().trim().length() > 0);
+    }
+
+    @Override
+    public String getSearch() {
+        return this.tSearch.getText().trim();
+    }
+
+    @Override
+    public void filtrer(String[] search) {
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                this.tableManifestations.filtrer(search);
+                break;
+        }
+    }
+
+    @Override
+    public int confirmation(String message, String titre, int typeMessage, int icone) {
+        return JOptionPane.showConfirmDialog(this, message, titre, typeMessage, icone, null);
+    }
+
+    @Override
+    public void afficheErreur(String message, String titre, int typeMessage) {
+        JOptionPane.showMessageDialog(this, message, titre, typeMessage);
+    }
+
+    @Override
+    public int[] getLesLignesSelectionnee() {
+        int[] selectedRows = {0};
+        switch (this.tpPrincipal.getSelectedIndex()) {
+            case 0:
+                selectedRows = this.tableManifestations.getSelectedRows();
+                break;
+            case 1:
+                selectedRows = this.tableDepartements.getSelectedRows();
+                break;
+            case 2:
+                selectedRows = this.tableContacts.getSelectedRows();
+                break;
+        }
+        return selectedRows;
     }
 }

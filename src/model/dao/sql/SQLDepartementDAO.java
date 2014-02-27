@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import model.business.Departement;
-import model.dao.factory.MySQLDAOFactory;
-import model.dao.interfaces.DAOInterface;
+import model.dao.MySQLConnect;
+import model.dao.DAOInterface;
 
 public class SQLDepartementDAO implements DAOInterface<Departement> {
 
@@ -19,15 +19,13 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         if (SQLDepartementDAO.instance == null) {
             SQLDepartementDAO.instance = new SQLDepartementDAO();
         }
-
         return SQLDepartementDAO.instance;
     }
 
-    private MySQLDAOFactory daoFactory;
+    private MySQLConnect connect;
 
     private SQLDepartementDAO() {
-
-        this.daoFactory = new MySQLDAOFactory();
+        this.connect = new MySQLConnect();
     }
 
     @Override
@@ -35,8 +33,8 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
 
         ArrayList<Departement> listeDepartement = new ArrayList<Departement>();
 
-        Connection connection = this.daoFactory.getConnexion();
-        String sql = "SELECT * FROM departement ORDER BY id_dpt ASC";
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT * FROM departement";
 
         try {
             Statement st = connection.createStatement();
@@ -48,15 +46,36 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
         } finally {
-            this.daoFactory.fermeConnexion();
+            this.connect.fermeConnexion();
         }
 
         return listeDepartement;
     }
 
+    public Departement readById(int id) {
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT * FROM departement WHERE id_dpt = " + id;
+        Departement departement = null;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            while (res.next()) {
+                departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return departement;
+    }
+
     @Override
     public int create(Departement departement) {
-        Connection connection = this.daoFactory.getConnexion();
+        Connection connection = this.connect.getConnexion();
         String insert = "INSERT INTO departement SET libelle_dpt = ?";
 
         int id = -1;
@@ -74,18 +93,21 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
             stI.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
         }
          return id;
     }
 
     @Override
     public boolean update(Departement departement) {
-        Connection connection = this.daoFactory.getConnexion();
-        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt= ?";
+        Connection connection = this.connect.getConnexion();
+        String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt = ?";
 
         boolean updated = false;
 
         try {
+            System.err.println(departement.getIdDepartement());
             PreparedStatement stU = connection.prepareStatement(update);
 
             stU.setString(1, departement.getLibelleDepartement());
@@ -96,14 +118,16 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
             stU.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
         }
-
+        System.err.println(updated);
         return updated;
     }
 
     @Override
     public boolean delete(Departement departement) {
-        Connection connection = this.daoFactory.getConnexion();
+        Connection connection = this.connect.getConnexion();
         String delete = "DELETE FROM departement where id_dpt = ?";
 
         boolean deleted = false;
@@ -119,6 +143,8 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
         }
 
         return deleted;

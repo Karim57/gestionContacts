@@ -1,6 +1,6 @@
 package model.business;
 
-public class Enseignant {
+public class Enseignant implements Comparable<Enseignant> {
 
     private int idEnseignant;
     private String nomEnseignant;
@@ -48,6 +48,11 @@ public class Enseignant {
 
     public void setDepartement(Departement departement) {
         this.departement = departement;
+    }
+
+    @Override
+    public int compareTo(Enseignant e) {
+        return this.nomEnseignant.compareTo(e.nomEnseignant);
     }
 
 }
