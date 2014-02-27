@@ -127,6 +127,7 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public boolean delete(Manifestation manifestation) {
+
         Connection connection = this.connect.getConnexion();
         String delete = "DELETE FROM manifestation WHERE id_manif = " + manifestation.getIdManif();
 

@@ -91,7 +91,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
-            while (res.next()) {
+            if (res.next()) {
                 Departement departement = SQLDepartementDAO.getInstance().readById(res.getInt("id_dpt"));
                 enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
             }
@@ -133,6 +133,29 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         return id;
     }
 
+    public int nbEnseignantsParDpt(Departement d) {
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT COUNT(*) FROM enseignant WHERE id_dpt = " + d.getIdDepartement();
+
+        int i = 0;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                i = res.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return i;
+
+    }
+
     @Override
     public boolean update(Enseignant enseignant) {
         Connection connection = this.connect.getConnexion();
@@ -162,18 +185,41 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
     @Override
     public boolean delete(Enseignant enseignant) {
         Connection connection = this.connect.getConnexion();
-        String delete = "DELETE FROM enseignant WHERE id_ens = ?";
+        String delete = "DELETE FROM enseignant WHERE id_ens = " + enseignant.getIdEnseignant();
+
+        boolean deleted = false;
+
+        try {
+            PreparedStatement stD = connection.prepareStatement(delete);
+            stD.execute();
+
+            deleted = stD.executeUpdate(delete) > 0;
+            stD.close();
+
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return deleted;
+    }
+
+    public boolean deleteParDpt(Departement d) {
+        Connection connection = this.connect.getConnexion();
+        String delete = "DELETE FROM enseignant WHERE id_dpt = " + d.getIdDepartement();
 
         boolean deleted = false;
 
         try {
             PreparedStatement stD = connection.prepareStatement(delete);
 
-            stD.setInt(1, enseignant.getIdEnseignant());
             stD.execute();
 
             deleted = stD.executeUpdate(delete) > 0;
             stD.close();
+
+            deleted = true;
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());

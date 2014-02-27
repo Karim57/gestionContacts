@@ -4,7 +4,6 @@ import model.business.Contact;
 
 public interface IObservable {
 
-
     public String getSearch();
 
     public void close();
@@ -18,8 +17,6 @@ public interface IObservable {
     public int getLigneSelectionnee();
 
     public int[] getLesLignesSelectionnee();
-
-    public void remplitChamps(String libelle);
 
     public void prepareModif();
 

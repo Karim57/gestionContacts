@@ -9,6 +9,8 @@ public interface IOPrincipale extends IObservable {
 
     public int getActivePane();
 
+    public void remplitChamps(String libelle);
+
     public void construitProfil(Contact c);
 
     public void filtrer(String[] search);

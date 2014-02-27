@@ -21,14 +21,12 @@ import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
 import view.front.IOPrincipale;
 
-
 public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener {
 
     private IOPrincipale vue;
     private ModeleManifestation donneesManifestation;
     private ModeleDepartement donneesDepartement;
     private ModeleContact donneesContact;
-
 
     private static boolean enseignantOuverte = false;
 
@@ -62,19 +60,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Modifier")) {
-            this.vue.construitAjoutModif(); // On construit d'abord le frame
-            this.vue.prepareModif(); // sinon on peut pas remplir
 
-            if (activePane == 0) {
-                Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
-                this.vue.remplitChamps(manifestaion.getLibelleManif());
-            } else if (activePane == 1) {
-                Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
-                this.vue.remplitChamps(departement.getLibelleDepartement());
-            }
-            // On l'affiche en modal à la fin,
-            // Sinon le remplissage va pas marcher (vue bloquée)
-            this.vue.afficheAjoutModif();
         }
 
         if (s.equals("submitAjout")) {

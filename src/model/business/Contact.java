@@ -19,24 +19,21 @@ public class Contact implements Comparable<Contact> {
     private Enseignant enseignant;
     private ArrayList<Formation> listeFormations;
 
-    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Manifestation manifestation, Enseignant enseignant, ArrayList<Formation> listeFormations) {
-        this.idContact = idContact;
-        this.nomContact = nomContact;
-        this.prenomContact = prenomContact;
-        this.emailContact = emailContact;
-        this.etudes1Contact = etudes1Contact;
-        this.etudes2Contact = etudes2Contact;
-        this.descriptionContact = descriptionContact;
-        this.manifestation = manifestation;
-        this.enseignant = enseignant;
-        this.listeFormations = listeFormations;
+    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Manifestation manifestation, Enseignant enseignant) {
 
-        long time = System.currentTimeMillis();
-        this.dateContact = new Date(time);
-        this.heureContact = new Time(time);
+        this(idContact,
+                nomContact,
+                prenomContact,
+                emailContact,
+                etudes1Contact,
+                etudes2Contact, descriptionContact,
+                new Date(System.currentTimeMillis()),
+                new Time(System.currentTimeMillis()),
+                manifestation,
+                enseignant);
     }
 
-    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Date dateContact, Time heureContact, Manifestation manifestation, Enseignant enseignant, ArrayList<Formation> listeFormations) {
+    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Date dateContact, Time heureContact, Manifestation manifestation, Enseignant enseignant) {
         this.idContact = idContact;
         this.nomContact = nomContact;
         this.prenomContact = prenomContact;
@@ -48,7 +45,7 @@ public class Contact implements Comparable<Contact> {
         this.heureContact = heureContact;
         this.manifestation = manifestation;
         this.enseignant = enseignant;
-        this.listeFormations = listeFormations;
+        this.listeFormations = new ArrayList<Formation>();
     }
 
     public int getIdContact() {
@@ -150,7 +147,7 @@ public class Contact implements Comparable<Contact> {
 
     public void addFormation(Formation formation) {
         if (this.listeFormations.size() < 4) {
-            this.addFormation(formation);
+            this.listeFormations.add(formation);
         }
     }
 

@@ -2,6 +2,7 @@ package model.tables;
 
 import java.util.Iterator;
 import model.business.Contact;
+import model.business.Enseignant;
 import model.business.Manifestation;
 
 public class ModeleContact extends ModeleGenerique<Contact> {
@@ -36,6 +37,15 @@ public class ModeleContact extends ModeleGenerique<Contact> {
     public boolean canDeleteManif(Manifestation m) {
         for (Contact c : this.donnees) {
             if (m.equals(c.getManifestation())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canDeleteEns(Enseignant e) {
+        for (Contact c : this.donnees) {
+            if (e.equals(c.getEnseignant())) {
                 return false;
             }
         }

@@ -9,6 +9,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.business.Departement;
+import model.business.Enseignant;
+import model.business.Manifestation;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLEnseignantDAO;
 import model.tables.ModeleEnseignant;
@@ -40,7 +42,28 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String s = e.getActionCommand();
+
+        if (s.equals("Nouveau")) {
+            this.vue.construitAjoutModif();
+            this.vue.afficheAjoutModif();
+        }
+
+        if (s.equals("Modifier")) {
+            this.vue.construitAjoutModif(); // On construit d'abord le frame
+            this.vue.prepareModif(); // sinon on peut pas remplir
+
+            Enseignant enseignant = this.donneesEnseignant.getValueAt(this.vue.getLigneSelectionnee());
+            this.vue.remplitChamps(enseignant);
+
+            // On l'affiche en modal à la fin,
+            // Sinon le remplissage va pas marcher (vue bloquée)
+            this.vue.afficheAjoutModif();
+        }
+
+        if (s.equals("Supprimer")) {
+            //   this.supprimerDesManifestaion(this.vue.getLesLignesSelectionnee());
+        }
     }
 
     @Override
@@ -68,10 +91,13 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
     @Override
     public void itemStateChanged(ItemEvent e) {
 
-        if (e.getStateChange() == ItemEvent.SELECTED) {
+        if (this.vue.getSelectedDepartement() == 0) {
+            this.searchDpt = "";
+        } else {
             this.searchDpt = this.vue.getDptSelected().toString();
-            this.vue.filtrer(this.searchNomPrenom, this.searchDpt);
         }
+        this.vue.filtrer(this.searchNomPrenom, this.searchDpt);
+
     }
 
 }

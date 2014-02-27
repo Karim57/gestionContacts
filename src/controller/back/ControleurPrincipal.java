@@ -12,9 +12,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.business.Contact;
 import model.business.Departement;
+import model.business.Enseignant;
 import model.business.Manifestation;
 import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
+import model.dao.sql.SQLEnseignantDAO;
+import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
 import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
@@ -33,8 +36,6 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     private static boolean enseignantOuverte = false;
 
-    private static int activePane = 0;
-
     private String[] search = {""};
 
     public ControleurPrincipal(IOPrincipale v) {
@@ -45,89 +46,145 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
 
+        switch (this.vue.getActivePane()) {
+            case 0:
+                this.gereActionCommandManif(s);
+                break;
+            case 1:
+                this.gereActionCommandDepartement(s);
+                break;
+            case 2:
+                this.gereActionCommandContact(s);
+                break;
+        }
+
+        // Bouttons généralistes
+        if (s.equals("Annuler")) {
+            this.vue.close();
+        }
+
+    }
+
+    private void gereActionCommandManif(String s) {
+
+        // Gestion des bouttons à l'accueil
         if (s.equals("Nouveau")) {
             this.vue.construitAjoutModif();
             this.vue.afficheAjoutModif();
-        }
-
-        if (s.equals("Supprimer")) {
-            if (activePane == 0) {
-
-                if (this.vue.getLesLignesSelectionnee().length > 1) {
-                    this.supprimerDesManifestaion(this.vue.getLesLignesSelectionnee());
-                } else {
-                    this.supprimerManifestaion(this.vue.getLesLignesSelectionnee()[0]);
-                }
-
-            }
         }
 
         if (s.equals("Modifier")) {
             this.vue.construitAjoutModif(); // On construit d'abord le frame
             this.vue.prepareModif(); // sinon on peut pas remplir
 
-            if (activePane == 0) {
-                Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
-                this.vue.remplitChamps(manifestaion.getLibelleManif());
-            } else if (activePane == 1) {
-                Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
-                this.vue.remplitChamps(departement.getLibelleDepartement());
-            }
+            Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
+            this.vue.remplitChamps(manifestaion.getLibelleManif());
+
             // On l'affiche en modal à la fin,
             // Sinon le remplissage va pas marcher (vue bloquée)
             this.vue.afficheAjoutModif();
         }
 
-        if (s.equals("ManifDefaut")) {
-            if (!enseignantOuverte) {
-                vueEnseignants = new VueEnseignants(new Departement(5, "Informatique"));
-                enseignantOuverte = true;
-                vueEnseignants.addWindowListener(this);
-            } else {
-                vueEnseignants.toFront();
-            }
+        if (s.equals("Supprimer")) {
+            this.supprimerDesManifestaion(this.vue.getLesLignesSelectionnee());
         }
 
+        if (s.equals("Exporter")) {
+
+        }
+
+        if (s.equals("Stats")) {
+
+        }
+
+        // Gestion des buttons d'ajout - modification
         if (s.equals("submitAjout")) {
             String libelle = this.vue.getLibelle();
-            if (activePane == 0) {
-                Manifestation manifestaion = new Manifestation(libelle);
-                this.donneesManifestation.ajouterElement(manifestaion);
-                SQLManifestationDAO.getInstance().create(manifestaion);
-
-            } else if (activePane == 1) {
-                Departement departement = new Departement(libelle);
-                this.donneesDepartement.ajouterElement(departement);
-                SQLDepartementDAO.getInstance().create(departement);
-            }
+            Manifestation manifestaion = new Manifestation(libelle);
+            this.donneesManifestation.ajouterElement(manifestaion);
+            SQLManifestationDAO.getInstance().create(manifestaion);
             this.vue.close();
         }
 
         if (s.equals("submitModif")) {
             String libelle = this.vue.getLibelle();
-            if (activePane == 0) {
-                Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
-                manifestaion.setLibelleManif(libelle);
-                this.donneesManifestation.setRow(this.vue.getLigneSelectionnee(), manifestaion);
-                SQLManifestationDAO.getInstance().update(manifestaion);
+            Manifestation manifestaion = this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee());
+            manifestaion.setLibelleManif(libelle);
+            this.donneesManifestation.setRow(this.vue.getLigneSelectionnee(), manifestaion);
+            SQLManifestationDAO.getInstance().update(manifestaion);
+            this.vue.close();
+        }
 
-            } else if (activePane == 1) {
-                Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
-                departement.setLibelleDepartement(libelle);
-                this.donneesDepartement.setRow(this.vue.getLigneSelectionnee(), departement);
-                SQLDepartementDAO.getInstance().update(departement);
+    }
+
+    private void gereActionCommandDepartement(String s) {
+
+        if (s.equals("Nouveau")) {
+            this.vue.construitAjoutModif();
+            this.vue.afficheAjoutModif();
+        }
+
+        if (s.equals("Modifier")) {
+            Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
+            this.vue.remplitChamps(departement.getLibelleDepartement());
+            this.vue.afficheAjoutModif();
+        }
+
+        if (s.equals("Supprimer")) {
+            this.supprimerDesDpt(this.vue.getLesLignesSelectionnee());
+        }
+
+        if (s.equals("Enseignant")) {
+            Departement d = null;
+            if (this.vue.getLesLignesSelectionnee().length == 1) {
+                int l = this.vue.getLigneSelectionnee();
+                d = this.donneesDepartement.getValueAt(l);
             }
+
+            if (!enseignantOuverte) {
+                vueEnseignants = new VueEnseignants(d);
+                enseignantOuverte = true;
+                vueEnseignants.addWindowListener(this);
+            } else {
+                vueEnseignants.setDpt(d);
+                vueEnseignants.toFront();
+            }
+        }
+
+        if (s.equals("Formation")) {
+
+        }
+
+        // Bouttons Ajout-Modif
+        if (s.equals("submitAjout")) {
+            String libelle = this.vue.getLibelle();
+            Departement departement = new Departement(libelle);
+            this.donneesDepartement.ajouterElement(departement);
+            SQLDepartementDAO.getInstance().create(departement);
             this.vue.close();
         }
 
-        if (s.equals("Annuler")) {
+        if (s.equals("submitModif")) {
+            String libelle = this.vue.getLibelle();
+            Departement departement = this.donneesDepartement.getValueAt(this.vue.getLigneSelectionnee());
+            departement.setLibelleDepartement(libelle);
+            this.donneesDepartement.setRow(this.vue.getLigneSelectionnee(), departement);
+            SQLDepartementDAO.getInstance().update(departement);
             this.vue.close();
         }
+    }
+
+    private void gereActionCommandContact(String s) {
 
         if (s.equals("Profil")) {
             Contact contact = this.donneesContact.getValueAt(this.vue.getLigneSelectionnee());
             this.vue.construitProfil(contact);
         }
+
+        if (s.equals("Importer")) {
+
+        }
+
     }
 
     public ModeleManifestation getDonneesManifestation() {
@@ -151,48 +208,100 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         return donneesContact;
     }
 
+    /**
+     * Suppression Manifestations - Uniquement celle qui n'apparaissent pas dans
+     * contacts
+     *
+     * @param tab manifestations à supprimer
+     * @return résultat
+     */
     private boolean supprimerDesManifestaion(int tab[]) {
 
         for (int i : tab) {
             Manifestation m = this.donneesManifestation.getValueAt(i);
-            if (this.donneesContact.canDeleteManif(m)) {
+            if (SQLContactDAO.getInstance().nbContactsParManifestation(m) == 0) {
                 this.donneesManifestation.supprimerElement(m);
             } else {
-                this.vue.afficheErreur("Impossible de supprimer une manifestation liée à une autre donnée, opération annulée.",
+                this.vue.afficheErreur("Impossible de supprimer une manifestation liée à un contact, opération annulée.",
                         "Erreur lors de la suppression", 0);
                 this.donneesManifestation.videElementsASupprimer();
                 return false;
             }
         }
 
-        if (this.vue.confirmation("Etes-vous sûr de vouloir supprimer " + tab.length + " manifestations ?",
-                "Confirmation de suppression groupée", 2, 3) == 0) {
+        int response = -1;
 
+        if (tab.length > 1) {
+            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer " + tab.length + " manifestations ?",
+                    "Confirmation de suppression groupée", 2, 3);
+        } else {
+            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer cette manifestation ?",
+                    this.donneesManifestation.getElementsASupprimer().get(0).getLibelleManif(), 2, 3);
+        }
+
+        if (response == 0) {
             this.donneesManifestation.confirmerSuppression();
-
-            for (Manifestation m : this.donneesManifestation.getElementsASupprimer()) {
-                SQLManifestationDAO.getInstance().delete(m);
-            }
-
+            SQLManifestationDAO.getInstance().deleteList(this.donneesManifestation.getElementsASupprimer());
         }
 
         this.donneesManifestation.videElementsASupprimer();
         return true;
     }
 
-    private void supprimerManifestaion(int i) {
-        Manifestation m = this.donneesManifestation.getValueAt(i);
-        if (this.donneesContact.canDeleteManif(m)) {
-            if (this.vue.confirmation("Etes-vous sûr de vouloir supprimer cette manifestation",
-                    m.getLibelleManif(), 2, 3) == 0) {
-                this.donneesManifestation.supprimerElement(m);
-                this.donneesManifestation.confirmerSuppression();
-                this.donneesContact.videElementsASupprimer();
+    /**
+     * Suppression de départements - Uniquement les département qui ne sont pas
+     * lié à des contacts - Si un dpt est lié à une formation ou enseignant,
+     * alors suppression en cascade
+     *
+     * @param tab départements à supprimer
+     * @return résultat
+     */
+    private boolean supprimerDesDpt(int tab[]) {
+
+        int nbEnsTotal = 0;
+        int nbFormTotal = 0;
+
+        for (int i : tab) {
+            Departement d = this.donneesDepartement.getValueAt(i);
+
+            int nbEns = SQLEnseignantDAO.getInstance().nbEnseignantsParDpt(d);
+            int nbForm = SQLFormationDAO.getInstance().nbFormationsParDpt(d);
+
+            nbEnsTotal = nbEnsTotal + nbEns;
+            nbFormTotal = nbFormTotal + nbForm;
+
+            if (SQLContactDAO.getInstance().nbContactsParDptEnseignants(d) == 0
+                    && SQLContactDAO.getInstance().nbContactsParDptFormation(d) == 0) {
+                this.donneesDepartement.supprimerElement(d);
+            } else {
+                this.vue.afficheErreur("Impossible de supprimer un département lié à un contact, opération annulée.",
+                        "Erreur lors de la suppression", 0);
+                this.donneesDepartement.videElementsASupprimer();
+                return false;
             }
-        } else {
-            this.vue.afficheErreur("Impossible de supprimer une manifestation liée à une autre donnée, opération annulée.",
-                    "Erreur lors de la suppression", 0);
         }
+
+        int response = -1;
+
+        if (tab.length > 1) {
+            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer " + tab.length + " départements ? "
+                    + nbEnsTotal + " enseignant(s) et "
+                    + nbFormTotal + " formation(s) vont être supprimés",
+                    "Confirmation de suppression groupée", 2, 3);
+        } else {
+            response = this.vue.confirmation("Etes-vous sûr de vouloir supprimer ce département ? "
+                    + nbEnsTotal + " enseignant(s) et "
+                    + nbFormTotal + " formation(s) vont être supprimés",
+                    this.donneesDepartement.getElementsASupprimer().get(0).getLibelleDepartement(), 2, 3);
+        }
+
+        if (response == 0) {
+            this.donneesDepartement.confirmerSuppression();
+            SQLDepartementDAO.getInstance().deleteList(this.donneesDepartement.getElementsASupprimer());
+        }
+
+        this.donneesDepartement.videElementsASupprimer();
+        return true;
     }
 
     @Override
@@ -218,7 +327,6 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     @Override
     public void stateChanged(ChangeEvent e) {
         this.vue.gereButtonsActifs();
-        activePane = this.vue.getActivePane();
     }
 
     @Override

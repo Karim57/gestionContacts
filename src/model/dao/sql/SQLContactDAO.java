@@ -61,8 +61,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                         res.getDate("date_contact"),
                         res.getTime("heure_contact"),
                         manifestation,
-                        enseignant,
-                        null);
+                        enseignant);
 
                 this.remplitFormation(contact);
 
@@ -90,7 +89,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
-            while (res.next()) {
+            if (res.next()) {
                 Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
                 Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
 
@@ -106,8 +105,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                         res.getDate("date_contact"),
                         res.getTime("heure_contact"),
                         manifestation,
-                        enseignant,
-                        null);
+                        enseignant);
 
                 this.remplitFormation(contact);
             }
@@ -124,9 +122,9 @@ public class SQLContactDAO implements DAOInterface<Contact> {
     private void remplitFormation(Contact contact) {
 
         Connection connection = this.connect.getConnexion();
-        String sql = "SELECT * FROM contact c, formation f, renseignements r "
+        String sql = "SELECT id_form FROM contact c, formation f, renseignements r "
                 + "WHERE c.id_contact = r.id_contact "
-                + "AND r.id_formation = f.id_formation "
+                + "AND r.id_formation = f.id_form "
                 + "AND c.id_contact = " + contact.getIdContact();
 
         try {
@@ -135,6 +133,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             while (res.next()) {
                 Formation f = SQLFormationDAO.getInstance().readById(res.getInt("id_form"));
                 contact.addFormation(f);
+
             }
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
@@ -142,7 +141,121 @@ public class SQLContactDAO implements DAOInterface<Contact> {
 
     }
 
+    public int nbContactsParManifestation(Manifestation m) {
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT COUNT(*) FROM contact WHERE id_manifestation = " + m.getIdManif();
+
+        int i = 0;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                i = res.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return i;
+    }
+
+    public int nbContactsParEns(Enseignant e) {
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT COUNT(*) FROM contact WHERE id_enseignant = " + e.getIdEnseignant();
+
+        int i = 0;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                i = res.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return i;
+    }
+
+    public int nbContactsParFormation(Formation f) {
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT COUNT(*) FROM renseignements WHERE id_formation = " + f.getIdFormation();
+
+        int i = 0;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                i = res.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return i;
+    }
+
+    public int nbContactsParDptFormation(Departement d) {
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT COUNT(*) FROM renseignements r, formation f"
+                + " WHERE r.id_formation = f.id_form"
+                + " AND id_dpt = " + d.getIdDepartement();
+
+        int i = 0;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                i = res.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return i;
+    }
+
+    public int nbContactsParDptEnseignants(Departement d) {
+
+        Connection connection = this.connect.getConnexion();
+        String sql = "SELECT COUNT(*) FROM contact c, enseignant e"
+                + " WHERE e.id_ens = c.id_enseignant"
+                + " AND id_dpt = " + d.getIdDepartement();
+
+        int i = 0;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                i = res.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        } finally {
+            this.connect.fermeConnexion();
+        }
+
+        return i;
+    }
+
     @Override
+
     public int create(Contact objetAAjouter) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

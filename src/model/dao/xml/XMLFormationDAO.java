@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Formation;
-import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -30,7 +29,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
     private final XMLChemin chemin;
     private final String nomFichier;
     private Element racine;
-    
+
     public String getNomFicher() {
         return nomFichier;
     }
@@ -46,25 +45,25 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
     @Override
     public ArrayList<Formation> readAll() {
-         ArrayList<Formation> liste = new  ArrayList<>();
+        ArrayList<Formation> liste = new ArrayList<>();
 
-       try {
+        try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.nomFichier));
             Element root = doc.getRootElement();
-            
+
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                               
-                liste.add(new Formation(node.getAttribute("id").getIntValue(),node.getChildText("libelle_form")));
+
+                liste.add(new Formation(node.getAttribute("id").getIntValue(), node.getChildText("libelle_form")));
             }
 
         } catch (IOException | JDOMException io) {
             System.out.println(io.getMessage());
         }
-       return liste;
+        return liste;
     }
 
     @Override
@@ -84,7 +83,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
         return 1;
     }
- 
+
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
@@ -113,7 +112,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            
+
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
@@ -133,7 +132,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             for (Element element : root.getChildren()) {
 
                 if (numForm.equals(element.getAttributeValue("id"))) {
-                     element.getChild("libelle_form").setText(formation.getLibelleFormation());
+                    element.getChild("libelle_form").setText(formation.getLibelleFormation());
                     break;
                 }
 

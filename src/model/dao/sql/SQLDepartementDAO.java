@@ -61,7 +61,7 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         try {
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery(sql);
-            while (res.next()) {
+            if (res.next()) {
                 departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
             }
         } catch (SQLException se) {
@@ -129,14 +129,15 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
     @Override
     public boolean delete(Departement departement) {
         Connection connection = this.connect.getConnexion();
-        String delete = "DELETE FROM departement where id_dpt = ?";
+        String delete = "DELETE FROM departement where id_dpt = " + departement.getIdDepartement();
 
         boolean deleted = false;
 
         try {
+            SQLFormationDAO.getInstance().deleteParDpt(departement);
+            SQLEnseignantDAO.getInstance().deleteParDpt(departement);
             PreparedStatement stD = connection.prepareStatement(delete);
 
-            stD.setInt(1, departement.getIdDepartement());
             stD.execute();
 
             deleted = stD.executeUpdate(delete) > 0;

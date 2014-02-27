@@ -6,11 +6,14 @@ import controller.back.ControleurEnseignant;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
@@ -18,9 +21,9 @@ import javax.swing.WindowConstants;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.TableRowSorter;
 import model.business.Departement;
+import model.business.Enseignant;
 import view.JTableDonnees;
 import view.VueAbstraite;
-
 
 public class VueEnseignants extends VueAbstraite implements IObservable, IOEnseignant {
 
@@ -29,12 +32,14 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
     private JDialog frameAjoutModif;
 
     private JTextField tNom;
+    private JTextField tPrenom;
+    private JComboBox<Departement> cDepartements;
 
     private JTableDonnees tableEnseignants;
 
     public VueEnseignants(Departement departement) {
         this();
-        this.cListeDpt.setSelectedItem(departement);
+        this.setDpt(departement);
     }
 
     public VueEnseignants() {
@@ -43,8 +48,8 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
         this.monControleur = new ControleurEnseignant(this);
 
-        this.add(creerBarreOutils(), BorderLayout.NORTH);
-        this.add(creerPanelPrincipal(), BorderLayout.CENTER);
+        this.add(super.creerBarreOutils(), BorderLayout.NORTH);
+        this.add(this.creerPanelPrincipal(), BorderLayout.CENTER);
 
         this.monControleur.remplitComboDpt();
 
@@ -70,10 +75,10 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     @Override
     public void construitAjoutModif() {
-        frameAjoutModif = new JDialog();
-        frameAjoutModif.setModal(true);
+        this.frameAjoutModif = new JDialog();
+        this.frameAjoutModif.setModal(true);
 
-        frameAjoutModif.setTitle("Ajouter un enseignant");
+        this.frameAjoutModif.setTitle("Ajouter un enseignant");
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
@@ -86,14 +91,81 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
         this.gereEcouteurAM();
 
-        frameAjoutModif.add(p);
+        this.frameAjoutModif.add(p);
 
-        frameAjoutModif.setSize(400, 100);
-        frameAjoutModif.setResizable(false);
-        frameAjoutModif.setLocation(450, 300);
-        frameAjoutModif.setVisible(true);
+        this.frameAjoutModif.setSize(400, 170);
+        this.frameAjoutModif.setResizable(false);
+        this.frameAjoutModif.setLocation(450, 300);
+        this.frameAjoutModif.setVisible(true);
 
-        frameAjoutModif.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.frameAjoutModif.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    }
+
+    private JPanel construitPanelSaisieAjout() {
+
+        JPanel panelAjout = new JPanel();
+
+        JLabel lNom = new JLabel("Nom");
+        JLabel lPrenom = new JLabel("Prenom");
+        JLabel lDepartement = new JLabel("Département");
+
+        this.tNom = new JTextField(255);
+        this.tPrenom = new JTextField(255);
+
+        this.tNom.getDocument().putProperty("id", "tAjoutModifNom");
+        this.tPrenom.getDocument().putProperty("id", "tAjoutModifPrenom");
+
+        this.cDepartements = new JComboBox<Departement>();
+
+        panelAjout.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 5, 2, 10);
+
+        panelAjout.add(lNom, gbc);
+
+        gbc.ipady = 4;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panelAjout.add(this.tNom, gbc);
+
+        gbc.gridx = 0;
+        gbc.weightx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 5, 2, 10);
+
+        panelAjout.add(lPrenom, gbc);
+
+        gbc.ipady = 4;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panelAjout.add(this.tPrenom, gbc);
+
+        gbc.gridx = 0;
+        gbc.weightx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 5, 2, 10);
+
+        panelAjout.add(lDepartement, gbc);
+
+        gbc.ipady = 4;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        panelAjout.add(this.cDepartements, gbc);
+
+        return panelAjout;
+
     }
 
     @Override
@@ -102,7 +174,7 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
     }
 
     @Override
-    public void remplitChamps(String libelle) {
+    public void remplitChamps(Enseignant e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -118,7 +190,9 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     @Override
     public void setListeDepartement(ArrayList<Departement> liste) {
-        this.cListeDpt.setModel(new DefaultComboBoxModel<Departement>(liste.toArray(new Departement[liste.size()])));
+        DefaultComboBoxModel modelDpt = new DefaultComboBoxModel<Departement>(liste.toArray(new Departement[liste.size()]));
+        super.cListeDpt.setModel(modelDpt);
+        super.cListeDpt.insertItemAt("Tous les départements", 0);
     }
 
     private JPanel creerPanelPrincipal() {
@@ -143,25 +217,21 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
     }
 
     private void gereEcouteur() {
-        this.bNouveau.addActionListener(monControleur);
-        this.bSupprimer.addActionListener(monControleur);
-        this.bModifier.addActionListener(monControleur);
+        super.bNouveau.addActionListener(monControleur);
+        super.bSupprimer.addActionListener(monControleur);
+        super.bModifier.addActionListener(monControleur);
 
-        this.cListeDpt.addItemListener(monControleur);
+        super.cListeDpt.addItemListener(monControleur);
 
-        this.tSearch.getDocument().addDocumentListener(monControleur);
+        super.tSearch.getDocument().addDocumentListener(monControleur);
     }
 
     private void gereEcouteurAM() {
 
         this.tNom.getDocument().addDocumentListener(monControleur);
 
-        this.bSubmit.addActionListener(monControleur);
-        this.bCancel.addActionListener(monControleur);
-    }
-
-    private JPanel construitPanelSaisieAjout() {
-        return null;
+        super.bSubmit.addActionListener(monControleur);
+        super.bCancel.addActionListener(monControleur);
     }
 
     @Override
@@ -186,7 +256,10 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
         }
 
         filtrePlusieursMotsEtDpt.add(RowFilter.andFilter(filtrePlusieursMots));
-        filtrePlusieursMotsEtDpt.add(RowFilter.regexFilter("^" + dpt + "$", 2));
+
+        if (dpt != "") {
+            filtrePlusieursMotsEtDpt.add(RowFilter.regexFilter("^" + dpt + "$", 2));
+        }
 
         sorter.setRowFilter(RowFilter.andFilter(filtrePlusieursMotsEtDpt));
 
@@ -196,7 +269,7 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
 
     @Override
     public String getSearch() {
-        return this.tSearch.getText().trim();
+        return super.tSearch.getText().trim();
     }
 
     @Override
@@ -217,6 +290,19 @@ public class VueEnseignants extends VueAbstraite implements IObservable, IOEnsei
     @Override
     public int[] getLesLignesSelectionnee() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getSelectedDepartement() {
+        return super.cListeDpt.getSelectedIndex();
+    }
+
+    public void setDpt(Departement d) {
+        if (d == null) {
+            super.cListeDpt.setSelectedIndex(0);
+        } else {
+            super.cListeDpt.setSelectedItem(d);
+        }
     }
 
 }
