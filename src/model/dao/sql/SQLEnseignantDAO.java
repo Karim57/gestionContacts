@@ -25,7 +25,6 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
     private MySQLConnect connect;
 
     private SQLEnseignantDAO() {
-        this.connect = new MySQLConnect();
     }
 
     @Override
@@ -33,7 +32,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
         ArrayList<Enseignant> listeEnseignants = new ArrayList<Enseignant>();
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM enseignant e, departement d "
                 + "WHERE e.id_dpt = d.id_dpt";
 
@@ -45,10 +44,10 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
                 Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
                 listeEnseignants.add(enseignant);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return listeEnseignants;
@@ -58,7 +57,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
         ArrayList<Enseignant> listeEnseignants = new ArrayList<Enseignant>();
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM enseignant e, departement d "
                 + "WHERE e.id_dpt = d.id_dpt "
                 + "AND d.id_dpt = " + id_dpt;
@@ -71,10 +70,10 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
                 Enseignant enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
                 listeEnseignants.add(enseignant);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return listeEnseignants;
@@ -82,7 +81,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
     public Enseignant readById(int id) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM enseignant e, departement d "
                 + "WHERE e.id_dpt = d.id_dpt "
                 + "AND id_ens = " + id;
@@ -95,10 +94,10 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
                 Departement departement = SQLDepartementDAO.getInstance().readById(res.getInt("id_dpt"));
                 enseignant = new Enseignant(res.getInt("id_ens"), res.getString("nom_ens"), res.getString("prenom_ens"), departement);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return enseignant;
@@ -106,7 +105,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public int create(Enseignant enseignant) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "INSERT INTO enseignant SET nom_ens = ?, prenom_ens = ?, id_dpt = ?";
 
         int id = -1;
@@ -124,18 +123,16 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
                 enseignant.setIdEnseignant(id);
             }
             stI.close();
+            cle.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return id;
     }
 
     public int nbEnseignantsParDpt(Departement d) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM enseignant WHERE id_dpt = " + d.getIdDepartement();
 
         int i = 0;
@@ -146,19 +143,18 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return i;
 
     }
 
     @Override
     public boolean update(Enseignant enseignant) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "UPDATE enseignant SET nom_ens = ?, prenom_ens = ?, id_dpt = ? WHERE id_ens = ?";
 
         boolean updated = false;
@@ -175,8 +171,6 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
             stU.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return updated;
@@ -184,7 +178,7 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public boolean delete(Enseignant enseignant) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String delete = "DELETE FROM enseignant WHERE id_ens = " + enseignant.getIdEnseignant();
 
         boolean deleted = false;
@@ -198,15 +192,14 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return deleted;
     }
 
     public boolean deleteParDpt(Departement d) {
-        Connection connection = this.connect.getConnexion();
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String delete = "DELETE FROM enseignant WHERE id_dpt = " + d.getIdDepartement();
 
         boolean deleted = false;
@@ -223,8 +216,6 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return deleted;

@@ -28,14 +28,13 @@ public class SQLContactDAO implements DAOInterface<Contact> {
     private MySQLConnect connect;
 
     private SQLContactDAO() {
-        this.connect = new MySQLConnect();
     }
 
     @Override
     public ArrayList<Contact> readAll() {
         ArrayList<Contact> listeContacts = new ArrayList<Contact>();
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM contact c, manifestation m, departement d, enseignant e "
                 + "WHERE c.id_manifestation = m.id_manif "
                 + "AND c.id_enseignant = e.id_ens "
@@ -62,16 +61,18 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                         res.getDate("date_contact"),
                         res.getTime("heure_contact"),
                         res.getString("description_contact")
-                        );
+                );
 
                 this.remplitFormation(contact);
 
                 listeContacts.add(contact);
+
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return listeContacts;
@@ -79,7 +80,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
 
     public Contact readById(int id) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM contact c, manifestation m, departement d, enseignant e "
                 + "WHERE c.id_manifestation = m.id_manif "
                 + "AND c.id_enseignant = e.id_ens "
@@ -107,14 +108,14 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                         res.getDate("date_contact"),
                         res.getTime("heure_contact"),
                         res.getString("description_contact")
-                        );
+                );
 
                 this.remplitFormation(contact);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return contact;
@@ -123,7 +124,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
 
     private void remplitFormation(Contact contact) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT id_form FROM contact c, formation f, renseignements r "
                 + "WHERE c.id_contact = r.id_contact "
                 + "AND r.id_formation = f.id_form "
@@ -137,6 +138,9 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                 contact.addFormation(f);
 
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
         }
@@ -144,7 +148,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
     }
 
     public int nbContactsParManifestation(Manifestation m) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM contact WHERE id_manifestation = " + m.getIdManif();
 
         int i = 0;
@@ -155,18 +159,18 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return i;
     }
 
     public int nbContactsParEns(Enseignant e) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM contact WHERE id_enseignant = " + e.getIdEnseignant();
 
         int i = 0;
@@ -177,10 +181,11 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return i;
@@ -188,7 +193,7 @@ public class SQLContactDAO implements DAOInterface<Contact> {
 
     public int nbContactsParFormation(Formation f) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM renseignements WHERE id_formation = " + f.getIdFormation();
 
         int i = 0;
@@ -199,18 +204,18 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return i;
     }
 
     public int nbContactsParDptFormation(Departement d) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM renseignements r, formation f"
                 + " WHERE r.id_formation = f.id_form"
                 + " AND id_dpt = " + d.getIdDepartement();
@@ -223,18 +228,18 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return i;
     }
 
     public int nbContactsParDptEnseignants(Departement d) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM contact c, enseignant e"
                 + " WHERE e.id_ens = c.id_enseignant"
                 + " AND id_dpt = " + d.getIdDepartement();
@@ -247,12 +252,12 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return i;
     }
 
@@ -264,17 +269,16 @@ public class SQLContactDAO implements DAOInterface<Contact> {
 
     @Override
     public boolean update(Contact objetAModifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
     public boolean delete(Contact objetASupprimer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
     public void deleteList(ArrayList<Contact> liste) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

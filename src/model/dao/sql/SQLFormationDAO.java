@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import model.business.Departement;
-import model.business.Enseignant;
 import model.business.Formation;
 import model.dao.DAOInterface;
 import model.dao.MySQLConnect;
@@ -26,7 +25,6 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
     private MySQLConnect connect;
 
     private SQLFormationDAO() {
-        this.connect = new MySQLConnect();
     }
 
     @Override
@@ -34,7 +32,7 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
 
         ArrayList<Formation> listeFormations = new ArrayList<Formation>();
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM formation";
 
         try {
@@ -45,10 +43,10 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
                 Formation formation = new Formation(res.getInt("id_form"), res.getString("libelle_form"), departement);
                 listeFormations.add(formation);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return listeFormations;
@@ -56,7 +54,7 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
 
     public Formation readById(int id) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM formation where id_form = " + id;
         Formation formation = null;
         try {
@@ -66,10 +64,10 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
                 Departement departement = SQLDepartementDAO.getInstance().readById(res.getInt("id_dpt"));
                 formation = new Formation(res.getInt("id_form"), res.getString("libelle_form"), departement);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return formation;
@@ -77,7 +75,7 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
 
     public int nbFormationsParDpt(Departement d) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT COUNT(*) FROM formation WHERE id_dpt = " + d.getIdDepartement();
 
         int i = 0;
@@ -88,18 +86,17 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
             if (res.next()) {
                 i = res.getInt(1);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return i;
     }
 
     @Override
     public int create(Formation formation) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "INSERT INTO formation SET libelle_form = ?,  id_dpt = ?";
 
         int id = -1;
@@ -116,10 +113,9 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
                 formation.setIdFormation(id);
             }
             stI.close();
+            cle.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return id;
@@ -127,7 +123,7 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
 
     @Override
     public boolean update(Formation formation) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "UPDATE formation SET libelle_form = ?,  id_dpt = ? WHERE id_form = ?";
 
         boolean updated = false;
@@ -143,16 +139,13 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
             stU.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return updated;
     }
 
     @Override
     public boolean delete(Formation formation) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String delete = "DELETE FROM formation WHERE id_form = " + formation.getIdFormation();
 
         boolean deleted = false;
@@ -166,15 +159,12 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return deleted;
     }
 
     public boolean deleteParDpt(Departement d) {
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String delete = "DELETE FROM formation WHERE id_dpt = " + d.getIdDepartement();
 
         boolean deleted = false;
@@ -190,8 +180,6 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return deleted;

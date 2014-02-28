@@ -25,7 +25,6 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
     private MySQLConnect connect;
 
     private SQLDepartementDAO() {
-        this.connect = new MySQLConnect();
     }
 
     @Override
@@ -33,7 +32,7 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
 
         ArrayList<Departement> listeDepartement = new ArrayList<Departement>();
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM departement";
 
         try {
@@ -43,18 +42,17 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
                 Departement departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
                 listeDepartement.add(departement);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return listeDepartement;
     }
 
     public Departement readById(int id) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM departement WHERE id_dpt = " + id;
         Departement departement = null;
 
@@ -64,10 +62,10 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
             if (res.next()) {
                 departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return departement;
@@ -75,7 +73,8 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
 
     @Override
     public int create(Departement departement) {
-        Connection connection = this.connect.getConnexion();
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "INSERT INTO departement SET libelle_dpt = ?";
 
         int id = -1;
@@ -91,10 +90,9 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
                 departement.setIdDepartement(id);
             }
             stI.close();
+            cle.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return id;
@@ -102,7 +100,8 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
 
     @Override
     public boolean update(Departement departement) {
-        Connection connection = this.connect.getConnexion();
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String update = "UPDATE departement SET libelle_dpt = ? WHERE id_dpt = ?";
 
         boolean updated = false;
@@ -118,15 +117,14 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
             stU.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
         return updated;
     }
 
     @Override
     public boolean delete(Departement departement) {
-        Connection connection = this.connect.getConnexion();
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String delete = "DELETE FROM departement where id_dpt = " + departement.getIdDepartement();
 
         boolean deleted = false;
@@ -143,10 +141,7 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return deleted;
     }
 
