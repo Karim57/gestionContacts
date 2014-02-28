@@ -24,7 +24,6 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     private MySQLConnect connect;
 
     private SQLManifestationDAO() {
-        this.connect = new MySQLConnect();
     }
 
     @Override
@@ -32,7 +31,7 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
         ArrayList<Manifestation> listeManifestation = new ArrayList<Manifestation>();
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM manifestation";
 
         try {
@@ -42,10 +41,10 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
                 Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
                 listeManifestation.add(manifestation);
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return listeManifestation;
@@ -53,7 +52,7 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
     public Manifestation readById(int id) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String sql = "SELECT * FROM manifestation where id_manif = " + id;
         Manifestation manifestation = null;
 
@@ -63,10 +62,10 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
             while (res.next()) {
                 manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
             }
+            res.close();
+            st.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return manifestation;
@@ -75,7 +74,7 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
     @Override
     public int create(Manifestation manifestation) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "INSERT INTO manifestation SET libelle_manif = ?";
 
         int id = -1;
@@ -91,10 +90,9 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
                 manifestation.setIdManif(id);
             }
             stI.close();
+            cle.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return id;
@@ -102,7 +100,8 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public boolean update(Manifestation manifestation) {
-        Connection connection = this.connect.getConnexion();
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String update = "UPDATE manifestation SET libelle_manif = ? WHERE id_manif = ?";
 
         boolean updated = false;
@@ -118,17 +117,14 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
             stU.close();
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-        } finally {
-            this.connect.fermeConnexion();
         }
-
         return updated;
     }
 
     @Override
     public boolean delete(Manifestation manifestation) {
 
-        Connection connection = this.connect.getConnexion();
+        Connection connection = MySQLConnect.getInstance().getConnexion();
         String delete = "DELETE FROM manifestation WHERE id_manif = " + manifestation.getIdManif();
 
         boolean deleted = false;
@@ -142,9 +138,6 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
 
         } catch (SQLException se) {
             System.out.println("Erreur rq sql : " + se.getMessage());
-            se.printStackTrace();
-        } finally {
-            this.connect.fermeConnexion();
         }
 
         return deleted;
