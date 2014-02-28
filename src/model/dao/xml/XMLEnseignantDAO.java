@@ -30,7 +30,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     }
 
     private final XMLChemin chemin;
-    private final String nomFichier;
+    private final String NOM_FICHIER =  "enseignants.xml";
     private Element racine;
 
     /*
@@ -38,7 +38,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
      return chemin;
      }*/
     public String getNomFicher() {
-        return nomFichier;
+        return NOM_FICHIER;
     }
 
     public Element getRacine() {
@@ -47,7 +47,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     public XMLEnseignantDAO() {
         this.chemin = new XMLChemin();
-        this.nomFichier = "enseignants.xml";
+        racine = new Element("enseignants");
     }
 
     @Override
@@ -56,7 +56,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
@@ -79,7 +79,6 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     @Override
     public int create(Enseignant enseignant) {
 
-        racine = new Element("enseignants");
         Element ens = new Element("enseignant");
 
         Attribute id = new Attribute("id", Integer.toString(enseignant.getIdEnseignant()));
@@ -106,7 +105,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -210,6 +209,13 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     @Override
     public void deleteList(ArrayList<Enseignant> liste) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void creerListe(ArrayList<Enseignant> liste) {
+        this.sauvegarde();
+        for (Enseignant enseignant : liste) {
+            this.ajouter(enseignant);
+        }
     }
 
 }

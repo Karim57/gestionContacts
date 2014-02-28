@@ -8,7 +8,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +23,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
+import model.business.Departement;
+import model.business.Formation;
+import model.dao.xml.XMLFormationDAO;
 import view.JTableDonnees;
 
 public class VuePrincipaleFront extends JFrame implements IOPrincipale {
@@ -63,7 +68,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     }
 
     private void gereEcouteur() {
-        
+
         this.bNouveau.addActionListener(monControleur);
     }
 
@@ -150,7 +155,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         return p;
     }
 
-    protected JPanel creerPanelTable(JTableDonnees table) {
+    private JPanel creerPanelTable(JTableDonnees table) {
 
         JPanel jp = new JPanel();
         jp.setLayout(new GridBagLayout());
@@ -179,6 +184,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
 
         return jp;
 
+    }
+
+    @Override
+    public void setListeFormation(ArrayList<Formation> liste) {
+        DefaultComboBoxModel modelFormation = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
+        this.formation1ComboBox.setModel(modelFormation);
+        this.formation1ComboBox.insertItemAt("Choisir une formation", 0);
+        this.formation2ComboBox.setModel(modelFormation);
     }
 
     @Override
@@ -218,10 +231,12 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         JLabel descriptionTextField = new JLabel("Description :");
 
 
-        JComboBox formation1ComboBox = new JComboBox(new String[]{"Choix 1"});
-        JComboBox formation2ComboBox = new JComboBox(new String[]{"Choix 2"});
-        JComboBox formation3ComboBox = new JComboBox(new String[]{"Choix 3"});
-        JComboBox formation4ComboBox = new JComboBox(new String[]{"Choix 4"});
+        formation1ComboBox = new JComboBox<Formation>();
+        formation2ComboBox = new JComboBox(new String[]{"Choix 2"});
+        formation3ComboBox = new JComboBox(new String[]{"Choix 3"});
+        formation4ComboBox = new JComboBox(new String[]{"Choix 4"});
+
+        this.monControleur.remplitComboFormation();
 
         note = new JTextArea(5, 1);
         JScrollPane scrollingNote = new JScrollPane(note);
@@ -416,7 +431,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
 
         frameAjoutModif.setMinimumSize(new Dimension(350, 500));
         frameAjoutModif.setLocationRelativeTo(null);
-        
+
         frameAjoutModif.setVisible(true);
     }
 

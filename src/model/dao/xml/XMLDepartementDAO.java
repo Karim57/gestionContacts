@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Departement;
-import model.business.Formation;
-
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
 import org.jdom2.*;
@@ -26,18 +24,16 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
         }
         return XMLDepartementDAO.instance;
     }
-
     private final XMLChemin chemin;
-    private final String nomFichier;
+    private final String NOM_FICHIER = "departements.xml";
     private Element racine;
-    
+
     /*
-    public XMLChemin getChemin() {
-    return chemin;
-    }*/
-    
+     public XMLChemin getChemin() {
+     return chemin;
+     }*/
     public String getNomFicher() {
-        return nomFichier;
+        return NOM_FICHIER;
     }
 
     public Element getRacine() {
@@ -46,38 +42,36 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
 
     public XMLDepartementDAO() {
         this.chemin = new XMLChemin();
-        this.nomFichier = "departements.xml";
+        racine = new Element(NOM_FICHIER);
     }
 
     @Override
     public ArrayList<Departement> readAll() {
-         ArrayList<Departement> liste = new  ArrayList<>();
+        ArrayList<Departement> liste = new ArrayList<>();
 
-       try {
+        try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
-            
+
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                               
-                liste.add(new Departement(node.getAttribute("id").getIntValue(),node.getChildText("libelle_dpt")));
+
+                liste.add(new Departement(node.getAttribute("id").getIntValue(), node.getChildText("libelle_dpt")));
             }
 
         } catch (IOException | JDOMException io) {
             System.out.println(io.getMessage());
         }
-       return liste;
+        return liste;
     }
 
     @Override
     public int create(Departement departement) {
 
-        racine = new Element("departements");
         Element dpt = new Element("departement");
-
         Attribute id = new Attribute("id", Integer.toString(departement.getIdDepartement()));
         dpt.setAttribute(id);
         racine.addContent(dpt);
@@ -89,11 +83,11 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
 
         return 1;
     }
- 
+
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -118,7 +112,7 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            
+
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
         }
@@ -126,7 +120,7 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
 
     @Override
     public boolean update(Departement departement) {
-         SAXBuilder builder = new SAXBuilder();
+        SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
 
         try {
@@ -138,11 +132,11 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
             for (Element element : root.getChildren()) {
 
                 if (numDpt.equals(element.getAttributeValue("id"))) {
-                     element.getChild("libelle_dpt").setText(departement.getLibelleDepartement());
+                    element.getChild("libelle_dpt").setText(departement.getLibelleDepartement());
                     break;
                 }
             }
-            
+
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
             outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
             // this.sauvegarde(this.nomFicher);
@@ -174,7 +168,7 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
             }
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));         
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
@@ -188,4 +182,38 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void creerListe(ArrayList<Departement> liste) {
+        this.sauvegarde();
+        for (Departement departement : liste) {
+            this.ajouter(departement);
+        }
+    }
+
+    public Departement readById(int id) {
+
+        SAXBuilder builder = new SAXBuilder();
+        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+        
+        Departement departement = null;
+
+        try {
+            Document doc = (Document) builder.build(xmlFile);
+            Element root = doc.getRootElement();
+
+            for (Element element : root.getChildren()) {
+
+                if (Integer.toString(id).equals(element.getAttributeValue("id"))) {
+                    departement = new Departement(id, element.getChildText("libelle_dpt"));
+                    break;
+                }
+            }
+
+            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
+            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+
+        } catch (IOException | JDOMException e) {
+            System.out.println(e.getMessage());
+        }
+        return departement;
+    }
 }

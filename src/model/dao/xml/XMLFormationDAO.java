@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Formation;
+import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -28,11 +29,11 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
     }
 
     private final XMLChemin chemin;
-    private final String nomFichier;
+    private final String NOM_FICHIER =  "formations.xml";
     private Element racine;
 
     public String getNomFicher() {
-        return nomFichier;
+        return NOM_FICHIER;
     }
 
     public Element getRacine() {
@@ -41,7 +42,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
     public XMLFormationDAO() {
         this.chemin = new XMLChemin();
-        this.nomFichier = "formations.xml";
+          racine = new Element("formations");
     }
 
     @Override
@@ -50,7 +51,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
@@ -59,7 +60,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
                 Element node = (Element) list.get(i);
                 liste.add(new Formation(node.getAttribute("id").getIntValue(),
                         node.getChildText("libelle_form"),
-                        SQLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
+                        XMLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
         } catch (IOException | JDOMException io) {
@@ -71,9 +72,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
     @Override
     public int create(Formation formation) {
 
-        racine = new Element("formations");
         Element form = new Element("formation");
-
         Attribute id = new Attribute("id", Integer.toString(formation.getIdFormation()));
         form.setAttribute(id);
         racine.addContent(form);
@@ -93,7 +92,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -192,4 +191,10 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void creerListe(ArrayList<Formation> liste) {
+        this.sauvegarde();
+        for (Formation formation : liste) {
+            this.ajouter(formation);
+        }
+    }
 }
