@@ -8,41 +8,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Formation;
-import model.business.Manifestation;
 
 import model.dao.DAOInterface;
-import model.dao.XMLChemin;
-import model.dao.sql.SQLDepartementDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
 
 public class XMLFormationDAO implements DAOInterface<Formation> {
 
-    private static XMLFormationDAO instance = null;
-
-    public static XMLFormationDAO getInstance() {
-        if (XMLFormationDAO.instance == null) {
-            XMLFormationDAO.instance = new XMLFormationDAO();
-        }
-        return XMLFormationDAO.instance;
-    }
-
-    private final XMLChemin chemin;
-    private final String NOM_FICHIER =  "formations.xml";
+    private final String chemin;
+    private final String NOM_FICHIER = "formations.xml";
     private Element racine;
-
-    public String getNomFicher() {
-        return NOM_FICHIER;
-    }
 
     public Element getRacine() {
         return racine;
     }
 
-    public XMLFormationDAO() {
-        this.chemin = new XMLChemin();
-          racine = new Element("formations");
+    public XMLFormationDAO(String chemin) {
+        this.chemin = chemin;
+        racine = new Element("formations");
     }
 
     @Override
@@ -51,7 +35,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
@@ -60,7 +44,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
                 Element node = (Element) list.get(i);
                 liste.add(new Formation(node.getAttribute("id").getIntValue(),
                         node.getChildText("libelle_form"),
-                        XMLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
+                        new XMLDepartementDAO(this.chemin).readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
         } catch (IOException | JDOMException io) {
@@ -92,7 +76,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            sortie.output(this.racine, new FileOutputStream((this.chemin) + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -100,7 +84,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
     public void ajouter(Formation formation) {
         SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+        File xmlFile = new File(this.chemin + "/" + this.NOM_FICHIER);
 
         try {
             Document doc = (Document) builder.build(xmlFile);
@@ -120,7 +104,7 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
             form.addContent(id_dpt);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            outputter1.output(doc, new FileWriter(this.chemin + "/" + this.NOM_FICHIER));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
@@ -129,66 +113,16 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
 
     @Override
     public boolean update(Formation formation) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numForm = Integer.toString(formation.getIdFormation());
-
-            for (Element element : root.getChildren()) {
-
-                if (numForm.equals(element.getAttributeValue("id"))) {
-                    element.getChild("libelle_form").setText(formation.getLibelleFormation());
-                    break;
-                }
-
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public boolean delete(Formation formation) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numForm = Integer.toString(formation.getIdFormation());
-
-            for (Element element : root.getChildren()) {
-
-                if (numForm.equals(element.getAttributeValue("id"))) {
-                    root.removeContent(element);
-                    break;
-                }
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public void deleteList(ArrayList<Formation> liste) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void creerListe(ArrayList<Formation> liste) {

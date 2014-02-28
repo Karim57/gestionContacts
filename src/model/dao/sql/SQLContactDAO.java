@@ -1,6 +1,7 @@
 package model.dao.sql;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -262,23 +263,89 @@ public class SQLContactDAO implements DAOInterface<Contact> {
     }
 
     @Override
+    public int create(Contact contact) {
 
-    public int create(Contact objetAAjouter) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection connection = MySQLConnect.getInstance().getConnexion();
+        String insert = "INSERT INTO contact "
+                + "SET id_manifestation = ? "
+                + "id_enseignant = ? "
+                + "nom_contact = ? "
+                + "prenom_contact = ? "
+                + "email_contact = ? "
+                + "etudes1_contact = ? "
+                + "etudes2_contact = ? "
+                + "description_contact = ? "
+                + "date_contact = ? "
+                + "heure_contact = ? ";
+
+        int id = -1;
+
+        try {
+            PreparedStatement stI = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+            stI.setInt(1, contact.getManifestation().getIdManif());
+            stI.setInt(2, contact.getEnseignant().getIdEnseignant());
+            stI.setString(3, contact.getNomContact());
+            stI.setString(4, contact.getPrenomContact());
+            stI.setString(5, contact.getEmailContact());
+            stI.setString(6, contact.getEtudes1Contact());
+            stI.setString(7, contact.getEtudes2Contact());
+            stI.setString(8, contact.getDescriptionContact());
+            stI.setDate(9, contact.getDateContact());
+            stI.setTime(10, contact.getHeureContact());
+            stI.executeUpdate();
+
+            ResultSet cle = stI.getGeneratedKeys();
+            if (cle.next()) {
+                id = cle.getInt(1);
+                contact.setIdContact(id);
+            }
+            this.createRens(contact);
+            stI.close();
+            cle.close();
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        }
+
+        return id;
+    }
+
+    private boolean createRens(Contact contact) {
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
+
+        boolean added = false;
+
+        for (Formation f : contact.getListeFormations()) {
+            String insert = "INSERT INTO renseignements SET id_contact = ?, id_formation = ?";
+
+            try {
+                PreparedStatement stI = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+                stI.setInt(1, contact.getIdContact());
+                stI.setInt(2, f.getIdFormation());
+                stI.close();
+                added = true;
+            } catch (SQLException se) {
+                System.out.println("Erreur rq sql : " + se.getMessage());
+            }
+        }
+        return added;
     }
 
     @Override
-    public boolean update(Contact objetAModifier) {
+    public boolean update(Contact objetAModifier
+    ) {
         return false;
     }
 
     @Override
-    public boolean delete(Contact objetASupprimer) {
+    public boolean delete(Contact objetASupprimer
+    ) {
         return false;
     }
 
     @Override
-    public void deleteList(ArrayList<Contact> liste) {
+    public void deleteList(ArrayList<Contact> liste
+    ) {
     }
 
 }

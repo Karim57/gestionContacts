@@ -47,7 +47,7 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
             if (SQLContactDAO.getInstance().nbContactsParEns(e) == 0) {
                 this.donneesEnseignant.supprimerElement(e);
             } else {
-                this.vue.afficheErreur("Impossible de supprimer un enseignant lié à un contact, opération annulée.",
+                this.vue.afficheMessage("Impossible de supprimer un enseignant lié à un contact, opération annulée.",
                         "Erreur lors de la suppression", 0);
                 this.donneesEnseignant.videElementsASupprimer();
                 return false;

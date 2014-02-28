@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.sql.SQLException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -15,13 +16,14 @@ import javax.swing.event.ListSelectionListener;
 import model.business.Contact;
 import model.business.Departement;
 import model.business.Manifestation;
-import model.dao.XMLChemin;
 import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLEnseignantDAO;
 import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
-import model.dao.xml.XMLContactDAO;
+import model.dao.xml.XMLDepartementDAO;
+import model.dao.xml.XMLEnseignantDAO;
+import model.dao.xml.XMLFormationDAO;
 import model.dao.xml.XMLManifestationDAO;
 import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
@@ -101,7 +103,13 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
         if (s.equals("Exporter")) {
             String chemin = this.vue.fileChooser();
+            Manifestation m = this.donneesManifestation.getDonnees().get(this.vue.getLigneSelectionnee());
             if (chemin != null) {
+                new XMLManifestationDAO(chemin).create(m);
+                new XMLDepartementDAO(chemin).creerListe(this.donneesDepartement.getDonnees());
+                new XMLEnseignantDAO(chemin).creerListe(SQLEnseignantDAO.getInstance().readAll());
+                new XMLFormationDAO(chemin).creerListe(SQLFormationDAO.getInstance().readAll());
+                this.vue.afficheMessage("Les fichiers XML ont été générés", "Opération réussi", 1);
             }
         }
 
@@ -260,7 +268,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
             if (SQLContactDAO.getInstance().nbContactsParManifestation(m) == 0) {
                 this.donneesManifestation.supprimerElement(m);
             } else {
-                this.vue.afficheErreur("Impossible de supprimer une manifestation liée à un contact, opération annulée.",
+                this.vue.afficheMessage("Impossible de supprimer une manifestation liée à un contact, opération annulée.",
                         "Erreur lors de la suppression", 0);
                 this.donneesManifestation.videElementsASupprimer();
                 return false;
@@ -312,7 +320,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
                     && SQLContactDAO.getInstance().nbContactsParDptFormation(d) == 0) {
                 this.donneesDepartement.supprimerElement(d);
             } else {
-                this.vue.afficheErreur("Impossible de supprimer un département lié à un contact, opération annulée.",
+                this.vue.afficheMessage("Impossible de supprimer un département lié à un contact, opération annulée.",
                         "Erreur lors de la suppression", 0);
                 this.donneesDepartement.videElementsASupprimer();
                 return false;

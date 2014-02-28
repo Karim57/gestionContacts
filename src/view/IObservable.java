@@ -24,6 +24,6 @@ public interface IObservable {
 
     public int confirmation(String message, String titre, int typeMessage, int icone);
 
-    public void afficheErreur(String message, String titre, int typeMessage);
+    public void afficheMessage(String message, String titre, int typeMessage);
 
 }

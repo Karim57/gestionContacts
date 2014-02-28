@@ -9,35 +9,23 @@ import java.util.ArrayList;
 import java.util.List;
 import model.business.Manifestation;
 import model.dao.DAOInterface;
-import model.dao.XMLChemin;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
 
 public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
-    private final XMLChemin chemin;
+    private String chemin;
     private final String NOM_FICHIER = "manifestations.xml";
     private Element racine;
     static XMLManifestationDAO instance = null;
-
-    public static XMLManifestationDAO getInstance() {
-        if (XMLManifestationDAO.instance == null) {
-            XMLManifestationDAO.instance = new XMLManifestationDAO();
-        }
-        return XMLManifestationDAO.instance;
-    }
-
-    public String getNomFicher() {
-        return NOM_FICHIER;
-    }
 
     public Element getRacine() {
         return racine;
     }
 
-    public XMLManifestationDAO() {
-        this.chemin = new XMLChemin();
+    public XMLManifestationDAO(String chemin) {
+        this.chemin = chemin;
         racine = new Element("manifestation");
     }
 
@@ -47,7 +35,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
@@ -82,7 +70,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            sortie.output(this.racine, new FileOutputStream(this.chemin + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -90,7 +78,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     public void ajouter(Manifestation manifestation) {
         SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+        File xmlFile = new File(this.chemin + "/" + this.NOM_FICHIER);
 
         try {
             Document doc = (Document) builder.build(xmlFile);
@@ -106,7 +94,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
             manif.addContent(libelle_manif);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            outputter1.output(doc, new FileWriter(this.chemin + "/" + this.NOM_FICHIER));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
@@ -115,60 +103,12 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public boolean update(Manifestation manifestation) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numManif = Integer.toString(manifestation.getIdManif());
-
-            for (Element element : root.getChildren()) {
-
-                if (numManif.equals(element.getAttributeValue("id"))) {
-                    element.getChild("libelle_manif").setText(manifestation.getLibelleManif());
-                    break;
-                }
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public boolean delete(Manifestation manifestation) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numManif = Integer.toString(manifestation.getIdManif());
-
-            for (Element element : root.getChildren()) {
-
-                if (numManif.equals(element.getAttributeValue("id"))) {
-                    root.removeContent(element);
-                    break;
-                }
-            }
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            // this.sauvegarde(this.nomFicher);
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override

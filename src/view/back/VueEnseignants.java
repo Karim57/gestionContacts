@@ -318,7 +318,7 @@ public class VueEnseignants extends VueAbstract implements IObservable, IOEnseig
     }
 
     @Override
-    public void afficheErreur(String message, String titre, int typeMessage) {
+    public void afficheMessage(String message, String titre, int typeMessage) {
         JOptionPane.showMessageDialog(this, message, titre, typeMessage);
     }
 

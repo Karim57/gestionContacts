@@ -7,4 +7,7 @@ import view.IObservable;
 public interface IOPrincipale extends IObservable {
 
     public void setListeFormation(ArrayList<Formation> liste);
+
+    public String fileChooser();
+
 }

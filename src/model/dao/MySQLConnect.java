@@ -1,11 +1,13 @@
 package model.dao;
 
 import java.io.IOException;
+import static java.lang.System.exit;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import view.utils.GereErreurs;
 
 public class MySQLConnect {
 
@@ -28,11 +30,13 @@ public class MySQLConnect {
             this.demandePilote();
             this.demandeConnexion();
         } catch (ClassNotFoundException cnfe) {
-            System.out.println("Pb de driver : .jar dans le classpath ??? "
-                    + cnfe.getMessage());
+            new GereErreurs("Le driver JDBC n'a pas pu être chargé, le programme va être fermé",
+                    "Problème driver");
+            exit(0);
         } catch (SQLException se) {
-            System.out.println("Connexion impossible : pb de droits ??? "
-                    + se.getMessage());
+            new GereErreurs("Impossible de se connecter a la base de données, le programme va être fermé",
+                    "Problème de connexion à la base de données");
+            exit(0);
         }
     }
 
@@ -120,10 +124,10 @@ public class MySQLConnect {
 
         try {
             this.proprietes.loadFromXML(url.openStream());
-        } catch (IOException ioe) {
-            System.out
-                    .println("Problème à la lecture du fichier de config bdd");
-            System.out.println(ioe.getMessage());
+        } catch (IOException | NullPointerException e) {
+            new GereErreurs("Erreur lors de la lecture de fichier de propriétés de la base de données",
+                    "Une erreur s'est produite");
+            exit(0);
         }
     }
 

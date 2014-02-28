@@ -10,11 +10,9 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Contact;
-import model.business.Departement;
 import model.business.Formation;
 
 import model.dao.DAOInterface;
-import model.dao.XMLChemin;
 import model.dao.sql.SQLEnseignantDAO;
 import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
@@ -24,29 +22,17 @@ import org.jdom2.output.*;
 
 public class XMLContactDAO implements DAOInterface<Contact> {
 
-    private static XMLContactDAO instance = null;
-
-    public static XMLContactDAO getInstance() {
-        if (XMLContactDAO.instance == null) {
-            XMLContactDAO.instance = new XMLContactDAO();
-        }
-        return XMLContactDAO.instance;
-    }
-
-    private final XMLChemin chemin;
+    private String chemin;
     private final String NOM_FICHIER = "contacts.xml";
     private Element racine;
-
-    public String getNomFicher() {
-        return NOM_FICHIER;
-    }
 
     public Element getRacine() {
         return racine;
     }
 
-    private XMLContactDAO() {
-        this.chemin = new XMLChemin();
+    private XMLContactDAO(String chemin) {
+        this.chemin = chemin;
+        racine = new Element("contacts");
     }
 
     @Override
@@ -55,14 +41,19 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                Contact contact = new Contact(node.getAttribute("id").getIntValue(), SQLManifestationDAO.getInstance().readById(Integer.parseInt(node.getChildText("manifestation"))), SQLEnseignantDAO.getInstance().readById(Integer.parseInt(node.getChildText("enseignant"))), node.getChildText("nom"), node.getChildText("prenom"), node.getChildText("email"), node.getChildText("etudes1"), node.getChildText("etude2"), Date.valueOf(node.getChildText("date")), Time.valueOf(node.getChildText("heure")), node.getChildText("description"));
+                Contact contact = new Contact(node.getAttribute("id").getIntValue(),
+                        SQLManifestationDAO.getInstance().readById(Integer.parseInt(node.getChildText("manifestation"))),
+                        SQLEnseignantDAO.getInstance().readById(Integer.parseInt(node.getChildText("enseignant"))),
+                        node.getChildText("nom"), node.getChildText("prenom"), node.getChildText("email"),
+                        node.getChildText("etudes1"), node.getChildText("etude2"), Date.valueOf(node.getChildText("date")), Time.valueOf(node.getChildText("heure")),
+                        node.getChildText("description"));
 
                 Element formations = node.getChild("formations");
                 List listform = formations.getChildren();
@@ -83,7 +74,6 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     @Override
     public int create(Contact contact) {
 
-        racine = new Element("contacts");
         Element cont = new Element("contact");
 
         Attribute id = new Attribute("id", Integer.toString(contact.getIdContact()));
@@ -146,7 +136,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            sortie.output(this.racine, new FileOutputStream(this.chemin + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -154,7 +144,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
     public void ajouter(Contact contact) {
         SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+        File xmlFile = new File(this.chemin + "/" + this.NOM_FICHIER);
 
         try {
             Document doc = (Document) builder.build(xmlFile);
@@ -214,7 +204,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
             cont.addContent(formations);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            outputter1.output(doc, new FileWriter(this.chemin + "/" + this.NOM_FICHIER));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
@@ -223,78 +213,18 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
     @Override
     public boolean update(Contact contact) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numContact = Integer.toString(contact.getIdContact());
-
-            for (Element element : root.getChildren()) {
-
-                if (numContact.equals(element.getAttributeValue("id"))) {
-                    element.getChild("manifestation").setText(Integer.toString(contact.getManifestation().getIdManif()));
-                    element.getChild("enseignant").setText(Integer.toString(contact.getEnseignant().getIdEnseignant()));
-                    element.getChild("nom").setText(contact.getNomContact());
-                    element.getChild("prenom").setText(contact.getPrenomContact());
-                    element.getChild("email").setText(contact.getEmailContact());
-                    element.getChild("etude1").setText(contact.getEtudes1Contact());
-                    element.getChild("etude2").setText(contact.getEtudes2Contact());
-                    element.getChild("date").setText(contact.getDateContact().toString());
-                    element.getChild("heure").setText(contact.getHeureContact().toString());
-                    element.getChild("description").setText(contact.getDescriptionContact());
-                    break;
-                }
-
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            // this.sauvegarde(this.nomFicher);
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public boolean delete(Contact contact) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numContact = Integer.toString(contact.getIdContact());
-
-            for (Element element : root.getChildren()) {
-
-                if (numContact.equals(element.getAttributeValue("id"))) {
-                    root.removeContent(element);
-                    break;
-                }
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public void deleteList(ArrayList<Contact> liste) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     public void creerListe(ArrayList<Contact> liste) {
         this.sauvegarde();
         for (Contact contact : liste) {

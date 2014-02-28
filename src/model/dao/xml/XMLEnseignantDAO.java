@@ -7,12 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import model.business.Departement;
 import model.business.Enseignant;
-import model.business.Manifestation;
 
 import model.dao.DAOInterface;
-import model.dao.XMLChemin;
 import model.dao.sql.SQLDepartementDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
@@ -20,33 +17,16 @@ import org.jdom2.output.*;
 
 public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
-    private static XMLEnseignantDAO instance = null;
-
-    public static XMLEnseignantDAO getInstance() {
-        if (XMLEnseignantDAO.instance == null) {
-            XMLEnseignantDAO.instance = new XMLEnseignantDAO();
-        }
-        return XMLEnseignantDAO.instance;
-    }
-
-    private final XMLChemin chemin;
-    private final String NOM_FICHIER =  "enseignants.xml";
+    private final String chemin;
+    private final String NOM_FICHIER = "enseignants.xml";
     private Element racine;
-
-    /*
-     public XMLChemin getChemin() {
-     return chemin;
-     }*/
-    public String getNomFicher() {
-        return NOM_FICHIER;
-    }
 
     public Element getRacine() {
         return racine;
     }
 
-    public XMLEnseignantDAO() {
-        this.chemin = new XMLChemin();
+    public XMLEnseignantDAO(String chemin) {
+        this.chemin = chemin;
         racine = new Element("enseignants");
     }
 
@@ -56,7 +36,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
@@ -105,7 +85,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
+            sortie.output(this.racine, new FileOutputStream(this.chemin + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -113,7 +93,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     public void ajouter(Enseignant enseignant) {
         SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
+        File xmlFile = new File(this.chemin + "/" + this.NOM_FICHIER);
 
         try {
             Document doc = (Document) builder.build(xmlFile);
@@ -137,7 +117,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             ens.addContent(id_dpt);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
+            outputter1.output(doc, new FileWriter(this.chemin + "/" + this.NOM_FICHIER));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
@@ -146,69 +126,16 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
     @Override
     public boolean update(Enseignant enseignant) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numEns = Integer.toString(enseignant.getIdEnseignant());
-
-            for (Element element : root.getChildren()) {
-
-                if (numEns.equals(element.getAttributeValue("id"))) {
-                    element.getChild("nom_ens").setText(enseignant.getNomEnseignant());
-                    element.getChild("prenom_ens").setText(enseignant.getPrenomEnseignant());
-                    break;
-                }
-
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-            // this.sauvegarde(this.nomFicher);
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public boolean delete(Enseignant enseignant) {
-        SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin.getChemin() + "/" + this.getNomFicher());
-
-        try {
-            Document doc = (Document) builder.build(xmlFile);
-            Element root = doc.getRootElement();
-
-            String numEns = Integer.toString(enseignant.getIdEnseignant());
-
-            for (Element element : root.getChildren()) {
-
-                if (numEns.equals(element.getAttributeValue("id"))) {
-                    root.removeContent(element);
-                    break;
-                }
-
-            }
-
-            XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin.getChemin() + "/" + this.getNomFicher()));
-
-        } catch (IOException | JDOMException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public void deleteList(ArrayList<Enseignant> liste) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void creerListe(ArrayList<Enseignant> liste) {

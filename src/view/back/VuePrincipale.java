@@ -42,8 +42,6 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
     private JTabbedPane tpPrincipal;
 
-    private JFileChooser chooser;
-
     private JDialog frameAjoutModif;
 
     private JTextField tLibelle;
@@ -65,8 +63,7 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
             this.lMessage.setText("Chargement des données ...");
             Thread.sleep(2000);
             this.monControleur = new ControleurPrincipal(this);
-            this.lMessage.setText("Création de l'interface graphique");
-            Thread.sleep(3000);
+
             pOutils = super.creerBarreOutils();
 
             this.add(pOutils, BorderLayout.NORTH);
@@ -78,6 +75,9 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
             this.setSize(1000, 600);
             this.setLocation(300, 100);
+
+            this.lMessage.setText("Création de l'interface graphique");
+            Thread.sleep(3000);
 
             this.wSplashScreen.dispose();
 
@@ -139,11 +139,11 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
     public String fileChooser() {
 
         FileSystemView fsv = FileSystemView.getFileSystemView();
-        chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(fsv.getRoots()[0]);
         chooser.setDialogTitle("Dossier d'exportation");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setApproveButtonText("Choisir");
+        chooser.setApproveButtonText("Sélectionner");
         chooser.setAcceptAllFileFilterUsed(false);
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -597,7 +597,7 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
     }
 
     @Override
-    public void afficheErreur(String message, String titre, int typeMessage) {
+    public void afficheMessage(String message, String titre, int typeMessage) {
         JOptionPane.showMessageDialog(this, message, titre, typeMessage);
     }
 

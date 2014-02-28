@@ -290,7 +290,7 @@ public class VueFormation extends VueAbstract implements IOFormation {
     }
 
     @Override
-    public void afficheErreur(String message, String titre, int typeMessage) {
+    public void afficheMessage(String message, String titre, int typeMessage) {
         JOptionPane.showMessageDialog(this, message, titre, typeMessage);
     }
 

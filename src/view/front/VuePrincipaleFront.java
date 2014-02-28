@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,6 +24,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileSystemView;
 import model.business.Departement;
 import model.business.Formation;
 import model.dao.xml.XMLFormationDAO;
@@ -47,6 +49,8 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     JButton retourButton = new JButton("Retour");
     JButton okButton = new JButton("Ok");
 
+    String cheminImport = null;
+
     public VuePrincipaleFront() {
 
         super("Gestion des contacts");
@@ -63,12 +67,10 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         this.setLocation(350, 250);
 
         this.setVisible(true);
-
-        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     private void gereEcouteur() {
-
         this.bNouveau.addActionListener(monControleur);
     }
 
@@ -110,10 +112,8 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         this.configurerButtons(bNouveau, "Nouveau");
         this.bNouveau.setToolTipText("Ajouter");
 
-
         this.bExporter = new JButton(new ImageIcon(cl.getResource("view/images/export.png")));
         this.configurerButtons(bExporter, "Exporter");
-
 
         JPanel p = new JPanel(new GridBagLayout());
 
@@ -187,6 +187,25 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     }
 
     @Override
+    public String fileChooser() {
+
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(fsv.getRoots()[0]);
+        chooser.setDialogTitle("Dossier d'XML");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setApproveButtonText("Sélectionner");
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile().getAbsolutePath();
+        }
+
+        return null;
+
+    }
+
+    @Override
     public void setListeFormation(ArrayList<Formation> liste) {
         DefaultComboBoxModel modelFormation = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
         this.formation1ComboBox.setModel(modelFormation);
@@ -230,7 +249,6 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         JLabel formation4Label = new JLabel("(optionnelle) ");
         JLabel descriptionTextField = new JLabel("Description :");
 
-
         formation1ComboBox = new JComboBox<Formation>();
         formation2ComboBox = new JComboBox(new String[]{"Choix 2"});
         formation3ComboBox = new JComboBox(new String[]{"Choix 3"});
@@ -258,7 +276,6 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(10, 0, 20, 0);
         frameAjoutModif.add(titreLabel, gbc);
-
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -428,7 +445,6 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.insets = new Insets(5, 10, 10, 10);
         frameAjoutModif.add(okButton, gbc);
 
-
         frameAjoutModif.setMinimumSize(new Dimension(350, 500));
         frameAjoutModif.setLocationRelativeTo(null);
 
@@ -465,7 +481,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     }
 
     @Override
-    public void afficheErreur(String message, String titre, int typeMessage) {
+    public void afficheMessage(String message, String titre, int typeMessage) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

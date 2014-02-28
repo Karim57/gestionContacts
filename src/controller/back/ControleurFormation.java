@@ -49,7 +49,7 @@ public class ControleurFormation implements ActionListener, DocumentListener, Li
             if (SQLContactDAO.getInstance().nbContactsParFormation(f) == 0) {
                 this.donneesFormation.supprimerElement(f);
             } else {
-                this.vue.afficheErreur("Impossible de supprimer une formation lié à un contact, opération annulée.",
+                this.vue.afficheMessage("Impossible de supprimer une formation lié à un contact, opération annulée.",
                         "Erreur lors de la suppression", 0);
                 this.donneesFormation.videElementsASupprimer();
                 return false;
