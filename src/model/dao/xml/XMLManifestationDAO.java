@@ -176,7 +176,6 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
         for (Manifestation manifestation : liste) {
             this.delete(manifestation);
         }
-
     }
 
 }
