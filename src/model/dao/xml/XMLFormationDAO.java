@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Formation;
+import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
@@ -192,4 +193,10 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void creerListe(ArrayList<Formation> liste) {
+        this.sauvegarde();
+        for (Formation formation : liste) {
+            this.ajouter(formation);
+        }
+    }
 }

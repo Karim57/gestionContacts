@@ -212,4 +212,11 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void creerListe(ArrayList<Enseignant> liste) {
+        this.sauvegarde();
+        for (Enseignant enseignant : liste) {
+            this.ajouter(enseignant);
+        }
+    }
+
 }

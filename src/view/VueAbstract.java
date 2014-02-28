@@ -128,6 +128,7 @@ public abstract class VueAbstract extends JFrame {
         JPanel p = new JPanel(new FlowLayout());
 
         this.cListeDpt = new JComboBox<Departement>();
+        this.cListeDpt.setPreferredSize(new Dimension(290, 30));
         p.add(this.cListeDpt);
 
         ClassLoader cl = this.getClass().getClassLoader();

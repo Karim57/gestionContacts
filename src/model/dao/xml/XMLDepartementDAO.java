@@ -187,5 +187,12 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
     public void deleteList(ArrayList<Departement> liste) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    public void creerListe(ArrayList<Departement> liste) {
+        this.sauvegarde();
+        for (Departement departement : liste) {
+            this.ajouter(departement);
+        }
+    }
 
 }

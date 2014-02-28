@@ -53,7 +53,7 @@ public class VueEnseignants extends VueAbstract implements IObservable, IOEnseig
         this.gereEcouteur();
         this.gereButtonsActifs();
 
-        this.setSize(700, 400);
+        this.setSize(800, 500);
         this.setLocation(300, 200);
 
         this.setVisible(true);
@@ -220,7 +220,7 @@ public class VueEnseignants extends VueAbstract implements IObservable, IOEnseig
     public void setListeDepartement(ArrayList<Departement> liste) {
         DefaultComboBoxModel modelDpt = new DefaultComboBoxModel<Departement>(liste.toArray(new Departement[liste.size()]));
         super.cListeDpt.setModel(modelDpt);
-     //************************************************   super.cListeDpt.insertItemAt("Tous les départements", 0);
+        super.cListeDpt.insertItemAt("Tous les départements", 0);
     }
 
     @Override

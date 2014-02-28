@@ -102,8 +102,9 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         if (s.equals("Exporter")) {
             String chemin = this.vue.fileChooser();
             if (chemin != null) {
+                Manifestation m = this.donneesManifestation.getDonnees().get(this.vue.getLigneSelectionnee());
                 XMLChemin.setChemin(chemin);
-                XMLManifestationDAO.getInstance().creerListe(this.donneesManifestation.getDonnees());
+                XMLManifestationDAO.getInstance().create(m);
             }
         }
 

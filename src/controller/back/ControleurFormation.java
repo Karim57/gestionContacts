@@ -124,9 +124,9 @@ public class ControleurFormation implements ActionListener, DocumentListener, Li
             SQLFormationDAO.getInstance().update(formation);
             this.vue.close();
         }
-
-        if (s.equals("Stats")) {
-
+        
+        if(s.equals("Annuler")) {
+            this.vue.close();
         }
     }
 

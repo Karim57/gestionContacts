@@ -127,6 +127,10 @@ public class ControleurEnseignant implements ActionListener, DocumentListener, L
             this.vue.close();
         }
 
+        if (s.equals("Annuler")) {
+            this.vue.close();
+        }
+
     }
 
     @Override

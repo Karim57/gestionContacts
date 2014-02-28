@@ -52,7 +52,7 @@ public class VueFormation extends VueAbstract implements IOFormation {
         this.gereEcouteur();
         this.gereButtonsActifs();
 
-        this.setSize(700, 350);
+        this.setSize(850, 550);
         this.setLocation(350, 250);
 
         this.setVisible(true);
@@ -202,8 +202,8 @@ public class VueFormation extends VueAbstract implements IOFormation {
         super.bNouveau.setEnabled(true);
         super.bModifier.setEnabled(true);
         super.bSupprimer.setEnabled(true);
-        super.bStats.setEnabled(true);
 
+        super.bStats.setVisible(false);
         super.bExporter.setVisible(false);
         super.bImporter.setVisible(false);
         super.bOuvreDpt.setVisible(false);
@@ -215,10 +215,8 @@ public class VueFormation extends VueAbstract implements IOFormation {
 
         if (this.tableFormation.getSelectedRowCount() == 1) {
             super.bModifier.setEnabled(true);
-            super.bStats.setEnabled(true);
         } else {
             super.bModifier.setEnabled(false);
-            super.bStats.setEnabled(false);
         }
 
         if (this.tableFormation.getSelectedRowCount() > 0) {

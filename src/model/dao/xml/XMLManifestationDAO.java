@@ -38,7 +38,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     public XMLManifestationDAO() {
         this.chemin = new XMLChemin();
-        racine = new Element("manifestations");
+        racine = new Element("manifestation");
     }
 
     @Override
@@ -67,15 +67,13 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     @Override
     public int create(Manifestation manifestation) {
 
-        Element manif = new Element("manifestation");
-
-        Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
-        manif.setAttribute(id);
-        racine.addContent(manif);
+        Element id_manif = new Element("id_manif");
+        id_manif.setText(Integer.toString(manifestation.getIdManif()));
+        racine.addContent(id_manif);
 
         Element libelle_manif = new Element("libelle_manif");
         libelle_manif.setText(manifestation.getLibelleManif());
-        manif.addContent(libelle_manif);
+        racine.addContent(libelle_manif);
         this.sauvegarde();
 
         return 1;

@@ -10,6 +10,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Contact;
+import model.business.Departement;
 import model.business.Formation;
 
 import model.dao.DAOInterface;
@@ -292,6 +293,13 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     @Override
     public void deleteList(ArrayList<Contact> liste) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void creerListe(ArrayList<Contact> liste) {
+        this.sauvegarde();
+        for (Contact contact : liste) {
+            this.ajouter(contact);
+        }
     }
 
 }
