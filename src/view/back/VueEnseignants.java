@@ -220,7 +220,7 @@ public class VueEnseignants extends VueAbstract implements IObservable, IOEnseig
     public void setListeDepartement(ArrayList<Departement> liste) {
         DefaultComboBoxModel modelDpt = new DefaultComboBoxModel<Departement>(liste.toArray(new Departement[liste.size()]));
         super.cListeDpt.setModel(modelDpt);
-     //************************************************   super.cListeDpt.insertItemAt("Tous les départements", 0);
+        super.cListeDpt.insertItemAt("Tous les départements", 0);
     }
 
     @Override
