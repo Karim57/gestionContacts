@@ -20,32 +20,34 @@ public class Contact implements Comparable<Contact> {
     private Enseignant enseignant;
     private ArrayList<Formation> listeFormations;
 
-    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Manifestation manifestation, Enseignant enseignant) {
+    public Contact(int idContact, Manifestation manifestation, Enseignant enseignant, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact) {
 
         this(idContact,
+                manifestation,
+                enseignant,
                 nomContact,
                 prenomContact,
                 emailContact,
                 etudes1Contact,
-                etudes2Contact, descriptionContact,
+                etudes2Contact,
                 new Date(System.currentTimeMillis()),
                 new Time(System.currentTimeMillis()),
-                manifestation,
-                enseignant);
+                descriptionContact
+                );
     }
 
-    public Contact(int idContact, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, String descriptionContact, Date dateContact, Time heureContact, Manifestation manifestation, Enseignant enseignant) {
+    public Contact(int idContact, Manifestation manifestation, Enseignant enseignant, String nomContact, String prenomContact, String emailContact, String etudes1Contact, String etudes2Contact, Date dateContact, Time heureContact,String descriptionContact) {
         this.idContact = idContact;
+        this.manifestation = manifestation;
+        this.enseignant = enseignant;
         this.nomContact = nomContact;
         this.prenomContact = prenomContact;
         this.emailContact = emailContact;
         this.etudes1Contact = etudes1Contact;
         this.etudes2Contact = etudes2Contact;
-        this.descriptionContact = descriptionContact;
         this.dateContact = dateContact;
         this.heureContact = heureContact;
-        this.manifestation = manifestation;
-        this.enseignant = enseignant;
+        this.descriptionContact = descriptionContact;
         this.listeFormations = new ArrayList<Formation>();
     }
 

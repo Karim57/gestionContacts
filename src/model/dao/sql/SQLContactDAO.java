@@ -52,16 +52,17 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                 Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
 
                 Contact contact = new Contact(res.getInt("id_contact"),
+                        manifestation,
+                        enseignant,
                         res.getString("nom_contact"),
                         res.getString("prenom_contact"),
                         res.getString("email_contact"),
                         res.getString("etudes1_contact"),
                         res.getString("etudes2_contact"),
-                        res.getString("description_contact"),
                         res.getDate("date_contact"),
                         res.getTime("heure_contact"),
-                        manifestation,
-                        enseignant);
+                        res.getString("description_contact")
+                        );
 
                 this.remplitFormation(contact);
 
@@ -96,16 +97,17 @@ public class SQLContactDAO implements DAOInterface<Contact> {
                 Manifestation manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
 
                 contact = new Contact(res.getInt("id_contact"),
+                        manifestation,
+                        enseignant,
                         res.getString("nom_contact"),
                         res.getString("prenom_contact"),
                         res.getString("email_contact"),
                         res.getString("etudes1_contact"),
                         res.getString("etudes2_contact"),
-                        res.getString("description_contact"),
                         res.getDate("date_contact"),
                         res.getTime("heure_contact"),
-                        manifestation,
-                        enseignant);
+                        res.getString("description_contact")
+                        );
 
                 this.remplitFormation(contact);
             }

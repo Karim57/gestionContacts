@@ -1,15 +1,22 @@
 package model.dao.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.List;
 import model.business.Contact;
 import model.business.Formation;
 
 import model.dao.DAOInterface;
 import model.dao.XMLChemin;
+import model.dao.sql.SQLEnseignantDAO;
+import model.dao.sql.SQLFormationDAO;
+import model.dao.sql.SQLManifestationDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
@@ -44,7 +51,33 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
     @Override
     public ArrayList<Contact> readAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          ArrayList<Contact> liste = new  ArrayList<>();
+
+       try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Element root = doc.getRootElement();
+            
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                Contact contact = new Contact(node.getAttribute("id").getIntValue(),SQLManifestationDAO.getInstance().readById( Integer.parseInt(node.getChildText("manifestation"))),SQLEnseignantDAO.getInstance().readById( Integer.parseInt(node.getChildText("enseignant"))),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),Date.valueOf(node.getChildText("date")),Time.valueOf(node.getChildText("heure")),node.getChildText("description"));
+                   
+                Element formations = node.getChild("formations");
+                List listform = formations.getChildren();
+                for (int j = 0; j < listform.size(); j++) {
+                    Element node2 = (Element) listform.get(j);
+                    contact.addFormation(SQLFormationDAO.getInstance().readById(Integer.parseInt(node2.getValue())));            
+                 }
+   
+                liste.add(contact);
+            }
+
+        } catch (IOException | JDOMException io) {
+            System.out.println(io.getMessage());
+        }
+       return liste;
     }
 
     @Override

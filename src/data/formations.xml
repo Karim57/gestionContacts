@@ -2,11 +2,14 @@
 <formations>
   <formation id="1">
     <libelle_form>LPSIL</libelle_form>
+    <id_dpt>1</id_dpt>
   </formation>
   <formation id="3">
     <libelle_form>2A</libelle_form>
+    <id_dpt>1</id_dpt>
   </formation>
   <formation id="4">
     <libelle_form>LPGEA</libelle_form>
+    <id_dpt>2</id_dpt>
   </formation>
 </formations>
