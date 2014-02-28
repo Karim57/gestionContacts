@@ -17,7 +17,7 @@ import org.jdom2.output.*;
 public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     private final XMLChemin chemin;
-    private final String nomFichier;
+    private final String NOM_FICHIER = "manifestations.xml";
     private Element racine;
     static XMLManifestationDAO instance = null;
 
@@ -29,7 +29,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     }
 
     public String getNomFicher() {
-        return nomFichier;
+        return NOM_FICHIER;
     }
 
     public Element getRacine() {
@@ -38,36 +38,35 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     public XMLManifestationDAO() {
         this.chemin = new XMLChemin();
-        this.nomFichier = "manifestations.xml";
+        racine = new Element("manifestations");
     }
 
     @Override
     public ArrayList<Manifestation> readAll() {
-        ArrayList<Manifestation> liste = new  ArrayList<>();
+        ArrayList<Manifestation> liste = new ArrayList<>();
 
-       try {
+        try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
-            
+
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                               
-                liste.add(new Manifestation(node.getAttribute("id").getIntValue(),node.getChildText("libelle_manif")));
+
+                liste.add(new Manifestation(node.getAttribute("id").getIntValue(), node.getChildText("libelle_manif")));
             }
 
         } catch (IOException | JDOMException io) {
             System.out.println(io.getMessage());
         }
-       return liste;
+        return liste;
     }
 
     @Override
     public int create(Manifestation manifestation) {
 
-        racine = new Element("manifestations");
         Element manif = new Element("manifestation");
 
         Attribute id = new Attribute("id", Integer.toString(manifestation.getIdManif()));
@@ -85,7 +84,7 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
@@ -176,7 +175,17 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public void deleteList(ArrayList<Manifestation> liste) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Manifestation manifestation : liste) {
+            this.delete(manifestation);
+        }
+
+    }
+
+    public void creerListe(ArrayList<Manifestation> liste) {
+        this.sauvegarde();
+        for (Manifestation manifestation : liste) {
+            this.ajouter(manifestation);
+        }
     }
 
 }

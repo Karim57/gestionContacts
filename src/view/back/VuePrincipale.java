@@ -135,9 +135,9 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
     }
 
-    public File fileChooser() {
+    @Override
+    public String fileChooser() {
 
-        File f = null;
         FileSystemView fsv = FileSystemView.getFileSystemView();
         chooser = new JFileChooser();
         chooser.setCurrentDirectory(fsv.getRoots()[0]);
@@ -147,10 +147,11 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
         chooser.setAcceptAllFileFilterUsed(false);
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            f = chooser.getSelectedFile();
+            return chooser.getSelectedFile().getAbsolutePath();
         }
 
-        return f;
+        return null;
+
     }
 
     private void gereEcouteur() {

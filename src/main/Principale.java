@@ -1,5 +1,6 @@
 package main;
 
+import model.dao.XMLChemin;
 import view.back.VuePrincipale;
 
 public class Principale {

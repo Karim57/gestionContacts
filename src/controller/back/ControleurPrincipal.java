@@ -15,11 +15,14 @@ import javax.swing.event.ListSelectionListener;
 import model.business.Contact;
 import model.business.Departement;
 import model.business.Manifestation;
+import model.dao.XMLChemin;
 import model.dao.sql.SQLContactDAO;
 import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLEnseignantDAO;
 import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
+import model.dao.xml.XMLContactDAO;
+import model.dao.xml.XMLManifestationDAO;
 import model.tables.ModeleContact;
 import model.tables.ModeleDepartement;
 import model.tables.ModeleManifestation;
@@ -97,7 +100,11 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Exporter")) {
-
+            String chemin = this.vue.fileChooser();
+            if (chemin != null) {
+                XMLChemin.setChemin(chemin);
+                XMLManifestationDAO.getInstance().creerListe(this.donneesManifestation.getDonnees());
+            }
         }
 
         if (s.equals("Stats")) {

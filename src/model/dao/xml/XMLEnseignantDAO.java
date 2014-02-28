@@ -63,8 +63,11 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                               
-                liste.add(new Enseignant(node.getAttribute("id").getIntValue(),node.getChildText("nom_ens"),node.getChildText("prenom_ens"), SQLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
+
+                liste.add(new Enseignant(node.getAttribute("id").getIntValue(),
+                        node.getChildText("nom_ens"),
+                        node.getChildText("prenom_ens"),
+                        SQLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
         } catch (IOException | JDOMException io) {
@@ -89,12 +92,12 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
         Element prenom_ens = new Element("prenom_ens");
         prenom_ens.setText(enseignant.getPrenomEnseignant());
-        ens.addContent(prenom_ens);     
-        
+        ens.addContent(prenom_ens);
+
         Element id_dpt = new Element("id_dpt");
         id_dpt.setText(Integer.toString(enseignant.getDepartement().getIdDepartement()));
         ens.addContent(id_dpt);
-        
+
         this.sauvegarde();
 
         return 1;
@@ -129,7 +132,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
             Element prenom_ens = new Element("prenom_ens");
             prenom_ens.setText(enseignant.getPrenomEnseignant());
             ens.addContent(prenom_ens);
-            
+
             Element id_dpt = new Element("id_dpt");
             id_dpt.setText(Integer.toString(enseignant.getDepartement().getIdDepartement()));
             ens.addContent(id_dpt);

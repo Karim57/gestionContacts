@@ -2,8 +2,12 @@ package model.dao;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class XMLChemin {
 
@@ -24,7 +28,26 @@ public class XMLChemin {
         chemin = this.chargeChemin();
     }
 
+    public static void setChemin(String chemin) {
+        try {
+            FileOutputStream out = null;
+            Properties props = new Properties();
+
+            try {
+                out = new FileOutputStream("src/config/xml.properties");
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(XMLChemin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            props.setProperty("chemin", chemin);
+            props.storeToXML(out, null);
+            out.close();
+        } catch (IOException ex) {
+            Logger.getLogger(XMLChemin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private String chargeChemin() {
+
         String source = "src/config/xml.properties";
         this.proprietes = new Properties();
 

@@ -17,4 +17,6 @@ public interface IOPrincipale extends IObservable {
 
     public void annulerSelectionTables();
 
+    public String fileChooser();
+
 }

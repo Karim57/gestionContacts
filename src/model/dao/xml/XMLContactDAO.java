@@ -33,51 +33,50 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     }
 
     private final XMLChemin chemin;
-    private final String nomFichier;
+    private final String NOM_FICHIER = "contacts.xml";
     private Element racine;
 
     public String getNomFicher() {
-        return nomFichier;
+        return NOM_FICHIER;
     }
 
     public Element getRacine() {
         return racine;
     }
 
-    public XMLContactDAO() {
+    private XMLContactDAO() {
         this.chemin = new XMLChemin();
-        this.nomFichier = "contacts.xml";
     }
 
     @Override
     public ArrayList<Contact> readAll() {
-          ArrayList<Contact> liste = new  ArrayList<>();
+        ArrayList<Contact> liste = new ArrayList<>();
 
-       try {
+        try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin.getChemin()+"/"+this.nomFichier));
+            Document doc = builder.build(new FileInputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
-            
+
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                Contact contact = new Contact(node.getAttribute("id").getIntValue(),SQLManifestationDAO.getInstance().readById( Integer.parseInt(node.getChildText("manifestation"))),SQLEnseignantDAO.getInstance().readById( Integer.parseInt(node.getChildText("enseignant"))),node.getChildText("nom"),node.getChildText("prenom"),node.getChildText("email"),node.getChildText("etudes1"),node.getChildText("etude2"),Date.valueOf(node.getChildText("date")),Time.valueOf(node.getChildText("heure")),node.getChildText("description"));
-                   
+                Contact contact = new Contact(node.getAttribute("id").getIntValue(), SQLManifestationDAO.getInstance().readById(Integer.parseInt(node.getChildText("manifestation"))), SQLEnseignantDAO.getInstance().readById(Integer.parseInt(node.getChildText("enseignant"))), node.getChildText("nom"), node.getChildText("prenom"), node.getChildText("email"), node.getChildText("etudes1"), node.getChildText("etude2"), Date.valueOf(node.getChildText("date")), Time.valueOf(node.getChildText("heure")), node.getChildText("description"));
+
                 Element formations = node.getChild("formations");
                 List listform = formations.getChildren();
                 for (int j = 0; j < listform.size(); j++) {
                     Element node2 = (Element) listform.get(j);
-                    contact.addFormation(SQLFormationDAO.getInstance().readById(Integer.parseInt(node2.getValue())));            
-                 }
-   
+                    contact.addFormation(SQLFormationDAO.getInstance().readById(Integer.parseInt(node2.getValue())));
+                }
+
                 liste.add(contact);
             }
 
         } catch (IOException | JDOMException io) {
             System.out.println(io.getMessage());
         }
-       return liste;
+        return liste;
     }
 
     @Override
@@ -146,7 +145,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.nomFichier));
+            sortie.output(this.racine, new FileOutputStream(this.chemin.getChemin() + "/" + this.NOM_FICHIER));
         } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
