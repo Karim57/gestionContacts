@@ -179,11 +179,4 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     }
 
-    public void creerListe(ArrayList<Manifestation> liste) {
-        this.sauvegarde();
-        for (Manifestation manifestation : liste) {
-            this.ajouter(manifestation);
-        }
-    }
-
 }
