@@ -151,9 +151,11 @@ public abstract class VueAbstract extends JFrame {
 
         this.bNouveau = new JButton(new ImageIcon(cl.getResource("view/images/add2.png")));
         this.configurerButtons(bNouveau, "Nouveau");
+        this.bNouveau.setToolTipText("Nouveau");
 
         this.bModifier = new JButton(new ImageIcon(cl.getResource("view/images/edit.png")));
         this.configurerButtons(bModifier, "Modifier");
+        this.bModifier.setToolTipText("Modifier");
 
         this.bSupprimer = new JButton(new ImageIcon(cl.getResource("view/images/trash.png")));
         this.configurerButtons(bSupprimer, "Supprimer");
@@ -161,21 +163,27 @@ public abstract class VueAbstract extends JFrame {
 
         this.bOuvreEns = new JButton(new ImageIcon(cl.getResource("view/images/person.png")));
         this.configurerButtons(bOuvreEns, "Enseignant");
+        this.bOuvreEns.setToolTipText("Liste des enseignants");
 
         this.bOuvreDpt = new JButton(new ImageIcon(cl.getResource("view/images/dpt.png")));
         this.configurerButtons(bOuvreDpt, "Formation");
+        this.bOuvreDpt.setToolTipText("Liste des départements");
 
         this.bProfil = new JButton(new ImageIcon(cl.getResource("view/images/profil.png")));
         this.configurerButtons(bProfil, "Profil");
+        this.bProfil.setToolTipText("Détails du contact");
 
         this.bExporter = new JButton(new ImageIcon(cl.getResource("view/images/export.png")));
         this.configurerButtons(bExporter, "Exporter");
+        this.bExporter.setToolTipText("Exporter les données");
 
         this.bImporter = new JButton(new ImageIcon(cl.getResource("view/images/import.png")));
         this.configurerButtons(bImporter, "Importer");
+        this.bImporter.setToolTipText("Importer des contacts");
 
         this.bStats = new JButton(new ImageIcon(cl.getResource("view/images/stats.png")));
         this.configurerButtons(bStats, "Stats");
+        this.bStats.setToolTipText("Afficher les statistiques");
 
         js2 = new JSeparator(JSeparator.VERTICAL);
 
