@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -18,6 +19,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -41,15 +43,15 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     private JComboBox formation2ComboBox;
     private JComboBox formation3ComboBox;
     private JComboBox formation4ComboBox;
-    private JTextArea note;
+    private JTextArea descriptionTextArea;
     private JTextField prenomTextField;
     private JTextField emailTextField;
     private JTextField etude1TextField;
     private JTextField etude2TextField;
-    JButton retourButton = new JButton("Retour");
-    JButton okButton = new JButton("Ok");
+    private JButton retourButton;
+    private JButton okButton;
 
-    String cheminImport = null;
+    private String cheminImport = null;
 
     public VuePrincipaleFront() {
 
@@ -61,10 +63,15 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         this.add(this.creerPanelPrincipal(), BorderLayout.CENTER);
 
         this.gereEcouteur();
-        this.gereButtonsActifs();
 
         this.setSize(700, 350);
         this.setLocation(350, 250);
+
+        if (this.cheminImport == null) {
+            this.afficheMessage("Merci de choisir le dossier ou sont stockès les fichiers XML", "Dossier d'import", 1);
+            this.cheminImport = this.fileChooser();
+            this.monControleur.initDonnees();
+        }
 
         this.setVisible(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -72,6 +79,19 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
 
     private void gereEcouteur() {
         this.bNouveau.addActionListener(monControleur);
+    }
+
+    private void gereEcouteurAjout() {
+
+        this.nomTextField.getDocument().addDocumentListener(monControleur);
+        this.prenomTextField.getDocument().addDocumentListener(monControleur);
+        this.emailTextField.getDocument().addDocumentListener(monControleur);
+        this.etude1TextField.getDocument().addDocumentListener(monControleur);
+
+        this.formation1ComboBox.addItemListener(monControleur);
+        this.formation2ComboBox.addItemListener(monControleur);
+        this.formation3ComboBox.addItemListener(monControleur);
+        this.formation4ComboBox.addItemListener(monControleur);
     }
 
     private JToolBar creerBarreOutils() {
@@ -187,7 +207,11 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     }
 
     @Override
-    public String fileChooser() {
+    public String getCheminImport() {
+        return this.cheminImport;
+    }
+
+    private String fileChooser() {
 
         FileSystemView fsv = FileSystemView.getFileSystemView();
         JFileChooser chooser = new JFileChooser();
@@ -202,20 +226,59 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         }
 
         return null;
+    }
+
+    /**
+     * Récupère toutes les informations en une seule fois
+     *
+     * @return table des informations
+     */
+    @Override
+    public Object[] getInfosAjout() {
+        Object[] liste = new Object[10];
+
+        liste[0] = this.nomTextField.getText();
+        liste[1] = this.prenomTextField.getText();
+        liste[2] = this.emailTextField.getText();
+        liste[3] = this.etude1TextField.getText();
+        liste[4] = this.etude2TextField.getText();
+
+        liste[5] = this.formation1ComboBox.getSelectedItem();
+        liste[6] = this.formation1ComboBox.getSelectedIndex();
+        liste[7] = this.formation2ComboBox.getSelectedItem();
+        liste[8] = this.formation2ComboBox.getSelectedIndex();
+        liste[9] = this.formation3ComboBox.getSelectedItem();
+        liste[10] = this.formation3ComboBox.getSelectedIndex();
+        liste[11] = this.formation4ComboBox.getSelectedItem();
+        liste[12] = this.formation4ComboBox.getSelectedIndex();
+
+        liste[14] = this.descriptionTextArea.getText();
+        return liste;
 
     }
 
     @Override
     public void setListeFormation(ArrayList<Formation> liste) {
-        DefaultComboBoxModel modelFormation = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
-        this.formation1ComboBox.setModel(modelFormation);
-        this.formation1ComboBox.insertItemAt("Choisir une formation", 0);
-        this.formation2ComboBox.setModel(modelFormation);
-    }
 
-    @Override
-    public String getSearch() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DefaultComboBoxModel modelFormation1 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
+        this.formation1ComboBox.setModel(modelFormation1);
+        this.formation1ComboBox.insertItemAt("Choisir une formation", 0);
+        this.formation1ComboBox.setSelectedIndex(0);
+
+        DefaultComboBoxModel modelFormation2 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
+        this.formation2ComboBox.setModel(modelFormation2);
+        this.formation2ComboBox.insertItemAt("Choisir une formation", 0);
+        this.formation2ComboBox.setSelectedIndex(0);
+
+        DefaultComboBoxModel modelFormation3 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
+        this.formation3ComboBox.setModel(modelFormation3);
+        this.formation3ComboBox.insertItemAt("Choisir une formation", 0);
+        this.formation3ComboBox.setSelectedIndex(0);
+
+        DefaultComboBoxModel modelFormation4 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
+        this.formation4ComboBox.setModel(modelFormation4);
+        this.formation4ComboBox.insertItemAt("Choisir une formation", 0);
+        this.formation4ComboBox.setSelectedIndex(0);
     }
 
     @Override
@@ -224,17 +287,13 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     }
 
     @Override
-    public void gereButtonsActifs() {
-    }
+    public void construitAjout() {
 
-    @Override
-    public void construitAjoutModif() {
-
-        JDialog frameAjoutModif = new JDialog(this, "Enregistrement");
-        frameAjoutModif.setModal(true);
+        JDialog frameAjout = new JDialog(this, "Enregistrement");
+        frameAjout.setModal(true);
 
         /* 1- Initialisation du container. */
-        frameAjoutModif.setLayout(new GridBagLayout());
+        frameAjout.setLayout(new GridBagLayout());
 
         /* 2- Création et initialisation d'une série de composants. */
         JLabel titreLabel = new JLabel("Fiche de Rendez vous");
@@ -247,17 +306,17 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         JLabel formation2Label = new JLabel("(optionnelle) ");
         JLabel formation3Label = new JLabel("(optionnelle) ");
         JLabel formation4Label = new JLabel("(optionnelle) ");
-        JLabel descriptionTextField = new JLabel("Description :");
+        JLabel descriptionLabel = new JLabel("Description :");
 
         formation1ComboBox = new JComboBox<Formation>();
-        formation2ComboBox = new JComboBox(new String[]{"Choix 2"});
-        formation3ComboBox = new JComboBox(new String[]{"Choix 3"});
-        formation4ComboBox = new JComboBox(new String[]{"Choix 4"});
+        formation2ComboBox = new JComboBox<Formation>();
+        formation3ComboBox = new JComboBox<Formation>();
+        formation4ComboBox = new JComboBox<Formation>();
 
         this.monControleur.remplitComboFormation();
 
-        note = new JTextArea(5, 1);
-        JScrollPane scrollingNote = new JScrollPane(note);
+        descriptionTextArea = new JTextArea(5, 1);
+        JScrollPane scrollingNote = new JScrollPane(descriptionTextArea);
 
         nomTextField = new JTextField();
         prenomTextField = new JTextField();
@@ -266,7 +325,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         etude2TextField = new JTextField();
 
         retourButton = new JButton("Retour");
-        okButton = new JButton("Ok");
+        okButton = new JButton("Valider");
 
         GridBagConstraints gbc = new GridBagConstraints();
         Font font = new Font("Arial", Font.BOLD, 18);
@@ -275,14 +334,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.gridheight = gbc.gridwidth = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(10, 0, 20, 0);
-        frameAjoutModif.add(titreLabel, gbc);
+        frameAjout.add(titreLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridheight = gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(nomLabel, gbc);
+        frameAjout.add(nomLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -290,7 +349,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(nomTextField, gbc);
+        frameAjout.add(nomTextField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -298,14 +357,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(prenomLabel, gbc);
+        frameAjout.add(prenomLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(prenomTextField, gbc);
+        frameAjout.add(prenomTextField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -313,14 +372,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(emailLabel, gbc);
+        frameAjout.add(emailLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(emailTextField, gbc);
+        frameAjout.add(emailTextField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -328,14 +387,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(etude1Label, gbc);
+        frameAjout.add(etude1Label, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(etude1TextField, gbc);
+        frameAjout.add(etude1TextField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -343,14 +402,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(etude2Label, gbc);
+        frameAjout.add(etude2Label, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(etude2TextField, gbc);
+        frameAjout.add(etude2TextField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 6;
@@ -358,14 +417,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(formation1Label, gbc);
+        frameAjout.add(formation1Label, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(formation1ComboBox, gbc);
+        frameAjout.add(formation1ComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 7;
@@ -373,14 +432,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(formation2Label, gbc);
+        frameAjout.add(formation2Label, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(formation2ComboBox, gbc);
+        frameAjout.add(formation2ComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 8;
@@ -388,14 +447,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(formation3Label, gbc);
+        frameAjout.add(formation3Label, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(formation3ComboBox, gbc);
+        frameAjout.add(formation3ComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 9;
@@ -403,14 +462,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(formation4Label, gbc);
+        frameAjout.add(formation4Label, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 10, 0, 10);
-        frameAjoutModif.add(formation4ComboBox, gbc);
+        frameAjout.add(formation4ComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 10;
@@ -418,7 +477,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 10, 0, 0);
-        frameAjoutModif.add(descriptionTextField, gbc);
+        frameAjout.add(descriptionLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -427,61 +486,40 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.insets = new Insets(5, 10, 0, 10);
         gbc.weightx = 1.;
         gbc.weighty = 1.;
-        frameAjoutModif.add(scrollingNote, gbc);
+        frameAjout.add(scrollingNote, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 11;
         gbc.gridheight = gbc.gridwidth = 0;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 10, 10, 10);
-        frameAjoutModif.add(retourButton, gbc);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.LINE_START;
+        gbc.insets = new Insets(0, 115, 10, 10);
+        frameAjout.add(retourButton, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 12;
-        gbc.gridheight = gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.fill = GridBagConstraints.LINE_END;
         gbc.insets = new Insets(5, 10, 10, 10);
-        frameAjoutModif.add(okButton, gbc);
+        frameAjout.add(okButton, gbc);
 
-        frameAjoutModif.setMinimumSize(new Dimension(350, 500));
-        frameAjoutModif.setLocationRelativeTo(null);
+        frameAjout.setSize(600, 500);
 
-        frameAjoutModif.setVisible(true);
+        frameAjout.setLocationRelativeTo(null);
+        frameAjout.setVisible(true);
     }
 
     @Override
-    public void afficheAjoutModif() {
-    }
-
-    @Override
-    public int getLigneSelectionnee() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int[] getLesLignesSelectionnee() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void prepareModif() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void autoriseAjoutModif() {
+    public void autoriseAjout() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int confirmation(String message, String titre, int typeMessage, int icone) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return JOptionPane.showConfirmDialog(this, message, titre, typeMessage, icone, null);
     }
 
     @Override
     public void afficheMessage(String message, String titre, int typeMessage) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JOptionPane.showMessageDialog(this, message, titre, typeMessage);
     }
 }

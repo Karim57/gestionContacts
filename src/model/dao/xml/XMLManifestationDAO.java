@@ -31,25 +31,23 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public ArrayList<Manifestation> readAll() {
-        ArrayList<Manifestation> liste = new ArrayList<>();
+        return null;
+    }
 
+    public Manifestation read() {
+        Manifestation manifestation = null;
         try {
             SAXBuilder builder = new SAXBuilder();
             Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
             Element root = doc.getRootElement();
 
-            List list = root.getChildren();
-
-            for (int i = 0; i < list.size(); i++) {
-                Element node = (Element) list.get(i);
-
-                liste.add(new Manifestation(node.getAttribute("id").getIntValue(), node.getChildText("libelle_manif")));
-            }
-
+            manifestation = new Manifestation(Integer.valueOf(root.getChildText("id_manif")),
+                    root.getChildText("libelle_manif"));
         } catch (IOException | JDOMException io) {
             System.out.println(io.getMessage());
         }
-        return liste;
+        return manifestation;
+
     }
 
     @Override
@@ -113,9 +111,6 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
     @Override
     public void deleteList(ArrayList<Manifestation> liste) {
-        for (Manifestation manifestation : liste) {
-            this.delete(manifestation);
-        }
     }
 
 }

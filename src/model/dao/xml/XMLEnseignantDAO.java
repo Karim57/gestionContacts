@@ -47,7 +47,7 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
                 liste.add(new Enseignant(node.getAttribute("id").getIntValue(),
                         node.getChildText("nom_ens"),
                         node.getChildText("prenom_ens"),
-                        SQLDepartementDAO.getInstance().readById(Integer.parseInt(node.getChildText("id_dpt")))));
+                        new XMLDepartementDAO(this.chemin).readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
         } catch (IOException | JDOMException io) {
