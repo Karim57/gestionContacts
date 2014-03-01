@@ -97,4 +97,9 @@ public class Enseignant implements Comparable<Enseignant> {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return nomEnseignant + " " + prenomEnseignant;
+    }
+
 }

@@ -267,15 +267,15 @@ public class SQLContactDAO implements DAOInterface<Contact> {
 
         Connection connection = MySQLConnect.getInstance().getConnexion();
         String insert = "INSERT INTO contact "
-                + "SET id_manifestation = ? "
-                + "id_enseignant = ? "
-                + "nom_contact = ? "
-                + "prenom_contact = ? "
-                + "email_contact = ? "
-                + "etudes1_contact = ? "
-                + "etudes2_contact = ? "
-                + "description_contact = ? "
-                + "date_contact = ? "
+                + "SET id_manifestation = ?, "
+                + "id_enseignant = ?, "
+                + "nom_contact = ?, "
+                + "prenom_contact = ?, "
+                + "email_contact = ?, "
+                + "etudes1_contact = ?, "
+                + "etudes2_contact = ?, "
+                + "description_contact = ?, "
+                + "date_contact = ?, "
                 + "heure_contact = ? ";
 
         int id = -1;
@@ -329,6 +329,12 @@ public class SQLContactDAO implements DAOInterface<Contact> {
             }
         }
         return added;
+    }
+
+    public void createList(ArrayList<Contact> liste) {
+        for (Contact c : liste) {
+            this.create(c);
+        }
     }
 
     @Override

@@ -12,6 +12,8 @@ import model.dao.DAOInterface;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
+import view.front.VuePrincipaleFront;
+import view.utils.GereErreurs;
 
 public class XMLDepartementDAO implements DAOInterface<Departement> {
 
@@ -25,12 +27,12 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
 
     public XMLDepartementDAO(String chemin) {
         this.chemin = chemin;
-        racine = new Element(NOM_FICHIER);
+        racine = new Element("Departements");
     }
 
     @Override
     public ArrayList<Departement> readAll() {
-        ArrayList<Departement> liste = new ArrayList<>();
+        ArrayList<Departement> liste = new ArrayList<Departement>();
 
         try {
             SAXBuilder builder = new SAXBuilder();
@@ -44,8 +46,10 @@ public class XMLDepartementDAO implements DAOInterface<Departement> {
                 liste.add(new Departement(node.getAttribute("id").getIntValue(), node.getChildText("libelle_dpt")));
             }
 
-        } catch (IOException | JDOMException io) {
-            System.out.println(io.getMessage());
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
+            new VuePrincipaleFront();
         }
         return liste;
     }

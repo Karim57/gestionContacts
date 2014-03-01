@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.io.File;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
@@ -31,8 +32,11 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import model.business.Contact;
+import model.business.Departement;
+import model.business.Manifestation;
 import view.JTableDonnees;
 import view.VueAbstract;
 
@@ -54,6 +58,8 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
     private JLabel lMessage;
 
     private JToolBar pOutils;
+
+    private JFileChooser chooserImport;
 
     public VuePrincipale() {
 
@@ -240,6 +246,62 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
     @Override
     public void close() {
         this.frameAjoutModif.dispose();
+    }
+
+    @Override
+    public String fileChooserImport() {
+
+        chooserImport = new JFileChooser();
+
+        chooserImport.addPropertyChangeListener(monControleur);
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichiers XML", "xml");
+        chooserImport.setFileFilter(filter);
+        chooserImport.setAcceptAllFileFilterUsed(false);
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        chooserImport.setCurrentDirectory(fsv.getRoots()[0]);
+        chooserImport.setDialogTitle("Importer des contacts");
+        chooserImport.setApproveButtonText("Ouvrir");
+
+        if (chooserImport.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            return chooserImport.getSelectedFile().getAbsolutePath();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void creerPanelRecap(Manifestation manifestation, String date_deb, String date_fin, List<Departement> listeDpt) {
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+
+        if (manifestation != null) {
+            JLabel lManif = new JLabel("Manifestation : " + manifestation.getLibelleManif());
+            p.add(lManif);
+        }
+
+        if (date_deb != null) {
+            JLabel lDate_deb = new JLabel("Date début : " + date_deb);
+            p.add(lDate_deb);
+        }
+
+        if (date_fin != null) {
+            JLabel lDate_fin = new JLabel("Date fin : " + date_fin);
+            p.add(lDate_fin);
+        }
+
+        if (!listeDpt.isEmpty()) {
+            p.add(new JLabel("Départements : "));
+        }
+        for (Departement d : listeDpt) {
+            if (d != null) {
+                JLabel lDpt = new JLabel(d.getLibelleDepartement());
+                p.add(lDpt);
+            }
+        }
+        p.setBorder(new EmptyBorder(0, 10, 0, 0));
+        this.chooserImport.setAccessory(p);
+        this.chooserImport.revalidate();
     }
 
     @Override

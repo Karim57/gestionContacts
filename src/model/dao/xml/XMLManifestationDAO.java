@@ -12,6 +12,8 @@ import model.dao.DAOInterface;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
+import view.front.VuePrincipaleFront;
+import view.utils.GereErreurs;
 
 public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
@@ -43,8 +45,10 @@ public class XMLManifestationDAO implements DAOInterface<Manifestation> {
 
             manifestation = new Manifestation(Integer.valueOf(root.getChildText("id_manif")),
                     root.getChildText("libelle_manif"));
-        } catch (IOException | JDOMException io) {
-            System.out.println(io.getMessage());
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
+            new VuePrincipaleFront();
         }
         return manifestation;
 

@@ -1,7 +1,10 @@
 package view.back;
 
+import java.util.List;
 import view.IObservable;
 import model.business.Contact;
+import model.business.Departement;
+import model.business.Manifestation;
 
 public interface IOPrincipale extends IObservable {
 
@@ -19,4 +22,7 @@ public interface IOPrincipale extends IObservable {
 
     public String fileChooser();
 
+    public String fileChooserImport();
+
+    public void creerPanelRecap(Manifestation manifestation, String date_deb, String date_fin, List<Departement> listeDpt);
 }

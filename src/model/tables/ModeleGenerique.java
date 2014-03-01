@@ -22,6 +22,12 @@ public abstract class ModeleGenerique<T extends Comparable<? super T>> extends A
         this.fireTableDataChanged();
     }
 
+    public void addDonnees(ArrayList<T> nouvDonnees) {
+        this.getDonnees().addAll(nouvDonnees);
+        this.tri();
+        this.fireTableDataChanged();
+    }
+
     public ArrayList<T> getDonnees() {
         return this.donnees;
     }

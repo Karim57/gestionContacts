@@ -7,12 +7,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import model.business.Departement;
 import model.business.Formation;
 
 import model.dao.DAOInterface;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
+import view.front.VuePrincipaleFront;
+import view.utils.GereErreurs;
 
 public class XMLFormationDAO implements DAOInterface<Formation> {
 
@@ -47,8 +50,36 @@ public class XMLFormationDAO implements DAOInterface<Formation> {
                         new XMLDepartementDAO(this.chemin).readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
-        } catch (IOException | JDOMException io) {
-            System.out.println(io.getMessage());
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
+            new VuePrincipaleFront();
+        }
+        return liste;
+    }
+
+    public ArrayList<Formation> readAll(Departement d) {
+        ArrayList<Formation> liste = new ArrayList<>();
+
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
+            Element root = doc.getRootElement();
+
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                if (Integer.parseInt(node.getChildText("id_dpt")) == d.getIdDepartement()) {
+                    liste.add(new Formation(node.getAttribute("id").getIntValue(),
+                            node.getChildText("libelle_form"), d));
+                }
+            }
+
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
+            new VuePrincipaleFront();
         }
         return liste;
     }

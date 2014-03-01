@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import model.business.Departement;
 import model.business.Enseignant;
 
 import model.dao.DAOInterface;
@@ -14,6 +15,8 @@ import model.dao.sql.SQLDepartementDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
+import view.front.VuePrincipaleFront;
+import view.utils.GereErreurs;
 
 public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
 
@@ -50,8 +53,37 @@ public class XMLEnseignantDAO implements DAOInterface<Enseignant> {
                         new XMLDepartementDAO(this.chemin).readById(Integer.parseInt(node.getChildText("id_dpt")))));
             }
 
-        } catch (IOException | JDOMException io) {
-            System.out.println(io.getMessage());
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
+            new VuePrincipaleFront();
+        }
+        return liste;
+    }
+
+    public ArrayList<Enseignant> readAll(Departement d) {
+        ArrayList<Enseignant> liste = new ArrayList<>();
+
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
+            Element root = doc.getRootElement();
+
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                if (Integer.parseInt(node.getChildText("id_dpt")) == d.getIdDepartement()) {
+                    liste.add(new Enseignant(node.getAttribute("id").getIntValue(),
+                            node.getChildText("nom_ens"),
+                            node.getChildText("prenom_ens"), d));
+                }
+            }
+
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
+            new VuePrincipaleFront();
         }
         return liste;
     }

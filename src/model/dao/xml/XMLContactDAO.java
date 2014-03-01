@@ -7,10 +7,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import model.business.Contact;
+import model.business.Departement;
 import model.business.Formation;
+import model.business.Manifestation;
 
 import model.dao.DAOInterface;
 import model.dao.sql.SQLEnseignantDAO;
@@ -19,6 +23,8 @@ import model.dao.sql.SQLManifestationDAO;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.*;
+import sun.misc.VM;
+import view.utils.GereErreurs;
 
 public class XMLContactDAO implements DAOInterface<Contact> {
 
@@ -30,7 +36,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
         return racine;
     }
 
-    private XMLContactDAO(String chemin) {
+    public XMLContactDAO(String chemin) {
         this.chemin = chemin;
         racine = new Element("contacts");
     }
@@ -41,18 +47,18 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new FileInputStream(this.chemin + "/" + this.NOM_FICHIER));
+            Document doc = builder.build(new FileInputStream(this.chemin));
             Element root = doc.getRootElement();
 
             List list = root.getChildren();
 
             for (int i = 0; i < list.size(); i++) {
                 Element node = (Element) list.get(i);
-                Contact contact = new Contact(node.getAttribute("id").getIntValue(),
+                Contact contact = new Contact(
                         SQLManifestationDAO.getInstance().readById(Integer.parseInt(node.getChildText("manifestation"))),
                         SQLEnseignantDAO.getInstance().readById(Integer.parseInt(node.getChildText("enseignant"))),
                         node.getChildText("nom"), node.getChildText("prenom"), node.getChildText("email"),
-                        node.getChildText("etudes1"), node.getChildText("etude2"), Date.valueOf(node.getChildText("date")), Time.valueOf(node.getChildText("heure")),
+                        node.getChildText("etude1"), node.getChildText("etude2"), Date.valueOf(node.getChildText("date")), Time.valueOf(node.getChildText("heure")),
                         node.getChildText("description"));
 
                 Element formations = node.getChild("formations");
@@ -65,8 +71,9 @@ public class XMLContactDAO implements DAOInterface<Contact> {
                 liste.add(contact);
             }
 
-        } catch (IOException | JDOMException io) {
-            System.out.println(io.getMessage());
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données " + NOM_FICHIER,
+                    "Une erreur s'est produite");
         }
         return liste;
     }
@@ -76,8 +83,6 @@ public class XMLContactDAO implements DAOInterface<Contact> {
 
         Element cont = new Element("contact");
 
-        Attribute id = new Attribute("id", Integer.toString(contact.getIdContact()));
-        cont.setAttribute(id);
         racine.addContent(cont);
 
         Element manifestation = new Element("manifestation");
@@ -136,23 +141,21 @@ public class XMLContactDAO implements DAOInterface<Contact> {
     private void sauvegarde() {
         try {
             XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-            sortie.output(this.racine, new FileOutputStream(this.chemin + "/" + this.NOM_FICHIER));
+            sortie.output(this.racine, new FileOutputStream(this.chemin));
         } catch (java.io.IOException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
     public void ajouter(Contact contact) {
         SAXBuilder builder = new SAXBuilder();
-        File xmlFile = new File(this.chemin + "/" + this.NOM_FICHIER);
+        File xmlFile = new File(this.chemin);
 
         try {
             Document doc = (Document) builder.build(xmlFile);
             Element root = doc.getRootElement();
 
             Element cont = new Element("contact");
-            Attribute id = new Attribute("id", Integer.toString(contact.getIdContact()));
-            cont.setAttribute(id);
             root.addContent(cont);
 
             Element manifestation = new Element("manifestation");
@@ -204,7 +207,7 @@ public class XMLContactDAO implements DAOInterface<Contact> {
             cont.addContent(formations);
 
             XMLOutputter outputter1 = new XMLOutputter(Format.getPrettyFormat());
-            outputter1.output(doc, new FileWriter(this.chemin + "/" + this.NOM_FICHIER));
+            outputter1.output(doc, new FileWriter(this.chemin));
 
         } catch (IOException | JDOMException e) {
             System.out.println(e.getMessage());
@@ -230,6 +233,110 @@ public class XMLContactDAO implements DAOInterface<Contact> {
         for (Contact contact : liste) {
             this.ajouter(contact);
         }
+    }
+
+    public Manifestation getManifestation() {
+        Manifestation m = null;
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin));
+            Element root = doc.getRootElement();
+
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+                m = SQLManifestationDAO.getInstance().readById(Integer.parseInt(node.getChildText("manifestation")));
+            }
+
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données ",
+                    "Une erreur s'est produite");
+        }
+        return m;
+    }
+
+    public String getMaxDate() {
+        String sMaxDate = null;
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin));
+            Element root = doc.getRootElement();
+
+            List list = root.getChildren();
+            Element node = (Element) list.get(0);
+            Date maxDate = Date.valueOf(node.getChildText("date"));
+
+            for (int i = 1; i < list.size(); i++) {
+                node = (Element) list.get(i);
+                if (maxDate.before(Date.valueOf(node.getChildText("date")))) {
+                    maxDate = Date.valueOf(node.getChildText("date"));
+                }
+            }
+            DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+            sMaxDate = df.format(maxDate);
+
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données ",
+                    "Une erreur s'est produite");
+        }
+        return sMaxDate;
+    }
+
+    public String getMinDate() {
+        String sMinDate = null;
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin));
+            Element root = doc.getRootElement();
+
+            List list = root.getChildren();
+            Element node = (Element) list.get(0);
+            Date minDate = Date.valueOf(node.getChildText("date"));
+            for (int i = 1; i < list.size(); i++) {
+                node = (Element) list.get(i);
+                if (minDate.after(Date.valueOf(node.getChildText("date")))) {
+                    minDate = Date.valueOf(node.getChildText("date"));
+                }
+            }
+            DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+            sMinDate = df.format(minDate);
+
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données",
+                    "Une erreur s'est produite");
+        }
+        return sMinDate;
+    }
+
+    public ArrayList<Departement> getListDpt() {
+        ArrayList<Departement> listeDpt = new ArrayList<Departement>();
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new FileInputStream(this.chemin));
+            Element root = doc.getRootElement();
+
+            List list = root.getChildren();
+
+            for (int i = 0; i < list.size(); i++) {
+                Element node = (Element) list.get(i);
+
+                Element formations = node.getChild("formations");
+                List listform = formations.getChildren();
+                for (int j = 0; j < listform.size(); j++) {
+                    Element node2 = (Element) listform.get(j);
+                    Formation formation = SQLFormationDAO.getInstance().readById(Integer.parseInt(node2.getValue()));
+                    if (!listeDpt.contains(formation.getDepartement())) {
+                        listeDpt.add(formation.getDepartement());
+                    }
+                }
+            }
+
+        } catch (IOException | JDOMException | NullPointerException | NumberFormatException e) {
+            new GereErreurs("Un problème s'est produit lors de la lecture du fichier de données",
+                    "Une erreur s'est produite");
+        }
+        return listeDpt;
     }
 
 }

@@ -6,6 +6,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.ArrayList;
+import javax.swing.JFileChooser;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -20,6 +25,7 @@ import model.dao.sql.SQLDepartementDAO;
 import model.dao.sql.SQLEnseignantDAO;
 import model.dao.sql.SQLFormationDAO;
 import model.dao.sql.SQLManifestationDAO;
+import model.dao.xml.XMLContactDAO;
 import model.dao.xml.XMLDepartementDAO;
 import model.dao.xml.XMLEnseignantDAO;
 import model.dao.xml.XMLFormationDAO;
@@ -31,7 +37,7 @@ import view.back.IOPrincipale;
 import view.back.VueEnseignants;
 import view.back.VueFormation;
 
-public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener, MouseListener {
+public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener, MouseListener, PropertyChangeListener {
 
     private IOPrincipale vue;
     private ModeleManifestation donneesManifestation;
@@ -227,9 +233,13 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Importer")) {
+            String c = this.vue.fileChooserImport();
 
+            if (c != null) {
+                this.donneesContact.addDonnees((new XMLContactDAO(c).readAll()));
+                SQLContactDAO.getInstance().createList(new XMLContactDAO(c).readAll());
+            }
         }
-
     }
 
     public ModeleManifestation getDonneesManifestation() {
@@ -247,8 +257,8 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
     }
 
     public ModeleContact getDonneesContact() {
-        String[] champsForm = {"Nom", "Prenom", "Description", "Lieu de la rencontre"};
-        this.donneesContact = new ModeleContact(champsForm);
+        String[] champsContact = {"Nom", "Prenom", "Description", "Lieu de la rencontre"};
+        this.donneesContact = new ModeleContact(champsContact);
         this.donneesContact.setDonnees(SQLContactDAO.getInstance().readAll());
         return donneesContact;
     }
@@ -440,6 +450,22 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
 
     @Override
     public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
+            File file = (File) evt.getNewValue();
+            if (file != null) {
+                String c = file.getAbsolutePath();
+                String dateMax = new XMLContactDAO(c).getMaxDate();
+                String dateMin = new XMLContactDAO(c).getMinDate();
+                Manifestation m = new XMLContactDAO(c).getManifestation();
+                ArrayList<Departement> liste = new XMLContactDAO(c).getListDpt();
+
+                this.vue.creerPanelRecap(m, dateMin, dateMax, liste);
+            }
+        }
     }
 
 }
