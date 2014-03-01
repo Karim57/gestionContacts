@@ -125,10 +125,15 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         // Gestion des buttons d'ajout - modification
         if (s.equals("submitAjout")) {
             String libelle = this.vue.getLibelle();
-            Manifestation manifestaion = new Manifestation(libelle);
-            this.donneesManifestation.ajouterElement(manifestaion);
-            SQLManifestationDAO.getInstance().create(manifestaion);
-            this.vue.close();
+            if (SQLManifestationDAO.getInstance().readByName(libelle) == null) {
+                Manifestation manifestaion = new Manifestation(libelle);
+                this.donneesManifestation.ajouterElement(manifestaion);
+                SQLManifestationDAO.getInstance().create(manifestaion);
+                this.vue.close();
+            } else {
+                this.vue.afficheMessage("Une manifestation avec le même nom existe déjà, opération annulée.",
+                        "Erreur lors de l'ajout", 0);
+            }
         }
 
         if (s.equals("submitModif")) {
@@ -207,10 +212,16 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         // Bouttons Ajout-Modif
         if (s.equals("submitAjout")) {
             String libelle = this.vue.getLibelle();
-            Departement departement = new Departement(libelle);
-            this.donneesDepartement.ajouterElement(departement);
-            SQLDepartementDAO.getInstance().create(departement);
-            this.vue.close();
+            if (SQLDepartementDAO.getInstance().readByName(libelle) == null) {
+                Departement departement = new Departement(libelle);
+                this.donneesDepartement.ajouterElement(departement);
+                SQLDepartementDAO.getInstance().create(departement);
+                this.vue.close();
+            } else {
+                this.vue.afficheMessage("Un département avec le même nom existe déjà, opération annulée.",
+                        "Erreur lors de l'ajout", 0);
+            }
+
         }
 
         if (s.equals("submitModif")) {

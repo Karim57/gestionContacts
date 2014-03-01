@@ -50,6 +50,27 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
         return listeManifestation;
     }
 
+    public Manifestation readByName(String lib) {
+
+        Connection connection = MySQLConnect.getInstance().getConnexion();
+        String sql = "SELECT * FROM manifestation where libelle_manif = '" + lib + "'";
+        Manifestation manifestation = null;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            while (res.next()) {
+                manifestation = new Manifestation(res.getInt("id_manif"), res.getString("libelle_manif"));
+            }
+            res.close();
+            st.close();
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        }
+
+        return manifestation;
+    }
+
     public Manifestation readById(int id) {
 
         Connection connection = MySQLConnect.getInstance().getConnexion();

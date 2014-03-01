@@ -52,6 +52,26 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
         return listeFormations;
     }
 
+    public Formation readByNameDpt(String lib, int id_dpt) {
+        Connection connection = MySQLConnect.getInstance().getConnexion();
+        String sql = "SELECT * FROM formation where libelle_form = '" + lib + "' AND id_dpt = " + id_dpt;
+        Formation formation = null;
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            while (res.next()) {
+                Departement departement = SQLDepartementDAO.getInstance().readById(res.getInt("id_dpt"));
+                formation = new Formation(res.getInt("id_form"), res.getString("libelle_form"), departement);
+            }
+            res.close();
+            st.close();
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        }
+
+        return formation;
+    }
+
     public Formation readById(int id) {
 
         Connection connection = MySQLConnect.getInstance().getConnexion();

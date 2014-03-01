@@ -139,7 +139,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         frameConnexion = new JDialog(this, "Connexion");
 
         if (obligatoire) {
-            // frameConnexion.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            frameConnexion.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         }
 
         frameConnexion.setLayout(new GridBagLayout());

@@ -104,11 +104,15 @@ public class ControleurFormation implements ActionListener, DocumentListener, Li
         if (s.equals("submitAjout")) {
             String libelle = this.vue.getLibelle();
             Departement d = this.vue.getDptAjoutModif();
-
-            Formation formation = new Formation(libelle, d);
-            this.donneesFormation.ajouterElement(formation);
-            SQLFormationDAO.getInstance().create(formation);
-            this.vue.close();
+            if (SQLFormationDAO.getInstance().readByNameDpt(libelle, d.getIdDepartement()) == null) {
+                Formation formation = new Formation(libelle, d);
+                this.donneesFormation.ajouterElement(formation);
+                SQLFormationDAO.getInstance().create(formation);
+                this.vue.close();
+            } else {
+                this.vue.afficheMessage("Une formation appartenant à ce département porte le même nom, opération annulée.",
+                        "Erreur lors de l'ajout", 0);
+            }
         }
 
         if (s.equals("submitModif")) {

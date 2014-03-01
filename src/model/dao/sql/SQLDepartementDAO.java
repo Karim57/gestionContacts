@@ -27,6 +27,26 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
     private SQLDepartementDAO() {
     }
 
+    public Departement readByName(String lib) {
+        Connection connection = MySQLConnect.getInstance().getConnexion();
+        String sql = "SELECT * FROM departement WHERE libelle_dpt = '" + lib + "'";
+        Departement departement = null;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                departement = new Departement(res.getInt("id_dpt"), res.getString("libelle_dpt"));
+            }
+            res.close();
+            st.close();
+        } catch (SQLException se) {
+            System.out.println("Erreur rq sql : " + se.getMessage());
+        }
+
+        return departement;
+    }
+
     @Override
     public ArrayList<Departement> readAll() {
 

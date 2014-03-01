@@ -67,7 +67,7 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
         try {
             this.creerSplashScreen();
             this.lMessage.setText("Chargement des données ...");
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             this.monControleur = new ControleurPrincipal(this);
 
             pOutils = super.creerBarreOutils();
@@ -79,11 +79,11 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
             this.gereButtonsActifs();
 
-            this.setSize(1000, 600);
-            this.setLocation(300, 100);
+            this.setDefaultLookAndFeelDecorated(true);
+            this.setExtendedState(this.MAXIMIZED_BOTH);
 
             this.lMessage.setText("Création de l'interface graphique");
-            Thread.sleep(3000);
+            Thread.sleep(2000);
 
             this.wSplashScreen.dispose();
 
@@ -523,7 +523,6 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
     public void construitAjoutModif() {
 
         this.frameAjoutModif = new JDialog(this, "");
-        this.frameAjoutModif.setAlwaysOnTop(true);
 
         if (this.tpPrincipal.getSelectedIndex() == 0) {
             this.frameAjoutModif.setTitle("Ajouter une manifestaion");
