@@ -88,10 +88,14 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         this.emailTextField.getDocument().addDocumentListener(monControleur);
         this.etude1TextField.getDocument().addDocumentListener(monControleur);
 
-        this.formation1ComboBox.addItemListener(monControleur);
-        this.formation2ComboBox.addItemListener(monControleur);
-        this.formation3ComboBox.addItemListener(monControleur);
-        this.formation4ComboBox.addItemListener(monControleur);
+        this.formation1ComboBox.addActionListener(monControleur);
+        this.formation1ComboBox.setActionCommand("comboForm1");
+        this.formation2ComboBox.addActionListener(monControleur);
+        this.formation1ComboBox.setActionCommand("comboForm2");
+        this.formation3ComboBox.addActionListener(monControleur);
+        this.formation1ComboBox.setActionCommand("comboForm3");
+        this.formation4ComboBox.addActionListener(monControleur);
+        this.formation1ComboBox.setActionCommand("comboForm4");
     }
 
     private JToolBar creerBarreOutils() {
@@ -258,23 +262,32 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     }
 
     @Override
-    public void setListeFormation(ArrayList<Formation> liste) {
+    public void setListeFormation1(ArrayList<Formation> liste) {
 
         DefaultComboBoxModel modelFormation1 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
         this.formation1ComboBox.setModel(modelFormation1);
         this.formation1ComboBox.insertItemAt("Choisir une formation", 0);
         this.formation1ComboBox.setSelectedIndex(0);
+    }
 
+    @Override
+    public void setListeFormation2(ArrayList<Formation> liste) {
         DefaultComboBoxModel modelFormation2 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
         this.formation2ComboBox.setModel(modelFormation2);
         this.formation2ComboBox.insertItemAt("Choisir une formation", 0);
         this.formation2ComboBox.setSelectedIndex(0);
+    }
 
+    @Override
+    public void setListeFormation3(ArrayList<Formation> liste) {
         DefaultComboBoxModel modelFormation3 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
         this.formation3ComboBox.setModel(modelFormation3);
         this.formation3ComboBox.insertItemAt("Choisir une formation", 0);
         this.formation3ComboBox.setSelectedIndex(0);
+    }
 
+    @Override
+    public void setListeFormation4(ArrayList<Formation> liste) {
         DefaultComboBoxModel modelFormation4 = new DefaultComboBoxModel<Formation>(liste.toArray(new Formation[liste.size()]));
         this.formation4ComboBox.setModel(modelFormation4);
         this.formation4ComboBox.insertItemAt("Choisir une formation", 0);
@@ -313,7 +326,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         formation3ComboBox = new JComboBox<Formation>();
         formation4ComboBox = new JComboBox<Formation>();
 
-        this.monControleur.remplitComboFormation();
+        this.monControleur.remplitComboFormation1();
 
         descriptionTextArea = new JTextArea(5, 1);
         JScrollPane scrollingNote = new JScrollPane(descriptionTextArea);
@@ -502,6 +515,9 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         gbc.insets = new Insets(5, 10, 10, 10);
         frameAjout.add(okButton, gbc);
 
+        this.gereActivationComboAjout();
+        this.gereEcouteurAjout();
+
         frameAjout.setSize(600, 500);
 
         frameAjout.setLocationRelativeTo(null);
@@ -521,5 +537,26 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
     @Override
     public void afficheMessage(String message, String titre, int typeMessage) {
         JOptionPane.showMessageDialog(this, message, titre, typeMessage);
+    }
+
+    @Override
+    public void gereActivationComboAjout() {
+        if (this.formation1ComboBox.getSelectedIndex() == 0) {
+            this.formation2ComboBox.setEnabled(false);
+        } else {
+            this.formation2ComboBox.setEnabled(true);
+        }
+
+        if (this.formation2ComboBox.getSelectedIndex() == 0) {
+            this.formation3ComboBox.setEnabled(false);
+        } else {
+            this.formation3ComboBox.setEnabled(true);
+        }
+
+        if (this.formation3ComboBox.getSelectedIndex() == 0) {
+            this.formation4ComboBox.setEnabled(false);
+        } else {
+            this.formation4ComboBox.setEnabled(true);
+        }
     }
 }

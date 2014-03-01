@@ -6,9 +6,17 @@ import view.IObservable;
 
 public interface IOPrincipale {
 
-    public void setListeFormation(ArrayList<Formation> liste);
+    public void setListeFormation1(ArrayList<Formation> liste);
+
+    public void setListeFormation2(ArrayList<Formation> liste);
+
+    public void setListeFormation3(ArrayList<Formation> liste);
+
+    public void setListeFormation4(ArrayList<Formation> liste);
 
     public void autoriseAjout();
+
+    public void gereActivationComboAjout();
 
     public int confirmation(String message, String titre, int typeMessage, int icone);
 

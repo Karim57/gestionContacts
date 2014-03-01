@@ -26,7 +26,10 @@ public class ControleurPrincipal implements ActionListener, ItemListener, Docume
 
     private ModeleContact donneesContact;
     private ArrayList<Departement> donneesDepartement;
-    private ArrayList<Formation> donneesFormation;
+    private ArrayList<Formation> donneesFormation1;
+    private ArrayList<Formation> donneesFormation2;
+    private ArrayList<Formation> donneesFormation3;
+    private ArrayList<Formation> donneesFormation4;
     private ArrayList<Enseignant> donneesEnseignant;
     private Manifestation manifEnCours;
 
@@ -37,12 +40,24 @@ public class ControleurPrincipal implements ActionListener, ItemListener, Docume
     public void initDonnees() {
         this.donneesDepartement = new XMLDepartementDAO(this.vue.getCheminImport()).readAll();
         this.donneesEnseignant = new XMLEnseignantDAO(this.vue.getCheminImport()).readAll();
-        this.donneesFormation = new XMLFormationDAO(this.vue.getCheminImport()).readAll();
+        this.donneesFormation1 = new XMLFormationDAO(this.vue.getCheminImport()).readAll();
         this.manifEnCours = new XMLManifestationDAO(this.vue.getCheminImport()).read();
     }
 
-    public void remplitComboFormation() {
-        this.vue.setListeFormation(this.donneesFormation);
+    public void remplitComboFormation1() {
+        this.vue.setListeFormation1(this.donneesFormation1);
+    }
+
+    public void remplitComboFormation2() {
+        this.vue.setListeFormation2(this.donneesFormation2);
+    }
+
+    public void remplitComboFormation3() {
+        this.vue.setListeFormation3(this.donneesFormation3);
+    }
+
+    public void remplitComboFormation4() {
+        this.vue.setListeFormation4(this.donneesFormation4);
     }
 
     public ModeleContact getDonneesContact() {
@@ -80,6 +95,6 @@ public class ControleurPrincipal implements ActionListener, ItemListener, Docume
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        e.getItemSelectable().
     }
 }
