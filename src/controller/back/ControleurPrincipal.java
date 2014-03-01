@@ -36,6 +36,7 @@ import model.tables.ModeleManifestation;
 import view.back.IOPrincipale;
 import view.back.VueEnseignants;
 import view.back.VueFormation;
+import view.back.VueStats;
 
 public class ControleurPrincipal implements ActionListener, DocumentListener, ChangeListener, ListSelectionListener, WindowListener, MouseListener, PropertyChangeListener {
 
@@ -119,7 +120,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
         }
 
         if (s.equals("Stats")) {
-
+            new VueStats(this.donneesManifestation.getValueAt(this.vue.getLigneSelectionnee()));
         }
 
         // Gestion des buttons d'ajout - modification

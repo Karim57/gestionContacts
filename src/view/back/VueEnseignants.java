@@ -53,8 +53,8 @@ public class VueEnseignants extends VueAbstract implements IObservable, IOEnseig
         this.gereEcouteur();
         this.gereButtonsActifs();
 
-        this.setSize(700, 400);
-        this.setLocation(300, 200);
+        this.setSize(900, 600);
+        this.setLocation(300, 100);
 
         this.setVisible(true);
 

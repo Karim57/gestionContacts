@@ -22,8 +22,6 @@ public class SQLFormationDAO implements DAOInterface<Formation> {
         return SQLFormationDAO.instance;
     }
 
-    private MySQLConnect connect;
-
     private SQLFormationDAO() {
     }
 

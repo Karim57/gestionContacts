@@ -52,8 +52,8 @@ public class VueFormation extends VueAbstract implements IOFormation {
         this.gereEcouteur();
         this.gereButtonsActifs();
 
-        this.setSize(700, 350);
-        this.setLocation(350, 250);
+        this.setSize(800, 550);
+        this.setLocation(350, 150);
 
         this.setVisible(true);
 

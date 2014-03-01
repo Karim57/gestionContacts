@@ -26,8 +26,6 @@ public class SQLContactDAO implements DAOInterface<Contact> {
         return SQLContactDAO.instance;
     }
 
-    private MySQLConnect connect;
-
     private SQLContactDAO() {
     }
 

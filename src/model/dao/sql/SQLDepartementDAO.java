@@ -22,8 +22,6 @@ public class SQLDepartementDAO implements DAOInterface<Departement> {
         return SQLDepartementDAO.instance;
     }
 
-    private MySQLConnect connect;
-
     private SQLDepartementDAO() {
     }
 

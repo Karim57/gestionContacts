@@ -21,8 +21,6 @@ public class SQLManifestationDAO implements DAOInterface<Manifestation> {
         return SQLManifestationDAO.instance;
     }
 
-    private MySQLConnect connect;
-
     private SQLManifestationDAO() {
     }
 

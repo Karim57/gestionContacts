@@ -22,8 +22,6 @@ public class SQLEnseignantDAO implements DAOInterface<Enseignant> {
         return SQLEnseignantDAO.instance;
     }
 
-    private MySQLConnect connect;
-
     private SQLEnseignantDAO() {
     }
 

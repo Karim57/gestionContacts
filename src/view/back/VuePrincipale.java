@@ -67,7 +67,7 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
         try {
             this.creerSplashScreen();
             this.lMessage.setText("Chargement des données ...");
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             this.monControleur = new ControleurPrincipal(this);
 
             pOutils = super.creerBarreOutils();
@@ -79,11 +79,12 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
             this.gereButtonsActifs();
 
+            this.pack();
             this.setDefaultLookAndFeelDecorated(true);
             this.setExtendedState(this.MAXIMIZED_BOTH);
 
             this.lMessage.setText("Création de l'interface graphique");
-            Thread.sleep(2000);
+            Thread.sleep(3000);
 
             this.wSplashScreen.dispose();
 
@@ -91,7 +92,7 @@ public class VuePrincipale extends VueAbstract implements IOPrincipale {
 
             this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         } catch (InterruptedException ex) {
-            Logger.getLogger(VuePrincipale.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(0);
         }
     }
 
