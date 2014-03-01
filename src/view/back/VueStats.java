@@ -46,6 +46,7 @@ public class VueStats extends JFrame implements IOStats {
 
         this.setDefaultLookAndFeelDecorated(true);
         this.pack();
+        this.setLocationRelativeTo(null);
 
         this.setVisible(true);
 
