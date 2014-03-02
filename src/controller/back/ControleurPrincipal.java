@@ -250,6 +250,10 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, Ch
             if (c != null) {
                 this.donneesContact.addDonnees((new XMLContactDAO(c).readAll()));
                 SQLContactDAO.getInstance().createList(new XMLContactDAO(c).readAll());
+                File f1 = new File(c);
+                String c1 = c.replaceAll(".xml", ".old");
+                File f2 = new File(c1);
+                f1.renameTo(f2);
             }
         }
     }

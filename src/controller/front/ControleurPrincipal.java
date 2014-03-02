@@ -165,7 +165,7 @@ public class ControleurPrincipal implements ActionListener, DocumentListener, It
             }
         }
 
-        if (s.equals("Importer")) {
+        if (s.equals("ImporterFront")) {
             String c = this.vue.fileChooserImport();
 
             if (c != null) {

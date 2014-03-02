@@ -263,7 +263,7 @@ public class VuePrincipaleFront extends JFrame implements IOPrincipale {
         this.bNouveau.setToolTipText("Ajouter");
 
         this.bImporter = new JButton(new ImageIcon(cl.getResource("view/images/import.png")));
-        this.configurerButtons(bImporter, "Importer");
+        this.configurerButtons(bImporter, "ImporterFront");
         this.bImporter.setToolTipText("Importer");
 
         this.bExporter = new JButton(new ImageIcon(cl.getResource("view/images/export.png")));
